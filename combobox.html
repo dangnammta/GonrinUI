@@ -1,0 +1,143 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<script src="js/jquery.js"></script>
+	<script src="js/moment.js"></script>
+	<script src="vendor/bootstrap/js/bootstrap.js"></script>
+	<link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css">
+		<!-- Optional theme -->
+	<link rel="stylesheet" href="vendor/bootstrap/css/bootstrap-theme.min.css">
+	
+	<script src="js/gonui.combobox.js"></script>
+	<script src="js/gonui.combobox2.js"></script>
+	<link rel="stylesheet" href="css/gonui.datetimepicker.css">
+	
+	<script type="text/javascript">
+            $(function () {
+                $('#combobox').gonuiComboBox({
+                	dataTextField: "name",
+                    dataValueField: "id",
+                    dataSource: [
+                        { name: "Parent1", id: 1 },
+                        { name: "Parent2", id: 2 },
+                        { name: "Parent3", id: 3 },
+                        { name: "Parent4", id: 4 },
+                    ],
+                });
+                $('#combobox').on('change.gonui', function(e){
+                	console.log($('#combobox').data('ComboBox').getValue());
+                });
+                
+                $('#combobox0').gonuiComboBox2();
+                console.log($('#combobox0').data('ComboBox2'));
+                
+                $('button#ajax').bind("click", function(){
+                	$.ajax({
+                		  url: "http://google.com",
+                		  context: document.body
+                		}).done(function(data) {
+                		  //$( this ).addClass( "done" );
+                		  $('#combobox0').val(data);
+                		  //console.log(data);
+                		});
+                });
+            });
+       </script>
+</head>
+<body>
+	<nav class="navbar navbar-default">
+	   <div class="container">
+	     <div class="navbar-header">
+	       <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+	         <span class="sr-only">Toggle navigation</span>
+	         <span class="icon-bar"></span>
+	         <span class="icon-bar"></span>
+	         <span class="icon-bar"></span>
+	       </button>
+	       <a class="navbar-brand" href="#"><img src="images/logo.png" height="20px"/></a>
+	     </div>
+	     <div class="navbar-collapse collapse">
+	       <ul class="nav navbar-nav">
+			  	<li role="menu" data-route="user"><a href="#user">User</a></li>
+			  	<li role="menu" data-route="store"><a href="#store"><img src="images/button.png" height="20px"/> Cửa hàng</a></li>
+			  	<li role="menu" data-route="content"><a href="#content"><img src="images/apple.png" height="20px"/> Bài viết</a></li>
+			  	<li role="menu" data-route="feature"><a href="#feature">Feature</a></li>
+			  	<li role="menu" data-route="device"><a href="#device">Thiết bị</a></li>
+			  	<li role="menu" data-route="site" class="dropdown">
+			         <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><img src="images/apple.png" height="20px"/> Giao diện <span class="caret"></span></a>
+			         <ul class="dropdown-menu">
+			           <li><a href="#theme">Giao diện</a></li>
+			           <li><a href="#thememodule">Các Module</a></li>
+			           <li><a href="#menu">Các Menu</a></li>
+			           <!-- <li role="separator" class="divider"></li>-->
+			         </ul>
+			    </li>
+			    <li role="menu" data-route="brand"><a href="#brand">Thương hiệu</a></li>
+			    <li role="menu" data-route="region"><a href="#region">Vùng</a></li>
+			</ul>
+	     </div><!--/.nav-collapse -->
+	   </div>
+	 </nav>
+	 
+	 <div class="container">
+	    <div class="row-fluid" id="content" style="margin-top:20px;">
+	    	<button class="btn btn-default" id="ajax">ABC</button>
+	    	<div style="width:100%">
+	    		<div style="width:50%;">
+					<input type='text' id='combobox0' placeholder="select..."/>
+				</div>
+			</div>
+			
+			<br/>
+			<span id="abc"></span>
+			<div style="width:100%">
+	    		<div style="width:50%;">
+					<input type='text' id='combobox0' placeholder="select..."/>
+				</div>
+			</div>
+			<br/>
+	    	<div style="width:100%">
+	    		<div style="width:50%;">
+					<input type='text' id='combobox' placeholder="select..."/>
+				</div>
+			</div>
+			
+			<br/>
+			
+			<div style="width:50%;">
+				<div class="input-group">
+				  <input type="text" class="form-control" id='combobox2'>
+				  <div class="input-group-btn">
+				    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"> </span></button>
+			        <ul class="dropdown-menu dropdown-menu-right">
+			          <li><a href="#">Action</a></li>
+			          <li><a href="#">Another action</a></li>
+			          <li><a href="#">Something else here</a></li>
+			          <li role="separator" class="divider"></li>
+			          <li><a href="#">Separated link</a></li>
+			        </ul>
+				  </div>
+				</div>
+			</div>
+			<br/>
+			<div style="width:50%;">
+				<span class="input-group"> 
+					<input class="combobox input-large form-control" placeholder="Select a State" autocomplete="off" type="text">
+					<ul style="top: 34px; left: 0px; display: none;" class="typeahead typeahead-long dropdown-menu">
+						<li class="active" data-value="Colorado"><a href="#"><strong>Colorad</strong>o</a></li>
+					</ul> 
+					<span class="input-group-addon dropdown-toggle" data-dropdown="dropdown"> 
+						<span class="caret"></span> 
+						<span class="glyphicon glyphicon-remove" style="display:none;"></span> 
+					</span> 
+				</span>
+			</div>
+			
+			
+	    </div>
+	    
+	</div>
+	
+</body>
+</html>

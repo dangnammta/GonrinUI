@@ -1,0 +1,87 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<script src="js/jquery.js"></script>
+	<script src="js/moment.js"></script>
+
+	<script src="vendor/bootstrap/js/bootstrap.js"></script>
+	<link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css">
+		<!-- Optional theme -->
+	<link rel="stylesheet" href="vendor/bootstrap/css/bootstrap-theme.min.css">
+	
+	<script src="js/gonui.datetimepicker.js"></script>
+	<link rel="stylesheet" href="css/gonui.datetimepicker.css">
+	
+	<script type="text/javascript">
+            $(function () {
+                $('#datetime').gonuiDatePicker();
+            	$('#datetime').on('change.gonui', function (e) {
+				  	console.log(e.date);
+				})
+            });
+       </script>
+</head>
+<body>
+	<nav class="navbar navbar-default">
+	   <div class="container">
+	     <div class="navbar-header">
+	       <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+	         <span class="sr-only">Toggle navigation</span>
+	         <span class="icon-bar"></span>
+	         <span class="icon-bar"></span>
+	         <span class="icon-bar"></span>
+	       </button>
+	       <a class="navbar-brand" href="#"><img src="images/logo.png" height="20px"/></a>
+	     </div>
+	     <div class="navbar-collapse collapse">
+	       <ul class="nav navbar-nav">
+			  	<li role="menu" data-route="user"><a href="#user">User</a></li>
+			  	<li role="menu" data-route="store"><a href="#store"><img src="images/button.png" height="20px"/> Cửa hàng</a></li>
+			  	<li role="menu" data-route="content"><a href="#content"><img src="images/apple.png" height="20px"/> Bài viết</a></li>
+			  	<li role="menu" data-route="feature"><a href="#feature">Feature</a></li>
+			  	<li role="menu" data-route="device"><a href="#device">Thiết bị</a></li>
+			  	<li role="menu" data-route="site" class="dropdown">
+			         <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><img src="images/apple.png" height="20px"/> Giao diện <span class="caret"></span></a>
+			         <ul class="dropdown-menu">
+			           <li><a href="#theme">Giao diện</a></li>
+			           <li><a href="#thememodule">Các Module</a></li>
+			           <li><a href="#menu">Các Menu</a></li>
+			           <!-- <li role="separator" class="divider"></li>-->
+			         </ul>
+			    </li>
+			    <li role="menu" data-route="brand"><a href="#brand">Thương hiệu</a></li>
+			    <li role="menu" data-route="region"><a href="#region">Vùng</a></li>
+			</ul>
+	     </div><!--/.nav-collapse -->
+	   </div>
+	 </nav>
+	 
+	 <div class="container">
+	    <div class="row-fluid" id="content" style="margin-top:20px;">
+	    	<div style="width:50%; float:right">
+
+			    	<span class="input-group date" id='datetime'>
+			    		<input type='text' class="form-control" />
+		                <span class="input-group-addon">
+		                    <span class="glyphicon glyphicon-calendar"></span>
+		                </span>
+					</span>
+			
+			</div>
+			
+			
+			<br/>
+			<div style="width:100%">
+	    		<div style="width:50%;">
+					<input type='text' id='datetime'/>
+				</div>
+			</div>
+			
+			
+			
+	    </div>
+	</div>
+	
+</body>
+</html>

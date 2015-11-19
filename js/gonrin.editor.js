@@ -80,7 +80,7 @@
             "undo,,|" +
             "redo,,|" +
             "rule,Insert Horizontal Rule,inserthorizontalrule|" +
-            "image,Insert Image,insertimage,imgurl|" + //Cuong edit from urm to imgurl
+            "image,Insert Image,insertimage,url|" +
             "link,Insert Hyperlink,createlink,url|" +
             "unlink,Remove Hyperlink,|" +
             "cut,,|" +
@@ -105,7 +105,7 @@
         // Loop through all matching textareas and create the editors
         this.each(function (idx, elem) {
             if (elem.tagName.toUpperCase() === "TEXTAREA") {
-                var data = $.data(elem, gonrinEditor);
+                var data = $.data(elem, GONRINEDITOR);
                 if (!data) data = new gonrinEditor(elem, options);
                 $result = $result.add(data);
             }
@@ -128,7 +128,7 @@
     BUTTON = "button",
     BUTTON_NAME = "buttonName",
     CHANGE = "change",
-    gonrinEditor = "gonrinEditor",
+    GONRINEDITOR = "gonrinEditor",
     CLICK = "click",
     DISABLED = "disabled",
     DIV_TAG = "<div>",
@@ -203,7 +203,7 @@
         var $area = editor.$area = $(area)
             .css({ border: "none", margin: 0, padding: 0 }) // Needed for IE6 & 7 (won't work in CSS file)
             .hide()
-            .data(gonrinEditor, editor)
+            .data(GONRINEDITOR, editor)
             .blur(function () {
                 // Update the iframe when the textarea loses focus
                 updateFrame(editor, true);
@@ -381,7 +381,7 @@
             button = buttons[buttonName],
             popupName = button.popupName,
             popup = popups[popupName];
-	
+
         // Check if disabled
         if (editor.disabled || $(buttonDiv).attr(DISABLED) === DISABLED)
             return;
@@ -435,7 +435,7 @@
                         showMessage(editor, "A selection is required when inserting a link.", buttonDiv);
                         return false;
                     }
-		
+
                     // Wire up the submit button click event handler
                     $popup.children(":button")
                         .unbind(CLICK)
@@ -444,37 +444,6 @@
                             // Insert the image or link if a url was entered
                             var $text = $popup.find(":text"),
                                 url = $.trim($text.val());
-                            if (url !== "")
-                                execCommand(editor, data.command, url, null, data.button);
-
-                            // Reset the text, hide the popup and set focus
-                            $text.val("http://");
-                            hidePopups();
-                            focus(editor);
-
-                        });
-
-                }
-
-		else if (popupName === "imgurl") {
-
-                    // Check for selection before showing the link url popup
-                    if (buttonName === "link" && selectedText(editor) === "") {
-                        showMessage(editor, "A selection is required when inserting a link.", buttonDiv);
-                        return false;
-                    }
-			
-                    // Wire up the submit button click event handler
-		
-		    //imgur click
-                    $popup.find("input[type=button]")
-                        .unbind(CLICK)
-                        .bind(CLICK, function () {
-			
-                            // Insert the image or link if a url was entered
-                            var $text = $popup.find(":text"),
-                                url = $.trim($text.val());
-				
                             if (url !== "")
                                 execCommand(editor, data.command, url, null, data.button);
 
@@ -565,7 +534,7 @@
             command = button.command,
             value,
             useCSS = editor.options.useCSS;
-	
+
         // Get the command value
         if (buttonName === "font")
             // Opera returns the fontfamily wrapped in quotes
@@ -685,23 +654,7 @@
 
         // URL
         else if (popupName === "url") {
-		
             $popup.html('<label>Enter URL:<br /><input type="text" value="http://" style="width:200px" /></label><br /><input type="button" value="Submit" />');
-            popupTypeClass = PROMPT_CLASS;
-        }
-	else if (popupName === "imgurl") {
-	    var html = '<table><tr>';
-	    html = html + '<td style="border:0px!important; padding:0!important"><label>Image URL:<br /><input type="text" value="" style="width:200px" id="link" /></label></td>';
-	    if(typeof Imgur != "undefined"){
-		html = html + '<td style="border:0px!important; padding:0!important"><label><br/><input type="file" accept="image/*" class="upload" id="file_upload"></label></td></tr><tr>';
-	    	html = html + '<td  style="border:0px!important; padding:0!important" colspan="2" align="center"><div class="status"></div></td>';	
-	    }
-	    html = html + '</tr><tr><td  style="border:0px!important; padding:0!important"><input type="button" value="Submit" /></td></tr></table>';
-	    $popup.html(html);
-	    if(typeof Imgur != "undefined"){
-		Imgur().init($popup);	
-	    }
-
             popupTypeClass = PROMPT_CLASS;
         }
 
@@ -764,6 +717,7 @@
 
     // execCommand - executes a designMode command
     function execCommand(editor, command, value, useCSS, button) {
+
         // Restore the current ie selection
         restoreRange(editor);
 
@@ -1203,6 +1157,7 @@
 
     // updateTextArea - updates the textarea with the iframe contents
     function updateTextArea(editor, checkForChange) {
+
         var html = $(editor.doc.body).html(),
             options = editor.options,
             updateTextAreaCallback = options.updateTextArea,
@@ -1216,9 +1171,10 @@
                 return;
             editor.frameChecksum = sum;
         }
-		
+
         // Convert the iframe html into textarea source code
         var code = updateTextAreaCallback ? updateTextAreaCallback(html) : html;
+
         // Update the textarea checksum
         if (options.updateFrame)
             editor.areaChecksum = checksum(code);
@@ -1226,8 +1182,6 @@
         // Update the textarea and trigger the change event
         if (code !== $area.val()) {
             $area.val(code);
-            //Cuong added: to make $area trigger change
-            $area.trigger('change');
             $(editor).triggerHandler(CHANGE);
         }
 

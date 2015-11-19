@@ -16,29 +16,31 @@
         <script src="js/jquery.gonrinMask.js" type="text/javascript"></script>
         <script type="text/javascript">
             $(function () {
-                $('.date').mask('00/00/0000');
-                $('.time').mask('00:00:00');
-                $('.date_time').mask('00/00/0000 00:00:00');
-               // $('.cep').mask('00000-000');
-                $('.phone').mask('0000-0000');
-                $('.phone_with_ddd').mask('(00) 0000-0000');
-                $('.phone_us').mask('(000) 000-0000');
-                $('.mixed').mask('AAA 000-S0S');
-                $('.cpf').mask('000.000.000-00', {reverse: true});
-                $('.money').mask('000.000.000.000.000,00', {reverse: true});
-                $('.money2').mask("#.##0,00", {reverse: true});
-                $('.ip_address').mask('0ZZ.0ZZ.0ZZ.0ZZ', {
+                $('.date').gonrinmask('00/00/0000');
+                $('.time').gonrinmask('00:00:00');
+                $('.date_time').gonrinmask('00/00/0000 00:00:00');
+                $('.cep').gonrinmask('00000-000');
+                $('.phone').gonrinmask('0000-0000');
+                $('.phone_with_ddd').gonrinmask('(00) 0000-0000');
+                $('.phone_us').gonrinmask('(000) 000-0000');
+                $('.mixed').gonrinmask('AAA 000-S0S');
+                $('.cpf').gonrinmask('000.000.000-00', {reverse: true});
+                $('.money').gonrinmask('000.000.000.000.000,00', {reverse: true});
+                $('.money2').gonrinmask("#.##0,00", {reverse: true});
+                $('.spc').gonrinmask('(00) 00000-0000');
+                $('.czc').gonrinmask('0-00-00-00');
+                $('.ip_address').gonrinmask('0ZZ.0ZZ.0ZZ.0ZZ', {
                     translation: {
                         'Z': {
                             pattern: /[0-9]/, optional: true
                         }
                     }
                 });
-                $('.ip_address').mask('099.099.099.099');
-                $('.percent').mask('##0,00%', {reverse: true});
-                $('.clear-if-not-match').mask("00/00/0000", {clearIfNotMatch: true});
-                $('.placeholder').mask("00/00/0000", {placeholder: "__/__/____"});
-                $('.fallback').mask("00r00r0000", {
+                $('.ip_address').gonrinmask('099.099.099.099');
+                $('.percent').gonrinmask('##0,00%', {reverse: true});
+                $('.clear-if-not-match').gonrinmask("00/00/0000", {clearIfNotMatch: true});
+                $('.placeholder').gonrinmask("00/00/0000", {placeholder: "__/__/____"});
+                $('.fallback').gonrinmask("00r00r0000", {
                     translation: {
                         'r': {
                             pattern: /[\/]/,
@@ -47,7 +49,7 @@
                         placeholder: "__/__/____"
                     }
                 });
-                $('.selectonfocus').mask("00/00/0000", {selectOnFocus: true});
+                $('.selectonfocus').gonrinmask("00/00/0000", {selectOnFocus: true});
             });
         </script>
         <style>
@@ -77,11 +79,11 @@
                         <td>US Telephone :  <input type="text" class="phone_us" value=""/></td>
                     </tr>
                     <tr>
-                        <td> Zip-Code : <input type="text" class="ZipCode" value=""/></td>
+                        <td> Zip-Code : <input type="text" class="cep" value=""/></td>
                         <td>São Paulo Celphones :  <input type="text" class="spc" value=""/></td>
                     </tr>
                     <tr>
-                        <td> With Callbacks (open console) :<input type="text" class="wcb" value=""/></td>
+                        <td> With Callbacks (open console) :<input type="text" class="cep" value=""/></td>
                         <td>Mixed Type Mask :  <input type="text" class="mixed" value=""/></td>
                     </tr>
                     <tr>
@@ -91,6 +93,14 @@
                     <tr>
                         <td>Money :<input type="text" class="money2" value=""/></td>
                         <td>IP Address :  <input type="text" class="ip_address" value=""/></td>
+                    </tr>
+                    <tr>
+                        <td>Mask placeholder option :<input type="text" class="placeholder" value=""/></td>
+                        <td>Mask with Clear If Not Match Option :  <input type="text" class="clear-if-not-match" value=""/></td>
+                    </tr>
+                    <tr>
+                        <td>Mask with a Fallback Digit :<input type="text" class="fallback" value=""/></td>
+                        <td>Mask with selectOnFocus :  <input type="text" class="selectonfocus" value=""/></td>
                     </tr>
                 </table>
             </div>

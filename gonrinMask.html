@@ -16,22 +16,38 @@
         <script src="js/jquery.gonrinMask.js" type="text/javascript"></script>
         <script type="text/javascript">
             $(function () {
-                //console.log($('#editor').val());
-                $(".phone").gonrinMask("9999-9999");
-                $(".date").gonrinMask("99/99/9999");
-                $(".Hour").gonrinMask("99:99:99");
-                $(".twca").gonrinMask("(99) 9999-9999");
-                $(".dateandhour").gonrinMask("99/99/9999 99:99:99");
-                $(".USTelephone").gonrinMask("(999) 999-9999");
-                $(".ZipCode").gonrinMask("99999-999");
-                $(".spc").gonrinMask("(99) 99999-9999");
-                $(".wcb").gonrinMask("99999-999");
-                $(".mtm").gonrinMask("999 999-a");
-                $(".czc").gonrinMask("9-99-99-99");
-                $(".cpf").gonrinMask("999.999.999-99");
-                $(".Money").gonrinMask("999.999.999.999.999,99");
-                $(".IPA").gonrinMask("999.999.999.999");
-
+                $('.date').mask('00/00/0000');
+                $('.time').mask('00:00:00');
+                $('.date_time').mask('00/00/0000 00:00:00');
+               // $('.cep').mask('00000-000');
+                $('.phone').mask('0000-0000');
+                $('.phone_with_ddd').mask('(00) 0000-0000');
+                $('.phone_us').mask('(000) 000-0000');
+                $('.mixed').mask('AAA 000-S0S');
+                $('.cpf').mask('000.000.000-00', {reverse: true});
+                $('.money').mask('000.000.000.000.000,00', {reverse: true});
+                $('.money2').mask("#.##0,00", {reverse: true});
+                $('.ip_address').mask('0ZZ.0ZZ.0ZZ.0ZZ', {
+                    translation: {
+                        'Z': {
+                            pattern: /[0-9]/, optional: true
+                        }
+                    }
+                });
+                $('.ip_address').mask('099.099.099.099');
+                $('.percent').mask('##0,00%', {reverse: true});
+                $('.clear-if-not-match').mask("00/00/0000", {clearIfNotMatch: true});
+                $('.placeholder').mask("00/00/0000", {placeholder: "__/__/____"});
+                $('.fallback').mask("00r00r0000", {
+                    translation: {
+                        'r': {
+                            pattern: /[\/]/,
+                            fallback: '/'
+                        },
+                        placeholder: "__/__/____"
+                    }
+                });
+                $('.selectonfocus').mask("00/00/0000", {selectOnFocus: true});
             });
         </script>
         <style>
@@ -53,12 +69,12 @@
                         <td>Telephone :  <input type="text" class="phone" value=""/></td>
                     </tr>
                     <tr>
-                        <td> Hour : <input type="text" class="Hour" value=""/></td>
-                        <td>US Telephone :  <input type="text" class="USTelephone" value=""/></td>
+                        <td> Hour : <input type="text" class="time" value=""/></td>
+                        <td>Telephone with Code Area :  <input type="text" class="phone_with_ddd" value=""/></td>
                     </tr>
                     <tr>
-                        <td> Date & Hour : <input type="text" class="dateandhour" value=""/></td>
-                        <td>Telephone :  <input type="text" class="phone" value=""/></td>
+                        <td> Date & Hour : <input type="text" class="date_time" value=""/></td>
+                        <td>US Telephone :  <input type="text" class="phone_us" value=""/></td>
                     </tr>
                     <tr>
                         <td> Zip-Code : <input type="text" class="ZipCode" value=""/></td>
@@ -66,18 +82,17 @@
                     </tr>
                     <tr>
                         <td> With Callbacks (open console) :<input type="text" class="wcb" value=""/></td>
-                        <td>Mixed Type Mask :  <input type="text" class="mtm" value=""/></td>
+                        <td>Mixed Type Mask :  <input type="text" class="mixed" value=""/></td>
                     </tr>
                     <tr>
                         <td> Crazy Zip-Code :<input type="text" class="czc" value=""/></td>
                         <td>CPF :  <input type="text" class="cpf" value=""/></td>
                     </tr>
                     <tr>
-                        <td>Money :<input type="text" class="Money" value=""/></td>
-                        <td>IP Address :  <input type="text" class="IPA  " value=""/></td>
+                        <td>Money :<input type="text" class="money2" value=""/></td>
+                        <td>IP Address :  <input type="text" class="ip_address" value=""/></td>
                     </tr>
                 </table>
-
             </div>
 
         </div>

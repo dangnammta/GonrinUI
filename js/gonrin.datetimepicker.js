@@ -8,10 +8,10 @@
     } else {
         // Neither AMD nor CommonJS used. Use global variables.
         if (typeof jQuery === 'undefined') {
-            throw 'gonui.datetimepicker requires jQuery to be loaded first';
+            throw 'gonrin.datetimepicker requires jQuery to be loaded first';
         }
         if (typeof moment === 'undefined') {
-            throw 'gonui.datetimepicker requires Moment.js to be loaded first';
+            throw 'gonrin.datetimepicker requires Moment.js to be loaded first';
         }
         factory(jQuery, moment);
     }
@@ -19,7 +19,7 @@
 	
 	'use strict';
     if (!moment) {
-        throw new Error('gonui.datetimepicker requires Moment.js to be loaded first');
+        throw new Error('gonrin.datetimepicker requires Moment.js to be loaded first');
     }
 
     var dateTimePicker = function (element, options) {
@@ -300,7 +300,7 @@
             },
 
             getTemplate = function () {
-                var template = $('<div>').addClass('gonui-datetimepicker-widget dropdown-menu'),
+                var template = $('<div>').addClass('gonrin-datetimepicker-widget dropdown-menu'),
                     dateView = $('<div>').addClass('datepicker').append(getDatePickerTemplate()),
                     timeView = $('<div>').addClass('timepicker').append(getTimePickerTemplate()),
                     content = $('<ul>').addClass('list-unstyled'),
@@ -384,7 +384,7 @@
                 if (options.widgetParent) {
                     parent = options.widgetParent.append(widget);
                 } else if (element.is('input')) {
-                	//gonui inject
+                	//gonrin inject
                     parent = element.after(widget).parent();
                     position = element.position();
                 } else if (options.inline) {
@@ -446,7 +446,7 @@
             },
 
             notifyEvent = function (e) {
-                if ((e.type === 'change.gonui')  && ((e.date && e.date.isSame(e.oldDate)) || (!e.date && !e.oldDate))) {
+                if ((e.type === 'change.gonrin')  && ((e.date && e.date.isSame(e.oldDate)) || (!e.date && !e.oldDate))) {
                     return;
                 }
                 element.trigger(e);
@@ -457,7 +457,7 @@
                     e = 'YYYY';
                 }
                 notifyEvent({
-                    type: 'update.gonui',
+                    type: 'update.gonrin',
                     change: e,
                     viewDate: viewDate.clone()
                 });
@@ -816,7 +816,7 @@
                     input.val('');
                     element.data('date', '');
                     notifyEvent({
-                        type: 'change.gonui',
+                        type: 'change.gonrin',
                         date: false,
                         oldDate: oldDate
                     });
@@ -838,7 +838,7 @@
                     unset = false;
                     update();
                     notifyEvent({
-                        type: 'change.gonui',
+                        type: 'change.gonrin',
                         date: date.clone(),
                         oldDate: oldDate
                     });
@@ -847,7 +847,7 @@
                         input.val(unset ? '' : date.format(actualFormat));
                     }
                     notifyEvent({
-                        type: 'error.gonui',
+                        type: 'error.gonrin',
                         date: targetMoment
                     });
                 }
@@ -884,7 +884,7 @@
                 widget = false;
 
                 notifyEvent({
-                    type: 'hide.gonui',
+                    type: 'hide.gonrin',
                     date: date.clone()
                 });
 
@@ -1190,7 +1190,7 @@
                 }
 
                 notifyEvent({
-                    type: 'show.gonui'
+                    type: 'show.gonrin'
                 });
                 return picker;
             },
@@ -2272,7 +2272,7 @@
         // initializing element and component attributes
         if (element.is('input')) {
             input = element;
-            //gonUI inject input element
+            //gonrin inject input element
             
             element.wrap( '<span class="input-group date"></span>' );
             var inputGroupSpan = element.parent();
@@ -2332,18 +2332,18 @@
 	
 	/*****************************************/
 	
-	$.fn.gonuiDatePicker = function (options) {
+	$.fn.gonrinDatePicker = function (options) {
         return this.each(function () {
             var $this = $(this);
             if (!$this.data('DateTimePicker')) {
                 // create a private copy of the defaults object
-                options = $.extend(true, {}, $.fn.gonuiDatePicker.defaults, options);
+                options = $.extend(true, {}, $.fn.gonrinDatePicker.defaults, options);
                 $this.data('DateTimePicker', dateTimePicker($this, options));
             }
         });
     };
 
-    $.fn.gonuiDatePicker.defaults = {
+    $.fn.gonrinDatePicker.defaults = {
         timeZone: 'Etc/UTC',
         format: false,
         dayViewHeaderFormat: 'MMMM YYYY',

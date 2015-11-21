@@ -14,7 +14,7 @@
     }
 }(function ($) {
 	'use strict';
-	var comboBox = function (element, options) {
+	var ComboBox = function (element, options) {
 		var combo = {},
 		value,
 		text,
@@ -65,30 +65,30 @@
          * Private functions
          *
          ********************************************************************************/
-        setupData = function(){
-			data = options.dataSource;
+        setup_data = function(){
+			data = options.data_source;
 		},
-        setupWidget = function () {
-			if (options.dataSource) {
+        setup_widget = function () {
+			if (options.data_source) {
 				widget = $(menuTemplate);
 				if(component){
 					component.before(widget);
 				}
-				//getDatasource json from HTTP
-				//setupData();
-				data = options.dataSource;
+				//getdata_source json from HTTP
+				//setup_data();
+				data = options.data_source;
 				$.each(data, function (idx, item) {
 					
-					if((options.dataValueField != null) && (options.dataTextField != null)){
+					if((options.data_value_field != null) && (options.data_text_field != null)){
 						if (typeof item == 'object') {
 							var $item = $(itemTemplate);
-							$item.find('a').text(item[options.dataTextField]);
-							if(value == item[options.dataValueField]){
-								setValue(item[options.dataValueField]);
+							$item.find('a').text(item[options.data_text_field]);
+							if(value == item[options.data_value_field]){
+								set_value(item[options.data_value_field]);
 							}
 							widget.append($item);
 							$item.bind("click", function(){
-								setValue(item[options.dataValueField]);
+								set_value(item[options.data_value_field]);
 								hide();
 							});
 						}
@@ -98,7 +98,7 @@
 							$item.find('a').text(item);
 							widget.append($item);
 							$item.bind("click", function(){
-								setValue(item, item);
+								set_value(item, item);
 								hide();
 							});
 						}
@@ -114,16 +114,16 @@
             }
 			return combo;
         },
-        getValue = function(){
+        get_value = function(){
         	return value;
         },
-        getText = function(){
+        get_text = function(){
         	return text;
         },
-        getIndex = function(){
+        get_index = function(){
         	return index;
         },
-        setValue = function (val) {
+        set_value = function (val) {
         	var oldvalue = value;
         	value = val;
         	function set_text(txt){
@@ -136,9 +136,9 @@
         		var txt = null;
         		for(var i = 0; i < data.length; i++){
         			var item = data[i];
-        			if((options.dataValueField != null) && (options.dataTextField != null)){
-        				if(value == item[options.dataValueField]){
-        					txt = item[options.dataTextField];
+        			if((options.data_value_field != null) && (options.data_text_field != null)){
+        				if(value == item[options.data_value_field]){
+        					txt = item[options.data_text_field];
         					set_text(txt);
         					index = i;
         					input.val(value);
@@ -173,14 +173,14 @@
         		
         	}
         },
-        setIndex = function(idx){
+        set_index = function(idx){
         	if(data && (data.length > 0) && (data.length > idx)){
         		var item = data[idx];
         		var oldvalue = value;
         		var txt,val;
-        		if((options.dataValueField != null) && (options.dataTextField != null)){
-        			txt = item[options.dataTextField];
-        			val = item[options.dataValueField];
+        		if((options.data_value_field != null) && (options.data_text_field != null)){
+        			txt = item[options.data_text_field];
+        			val = item[options.data_value_field];
         		}else{
         			txt = item;
         			val = item;
@@ -202,9 +202,9 @@
 				return;
         	}
         },
-        dataToOptions = function () {
+        data_to_options = function () {
             var eData,
-                dataOptions = {};
+                data_options = {};
 
             /*if (element.is('input') || options.inline) {
                 eData = element.data();
@@ -222,10 +222,10 @@
                     dataOptions[key] = eData[attributeName];
                 }
             });*/
-            return dataOptions;
+            return data_options;
         },
         show = function () {
-        	if (input.prop('disabled') || (!options.ignoreReadonly && input.prop('readonly')) || widget.is(':visible')) {
+        	if (input.prop('disabled') || (!options.ignore_readonly && input.prop('readonly')) || widget.is(':visible')) {
                 return combo;
             };
             
@@ -264,7 +264,7 @@
             }
             element.trigger(e);
         },
-        attachElementEvents = function () {
+        attach_element_events = function () {
             /*input.on({
                 'change': change,
                 'blur': options.debug ? '' : hide,
@@ -332,11 +332,11 @@
         combo.toggle = toggle;
         combo.show = show;
         combo.hide = hide;
-        combo.setValue = setValue;
-        combo.getValue = getValue;
-        combo.getText = getText;
-        combo.setIndex = setIndex;
-        combo.getIndex = getIndex;
+        combo.set_value = set_value;
+        combo.get_value = get_value;
+        combo.get_text = get_text;
+        combo.set_index = set_index;
+        combo.get_index = get_index;
         combo.disable = function () {
             ///<summary>Disables the input element, the component is attached to, by adding a disabled="true" attribute to it.
             ///If the widget was visible before that call it is hidden. Possibly emits dp.hide</summary>
@@ -401,18 +401,18 @@
             options.debug = debug;
             return combo;
         };
-        combo.dataTextField = function (dataTextField) {
-            if (dataTextField !== null && typeof dataTextField !== 'string') {
-                throw new TypeError('dataTextField() expects a string parameter');
+        combo.data_text_field = function (data_text_field) {
+            if (data_text_field !== null && typeof data_text_field !== 'string') {
+                throw new TypeError('data_text_field() expects a string parameter');
             }
-            options.dataTextField = dataTextField;
+            options.data_text_field = data_text_field;
             return combo;
         };
-        combo.dataValueField = function (dataValueField) {
-        	if (dataValueField !== null && typeof dataValueField !== 'string') {
-                throw new TypeError('dataValueField() expects a string parameter');
+        combo.data_value_field = function (data_value_field) {
+        	if (data_value_field !== null && typeof data_value_field !== 'string') {
+                throw new TypeError('data_value_field() expects a string parameter');
             }
-            options.dataValueField = dataValueField;
+            options.data_value_field = data_value_field;
             return combo;
         };
         combo.placeholder = function (placeholder) {
@@ -423,11 +423,11 @@
             return combo;
         };
         
-        combo.dataSource = function (dataSource) {
-            if (dataSource !== null && typeof dataSource !== 'object') {
-                throw new TypeError('dataSource() expects a object parameter');
+        combo.data_source = function (data_source) {
+            if (data_source !== null && typeof data_source !== 'object') {
+                throw new TypeError('data_source() expects a object parameter');
             }
-            options.dataSource = dataSource;
+            options.data_source = data_source;
             return combo;
         };
         
@@ -439,14 +439,14 @@
             return combo;
         };
         
-        combo.ignoreReadonly = function (ignoreReadonly) {
+        combo.ignore_readonly = function (ignore_readonly) {
             if (arguments.length === 0) {
-                return options.ignoreReadonly;
+                return options.ignore_readonly;
             }
-            if (typeof ignoreReadonly !== 'boolean') {
-                throw new TypeError('ignoreReadonly () expects a boolean parameter');
+            if (typeof ignore_readonly !== 'boolean') {
+                throw new TypeError('ignore_readonly () expects a boolean parameter');
             }
-            options.ignoreReadonly = ignoreReadonly;
+            options.ignore_readonly = ignore_readonly;
             return combo;
         };
         
@@ -473,12 +473,12 @@
             throw new Error('Could not initialize ComboBox without an input element');
         }
 
-        $.extend(true, options, dataToOptions());
+        $.extend(true, options, data_to_options());
         
         combo.options(options);
         
         if (input.is('input'))  {
-        	setupWidget();
+        	setup_widget();
         	if(!options.placeholder){
         		options.placeholder = input.attr("placeholder");
         	}
@@ -486,11 +486,11 @@
         		textElement.attr("placeholder", options.placeholder);
         	}
         	if((options.index) && (options.index > -1)){
-        		combo.setIndex(options.index);
+        		combo.set_index(options.index);
         	}
         }
         
-        attachElementEvents();
+        attach_element_events();
         if (input.prop('disabled')) {
             combo.disable();
         }
@@ -504,27 +504,27 @@
 
 /*****************************************/
 	
-	$.fn.gonuiComboBox = function (options) {
+	$.fn.combobox = function (options) {
 		
         return this.each(function () {
             var $this = $(this);
-            if (!$this.data('ComboBox')) {
+            if (!$this.data('combobox')) {
                 // create a private copy of the defaults object
-                options = $.extend(true, {}, $.fn.gonuiComboBox.defaults, options);
-                $this.data('ComboBox', comboBox($this, options));
+                options = $.extend(true, {}, $.fn.combobox.defaults, options);
+                $this.data('combobox', ComboBox($this, options));
             }
         });
     };
 
-    $.fn.gonuiComboBox.defaults = {
+    $.fn.combobox.defaults = {
     	//template: null,
     	//height: null,
     	placeholder: null,
-    	ignoreReadonly: false,
+    	ignore_readonly: false,
     	debug: false,
-    	dataTextField: null,
-        dataValueField: null,
-        dataSource: null,
+    	data_text_field: null,
+        data_value_field: null,
+        data_source: null,
         index: -1,
     };
 }));

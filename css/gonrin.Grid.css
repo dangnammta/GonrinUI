@@ -1,12 +1,25 @@
 /*
  * Table styles
  */
+ .bg
+ {
+	 border:solid Orange;
+	 background-color:Orange;
+	 margin-bottom:5px;
+     width:100%;
+	 height:50px;
+	 font-size:30px;
+	 padding-left:20px;
+	 color:white;
+ }
 table.gonringrid {
-  width: 100%;
+  padding:20px;
+  width: 60%;
   margin: 0 auto;
   clear: both;
   border-collapse: separate;
   border-spacing: 0;
+  border:none;
   /*
    * Header and footer styles
    */
@@ -273,15 +286,22 @@ table.gonringrid td {
  * Control feature layout
  */
 .gonringrids_wrapper {
+  border:1px solid Orange;
   position: relative;
+  width:900px;
+  margin:0px auto;
+  margin-bottom:100px;
   clear: both;
+  margin-top:60px;
   *zoom: 1;
   zoom: 1;
 }
 .gonringrids_wrapper .gonringrids_length {
+  margin-left:20px;
   float: left;
 }
 .gonringrids_wrapper .gonringrids_filter {
+  margin-right:	20px;
   float: right;
   text-align: right;
 }
@@ -292,18 +312,21 @@ table.gonringrid td {
   clear: both;
   float: left;
   padding-top: 0.755em;
+  margin-left:20px;
 }
 .gonringrids_wrapper .gonringrids_paginate {
+  margin-right:20px;
   float: right;
   text-align: right;
   padding-top: 0.25em;
+  margin-top:0px;
 }
 .gonringrids_wrapper .gonringrids_paginate .paginate_button {
   box-sizing: border-box;
   display: inline-block;
   min-width: 1.5em;
-  padding: 0.5em 1em;
-  margin-left: 2px;
+  padding: 1px;
+  margin-left: 0px;
   text-align: center;
   text-decoration: none !important;
   cursor: pointer;
@@ -315,7 +338,7 @@ table.gonringrid td {
 .gonringrids_wrapper .gonringrids_paginate .paginate_button.current, .gonringrids_wrapper .gonringrids_paginate .paginate_button.current:hover {
   color: #333 !important;
   border: 1px solid #979797;
-  background-color: white;
+  background-color: Orange;
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, white), color-stop(100%, #dcdcdc));
   /* Chrome,Safari4+ */
   background: -webkit-linear-gradient(top, white 0%, #dcdcdc 100%);

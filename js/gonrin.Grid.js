@@ -46,7 +46,7 @@
 	var _re_escape_regex = new RegExp( '(\\' + [ '/', '.', '*', '+', '?', '|', '(', ')', '[', ']', '{', '}', '\\', '$', '^', '-' ].join('|\\') + ')', 'g' );
 	
 	
-	var _re_formatted_numeric = /[',$Â£â‚¬Â¥%\u2009\u202F\u20BD\u20a9\u20BArfk]/gi;
+	var _re_formatted_numeric = /[',$£€¥%\u2009\u202F\u20BD\u20a9\u20BArfk]/gi;
 	
 	
 	var _empty = function ( d ) {
@@ -286,6 +286,7 @@
 	 */
 	function _fnCamelToHungarian ( src, user, force )
 	{
+		$('thead tr').addClass("success");
 		if ( ! src._hungarianMap ) {
 			_fnHungarianMap( src );
 		}
@@ -1650,7 +1651,7 @@
 	
 			row.nTr = nTr;
 			row.anCells = cells;
-	
+	       // nTr.addClass("success");
 			/* Use a private property on the node to allow reserve mapping from the node
 			 * to the aoData array for fast look up
 			 */
@@ -1769,6 +1770,7 @@
 	
 		if ( createHeader ) {
 			row = $('<tr/>').appendTo( thead );
+			
 		}
 	
 		for ( i=0, ien=columns.length ; i<ien ; i++ ) {
@@ -1809,6 +1811,7 @@
 	 	$(thead).find('>tr').attr('role', 'row');
 	
 		/* Deal with the footer - add classes if required */
+        
 		$(thead).find('>tr>th, >tr>td').addClass( classes.sHeaderTH );
 		$(tfoot).find('>tr>th, >tr>td').addClass( classes.sFooterTH );
 	
@@ -2133,7 +2136,9 @@
 			id:      oSettings.sTableId+'_wrapper',
 			'class': classes.sWrapper + (oSettings.nTFoot ? '' : ' '+classes.sNoFooter)
 		} );
-	
+		var $div=$('<div class="bg">');
+		$div.html("Table Salary");
+	    insert.append($div);
 		oSettings.nHolding = holding[0];
 		oSettings.nTableWrapper = insert[0];
 		oSettings.nTableReinsertBefore = oSettings.nTable.nextSibling;
@@ -2193,7 +2198,6 @@
 	
 					i += j; /* Move along the position array */
 				}
-	
 				insert.append( nNewNode );
 				insert = $(nNewNode);
 			}
@@ -3435,7 +3439,7 @@
 			redraw = function( settings ) {
 				_fnDraw( settings );
 			},
-			node = $('<div/>').addClass( settings.oClasses.sPaging + type )[0],
+			node = $('<div/>').addClass( settings.oClasses.sPaging + type +'pagination')[0],
 			features = settings.aanFeatures;
 	
 		if ( ! modern ) {
@@ -14162,11 +14166,11 @@
 	
 	
 	$.extend( gonrinGrid.ext.classes, {
-		"sTable": "gonringrid",
+		"sTable": "table table-bordered gonringrid",
 		"sNoFooter": "no-footer",
 	
 		/* Paging buttons */
-		"sPageButton": "paginate_button",
+		"sPageButton":"pagination paginate_button",
 		"sPageButtonActive": "current",
 		"sPageButtonDisabled": "disabled",
 	
@@ -14405,7 +14409,9 @@
 							}
 	
 							if ( btnDisplay !== null ) {
-								node = $('<a>', {
+								var $a=$('<a href="#"></a>').html( btnDisplay);
+								var $li=$('<li>');	
+								node = $('<ul>', {
 										'class': classes.sPageButton+' '+btnClass,
 										'aria-controls': settings.sTableId,
 										'aria-label': aria[ button ],
@@ -14414,14 +14420,12 @@
 										'id': idx === 0 && typeof button === 'string' ?
 											settings.sTableId +'_'+ button :
 											null
-									} )
-									.html( btnDisplay )
-									.appendTo( container );
+									} );
+									node.append($li.append($a)).appendTo( container );
 	
 								_fnBindAction(
 									node, {action: button}, clickHandler
 								);
-	
 								counter++;
 							}
 						}

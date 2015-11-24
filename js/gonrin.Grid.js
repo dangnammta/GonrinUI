@@ -286,7 +286,7 @@
 	 */
 	function _fnCamelToHungarian ( src, user, force )
 	{
-		$('thead tr').addClass("success");
+	
 		if ( ! src._hungarianMap ) {
 			_fnHungarianMap( src );
 		}
@@ -433,6 +433,22 @@
 	 */
 	function _fnBrowserDetect( settings )
 	{
+		
+	   var 	$ip=$('<input type="checkbox">');
+	   var  $td=$('<td style="text-align:center;background:none">');
+	   $td.html($ip);
+	   $('tr').append($td);
+	   $('thead td input').click(function(){
+	   if($('thead td input').prop("checked"))
+	   {
+		     $('input').prop("checked",true);
+	   }else 
+	   {
+		    $('input').prop("checked",false);
+	   }
+	   });
+	   
+		 
 		// We don't need to do this every time DataTables is constructed, the values
 		// calculated are specific to the browser and OS configuration which we
 		// don't expect to change between initialisations
@@ -2756,7 +2772,7 @@
 				'id': ! features.f ? tableId+'_filter' : null,
 				'class': classes.sFilter
 			} )
-			.append( $('<label/>' ).append( str ) );
+			.append(str);
 	
 		var searchFn = function() {
 			/* Update all other filter input elements for the new display */
@@ -3162,7 +3178,6 @@
 				'class': settings.oClasses.sInfo,
 				'id': ! nodes ? tid+'_info' : null
 			} );
-	
 		if ( ! nodes ) {
 			// Update display on each draw
 			settings.aoDrawCallback.push( {
@@ -14199,7 +14214,7 @@
 		"sSortColumn": "sorting_", /* Note that an int is postfixed for the sorting order */
 	
 		/* Filtering */
-		"sFilterInput": "",
+		"sFilterInput": "form-control",
 	
 		/* Page length */
 		"sLengthSelect": "",
@@ -14285,6 +14300,8 @@
 	var extPagination = gonrinGrid.ext.pager;
 	
 	function _numbers ( page, pages ) {
+	
+		
 		var
 			numbers = [],
 			buttons = extPagination.numbers_length,
@@ -14421,7 +14438,7 @@
 											settings.sTableId +'_'+ button :
 											null
 									} );
-									node.append($li.append($a)).appendTo( container );
+									node.html($li.html($a)).appendTo( container );
 	
 								_fnBindAction(
 									node, {action: button}, clickHandler

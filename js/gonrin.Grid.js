@@ -438,8 +438,9 @@
 	   var  $td=$('<td style="text-align:center;background:none">');
 	   $td.html($ip);
 	   $('tr').append($td);
+	   
 	   $('thead td input').click(function(){
-	   if($('thead td input').prop("checked"))
+	   if($('thead td input').prop("checked")==true)
 	   {
 		     $('input').prop("checked",true);
 	   }else 
@@ -2152,9 +2153,6 @@
 			id:      oSettings.sTableId+'_wrapper',
 			'class': classes.sWrapper + (oSettings.nTFoot ? '' : ' '+classes.sNoFooter)
 		} );
-		var $div=$('<div class="bg">');
-		$div.html("Table Salary");
-	    insert.append($div);
 		oSettings.nHolding = holding[0];
 		oSettings.nTableWrapper = insert[0];
 		oSettings.nTableReinsertBefore = oSettings.nTable.nextSibling;
@@ -2762,17 +2760,24 @@
 		var previousSearch = settings.oPreviousSearch;
 		var features = settings.aanFeatures;
 		var input = '<input type="search" class="'+classes.sFilterInput+'"/>';
-	
+	    
 		var str = language.sSearch;
 		str = str.match(/_INPUT_/) ?
 			str.replace('_INPUT_', input) :
-			str+input;
+			input;
 	
 		var filter = $('<div/>', {
 				'id': ! features.f ? tableId+'_filter' : null,
 				'class': classes.sFilter
-			} )
-			.append(str);
+			} );
+			
+		var div=$('<div class="col-xs-9">');
+		div.html(str);
+		var di=$('<div class="col-xs-3 di">');
+		di.html("Search:");
+	    filter.append(di);
+		filter.append(div);
+	
 	
 		var searchFn = function() {
 			/* Update all other filter input elements for the new display */

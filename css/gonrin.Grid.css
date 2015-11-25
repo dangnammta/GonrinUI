@@ -11,6 +11,10 @@
 	 padding-left:20px;
 	 color:white;
  }
+ .di
+ {
+	 padding-top:6px
+ }
 table.gonringrid thead .sorting,
 table.gonringrid thead .sorting_asc,
 table.gonringrid thead .sorting_desc,
@@ -54,15 +58,15 @@ table.gonringrid thead .sorting_desc_disabled {
   margin-right:	5px;
   float: right;
   text-align: left;
-}
-.gonringrids_wrapper .gonringrids_filter input {
-  margin-left: 0.5em;
+  margin-bottom:15px;
+  font-size:16px;
 }
 .gonringrids_wrapper .gonringrids_info {
   clear: both;
   float: left;
   padding-top: 0.755em;
   margin-left:20px;
+
 }
 .gonringrids_wrapper .gonringrids_paginate {
   margin-right:20px;
@@ -159,12 +163,8 @@ table.gonringrid thead .sorting_desc_disabled {
   }
 }
 @media screen and (max-width: 640px) {
-  .gonringrids_wrapper .gonringrids_length,
-  .gonringrids_wrapper .gonringrids_filter {
+  .gonringrids_wrapper .gonringrids_length{
     float: none;
     text-align: center;
-  }
-  .gonringrids_wrapper .gonringrids_filter {
-    margin-top: 0.5em;
   }
 }

@@ -80,7 +80,7 @@
 				$.each(data, function (idx, item) {
 					
 					if((options.data_value_field != null) && (options.data_text_field != null)){
-						if (typeof item == 'object') {
+						if (typeof item === 'object') {
 							var $item = $(itemTemplate);
 							$item.find('a').text(item[options.data_text_field]);
 							if(value == item[options.data_value_field]){
@@ -93,7 +93,7 @@
 							});
 						}
 					}else{
-						if (typeof item == 'string') {
+						if (typeof item === 'string') {
 							var $item = $(itemTemplate);//.text(item);
 							$item.find('a').text(item);
 							widget.append($item);

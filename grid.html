@@ -1,0 +1,41 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<script src="js/jquery.js"></script>
+	<script src="vendor/bootstrap/js/bootstrap.js"></script>
+	<link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css">
+		<!-- Optional theme -->
+	<link rel="stylesheet" href="vendor/bootstrap/css/bootstrap-theme.min.css">
+	<script src="js/localization/gonrin.grid.lang.en.js"></script>
+	<script src="js/localization/gonrin.pagination.lang.en.js"></script>
+	<script src="js/gonrin.pagination.js"></script>
+	<script src="js/gonrin.grid.js"></script>
+
+	<script type="text/javascript">
+            $(function () {
+                $("#grid").grid({
+                	show_row_numbers: true,
+                	fields: [
+                         {field: "id", label: "Code", visible: true, width:250, readonly: true},
+                         {field: "name", label: "Ten"},
+                         {field: "address", label: "Dia Chi", visible: true, "sortable": false}
+                     ],
+                     data_source: [
+                         {id:1,name:"ABC", address: "22 Huynh thuc khang"},
+                         {id:2,name:"CDE", address: "33 Huynh thuc khang"},
+                     ],
+                     primary:"id",
+                });
+                
+            });
+     </script>
+</head>
+<body>
+	 <div class="container">
+	    <div class="row-fluid" id="content" style="margin-top:20px;">
+	    	<div id="grid"></div>
+	    </div> 
+	</div>
+</body>
+</html>

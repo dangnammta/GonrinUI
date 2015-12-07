@@ -485,7 +485,11 @@
     $(document).ready(function() {
         $('#example').gonrinGrid({
             keepConditions: true,
-            colReorder: true
+            colReorder: true,
+            data_source: [
+            	{id:1, name:"ABC", position:"Accounting"},
+            	{id:2, name:"ABC2", position:"Accounting2"},
+            ],
         });
     } );
 </script>

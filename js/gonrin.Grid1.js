@@ -5290,6 +5290,7 @@
 
 	gonrinGrid = function( options )
 	{
+		console.log(options.data_source);
 		/**
 		 * Perform a jQuery selector action on the table's TR elements (from the tbody) and
 		 * return the resulting jQuery object.
@@ -14964,6 +14965,7 @@
 	// With a capital `D` we return a DataTables API instance rather than a
 	// jQuery object
 	$.fn.gonrinGrid = function ( opts ) {
+		
 		return $(this).gonringrid( opts ).api();
 	};
 

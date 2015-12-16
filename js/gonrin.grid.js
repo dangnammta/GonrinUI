@@ -13,9 +13,9 @@
 			var elem = this;
 			if(!elem.attr("id")){
 				elem.attr("id","grid");
-			}
+			};
             return this.each(function() {
-
+            	
                 /**
                  * store given options on first launch (in new object - no reference)
                  */
@@ -38,7 +38,7 @@
                     settings = $.extend(true, {}, settings, options);
                 }
                 elem.data(plugin_name, settings);
-
+                
                 // initialize plugin status
                 if(typeof  elem.data(plugin_status) === "undefined") {
                     elem.data(plugin_status, {});
@@ -58,6 +58,8 @@
                             break;
                     }
                 }
+                
+                console.log('do grid');
                 var container_id = elem.attr("id");
 
                 // apply container style
@@ -256,6 +258,7 @@
             });
         },
         render_data: function(page_data, page, total_pages, num_rows, refresh_pag){
+        	console.log('render_data');
         	var elem = this,
             container_id = elem.attr("id"),
 	            s = grid.get_all_options.call(elem),
@@ -341,27 +344,34 @@
             tbl_html += '</tr>';
             tbl_html += '</thead>';
 
+            tbl_html += '<tbody class="grid-data">';
             tbl_html += '<tbody>';
+            elem_table.html(tbl_html);
+            
+            console.log(elem_table);
+            var grid_data = elem_table.find('tbody.grid-data');
+            
             for(row in page_data) {
-
-                row_id_html = (row_primary_key ? ' id="' + table_id + '_tr_' + page_data[row][row_primary_key] + '"' : '');
-                tbl_html += '<tr' + row_id_html + '>';
+            	row_id_html = (row_primary_key ? table_id + '_tr_' + page_data[row][row_primary_key] : '');
+            	var trow = $("<tr>").attr("id",row_id_html);
+            	trow.data("row_data",page_data[row]);
+                var tr_tbl_html = '';
 
                 if(s.show_row_numbers) {
                     row_index = offset + parseInt(row) + 1;
-                    tbl_html += '<td>' + row_index + '</td>';
+                    tr_tbl_html += '<td>' + row_index + '</td>';
                 }
 
                 for(i in s.fields) {
                     if(column_is_visible.call(elem,s.fields[i])) {
-                        tbl_html += '<td>' + page_data[row][s.fields[i].field] + '</td>';
+                    	tr_tbl_html += '<td>' + page_data[row][s.fields[i].field] + '</td>';
                     }
                 }
 
-                tbl_html += '</tr>';
+                trow.html(tr_tbl_html);
+                grid_data.append(trow);
             }
-            tbl_html += '<tbody>';
-            elem_table.html(tbl_html);
+            
             
          // refresh pagination (if needed)
             if(refresh_pag) {
@@ -437,7 +447,8 @@
                     var row_id = parseInt($(this).attr("id").substr(row_prefix_len)),
                         row_status,
                         idx = grid.selected_rows.call(elem, "selected_index", row_id);
-
+                    var row_data = $(this).data("row_data");
+                    console.log(idx);
                     if(idx > -1) {
                         grid.selected_rows.call(elem, "remove_id", idx);
                         grid.selected_rows.call(elem, "mark_deselected", row_id);
@@ -454,25 +465,14 @@
 
                     // update selected rows counter
                     grid.selected_rows.call(elem, "update_counter");
-                    
-                    console.log(page_data);
-                    console.log(row_id);
-                    var row_data = null;
-                    console.log(settings.row_primary_key);
-                    for(var iter = 0; iter < page_data.length; iter++){
-                    	if(page_data[iter][settings.row_primary_key] ===  row_id){
-                    		row_data = page_data[iter];
-                    		break;
-                    	}
-                    }
-
+                 
                     elem.triggerHandler("rowclick", {row_id: row_id, row_status: row_status, row_data:row_data});
                 });
 
                 // selection list
                 var container_id = elem.attr("id");
                 var selection_list_id = create_id(settings.selection_list_id_prefix, container_id);
-                var elem_selection_list = $("#" + selection_list_id);
+                var elem_selection_list = elem.find("#" + selection_list_id);
 
                 elem_selection_list.off("click", "li").on("click", "li", function() {
                     var sel_index = $(this).index();
@@ -532,13 +532,6 @@
 
             }
             
-            
-            
-            
-            
-            
-            
-            
             // trigger event onDisplay
             elem.triggerHandler("render");
         },
@@ -572,7 +565,7 @@
                         	var filter_error;
                             var err_msg = "ERROR: " + "Collection fetch error";
                             elem.html('<span style="color: red;">' + err_msg + '</span>');
-                            elem.triggerHandler("onDatagridError", {err_code: "server_error", err_description: err_msg});
+                            elem.triggerHandler("griderror", {err_code: "server_error", err_description: err_msg});
                             $.error(err_msg);
 
                             /*if(s.useFilters) {
@@ -598,7 +591,7 @@
                 container_id = elem.attr("id"),
                 s = grid.get_all_options.call(elem),
                 table_id = create_id(grid.get_option.call(elem, "table_id_prefix"), container_id),
-                selectedTrClass = grid.get_option.call(elem, "selectedTrClass"),
+                selected_tr_class = grid.get_option.call(elem, "selected_tr_class"),
                 selector_table_tr = "#" + table_id + " tbody tr",
                 table_tr_prefix = "#" + table_id + "_tr_";
 
@@ -623,19 +616,19 @@
                     s.selected_ids.splice(id, 1);
                     break;
                 case "mark_selected":
-                    $(table_tr_prefix + id).addClass(selectedTrClass);
+                	elem.find(table_tr_prefix + id).addClass(selected_tr_class);
                     break;
                 case "mark_deselected":
-                    $(table_tr_prefix + id).removeClass(selectedTrClass);
+                	elem.find(table_tr_prefix + id).removeClass(selected_tr_class);
                     break;
                 case "mark_page_selected":
-                    $(selector_table_tr).addClass(selectedTrClass);
+                	elem.find(selector_table_tr).addClass(selected_tr_class);
                     break;
                 case "mark_page_deselected":
-                    $(selector_table_tr).removeClass(selectedTrClass);
+                	elem.find(selector_table_tr).removeClass(selected_tr_class);
                     break;
                 case "mark_page_inversed":
-                    $(selector_table_tr).toggleClass(selectedTrClass);
+                	elem.find(selector_table_tr).toggleClass(selected_tr_class);
                     break;
             }
 
@@ -893,7 +886,7 @@
     };
     
     $.fn.grid = function(method) {
-
+    	console.log('do int grid');
         if(this.size() != 1) {
             var err_msg = "You must use this plugin (" + plugin_name + ") with a unique element (at once)";
             this.html('<span style="color: red;">' + 'ERROR: ' + err_msg + '</span>');

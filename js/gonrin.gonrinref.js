@@ -16,10 +16,6 @@
 	'use strict';
 	var GonrinRef = function (element, options) {
 		
-		
-		
-		
-		
 		var gonrin = {},
 		value,
 		text,
@@ -73,7 +69,24 @@
 			if (!!options.data_source) {
 				console.log(options);
 			};
+			console.log('setup wiget');
 			//show dialog
+            if(!!input.val()){
+            	var value = input.val();
+            	var view = options.data_source;
+            	var entity = view.entity || {};
+            	var model = entity.model || {};
+            	
+            	model.set(options.data_value_field, value);
+				model.fetch({
+                    success: function (data) {
+                    	console.log(model);
+                    	textElement.val(model.get(options.data_text_field));
+                    },
+                    error:function(){},
+				});
+            	console.log(view);
+            }
 			return gonrin;
 		},
 		show = function () {
@@ -84,11 +97,11 @@
             if (!!options.data_source) {
             	options.data_source.dialog({
             		on_success: function(){
-            			if((!!options.data_source)&&(!!options.data_source.selected_items)){
-            				console.log(options.data_source.selected_items)
+            			if((!!options.data_source)&&(!!options.data_source.selected_items)&&(options.data_source.selected_items.length > 0)){
+            				//console.log(options.data_source.selected_items)
             				var seleted = options.data_source.selected_items;
-            				textElement.val(seleted[options.data_text_field]);
-            				input.val(seleted[options.data_value_field]);
+            				textElement.val(seleted[0][options.data_text_field]);
+            				input.val(seleted[0][options.data_value_field]);
             				input.trigger('change');
             			}
             			

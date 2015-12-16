@@ -1,8 +1,8 @@
 "use strict";
 (function($) {
 	var plugin_name = "gonrin_grid",
-    plugin_given_options = "gonrin_grid_options",
-    plugin_status = "gonrin_grid_status";
+    pluginGivenOptions = "gonrin_grid_options",
+    pluginStatus = "gonrin_grid_status";
 	
 	function classExists(c) {
 	    return typeof(c) == "function" && typeof(c.prototype) == "object" ? true : false;
@@ -11,16 +11,14 @@
     var grid = {
 		init: function(options) {
 			var elem = this;
-			if(!elem.attr("id")){
-				elem.attr("id","grid");
-			}
+
             return this.each(function() {
 
                 /**
                  * store given options on first launch (in new object - no reference)
                  */
-                if(typeof  elem.data(plugin_given_options) === "undefined") {
-                    elem.data(plugin_given_options, $.extend(true, {}, options));
+                if(typeof  elem.data(pluginGivenOptions) === "undefined") {
+                    elem.data(pluginGivenOptions, $.extend(true, {}, options));
                 }
 
                 /**
@@ -40,8 +38,8 @@
                 elem.data(plugin_name, settings);
 
                 // initialize plugin status
-                if(typeof  elem.data(plugin_status) === "undefined") {
-                    elem.data(plugin_status, {});
+                if(typeof  elem.data(pluginStatus) === "undefined") {
+                    elem.data(pluginStatus, {});
                 }
 
                 if(!settings.row_primary_key) {
@@ -128,9 +126,9 @@
                 elem.html(elem_html);
                 $("#" + no_results_id).hide();
 
-                var elem_tools = elem.find("#" + tools_id),
-                    elem_table = elem.find("#" + table_id),
-                    elem_pagination = elem.find("#" + pagination_id);
+                var elem_tools = $("#" + tools_id),
+                    elem_table = $("#" + table_id),
+                    elem_pagination = $("#" + pagination_id);
                 
                 console.log(elem_pagination)
 
@@ -168,8 +166,8 @@
                 default_columns_list += '<li class="not-sortable columns-li-padding"><button class="' + settings.columns_list_default_button_class + '">' + rsc_bs_dg.columns_default + '</button></li>';
 
                 //save default columns list
-                if(typeof elem.data(plugin_status)["default_columns_list"] === "undefined") {
-                    elem.data(plugin_status)["default_columns_list"] = default_columns_list;
+                if(typeof elem.data(pluginStatus)["default_columns_list"] === "undefined") {
+                    elem.data(pluginStatus)["default_columns_list"] = default_columns_list;
                 }
 
                 tools_html += default_columns_list;
@@ -204,8 +202,8 @@
                 default_sorting_list += '<li class="not-sortable columns-li-padding"><button class="' + settings.columns_list_default_button_class + '">' + rsc_bs_dg.sorting_default + '</button></li>';
 
                 //save default columns list
-                if(typeof elem.data(plugin_status)["default_sorting_list"] === "undefined") {
-                    elem.data(plugin_status)["default_sorting_list"] = default_sorting_list;
+                if(typeof elem.data(pluginStatus)["default_sorting_list"] === "undefined") {
+                    elem.data(pluginStatus)["default_sorting_list"] = default_sorting_list;
                 }
 
                 tools_html += default_sorting_list;
@@ -250,9 +248,108 @@
                 
              // initialize grid ---------------------------------------------
                 //var grid_init = grid.display_grid.call(elem, false);
-                var grid_init = grid.display_grid.call(elem, true);
+                var grid_init = grid.display_grid_lc.call(elem, true);
                 
+                /**
+                 * EVENTS ******************************************************
+                 */
+
+                //TOOLS - columns list -----------------------------------------
+                //Edit later
                 
+             // row selection -----------------------------------------------
+                if(settings.row_primary_key &&
+                    (settings.row_selection_mode == "single" || settings.row_selection_mode == "multiple")) {
+
+                    var row_prefix_len = (table_id + "_tr_").length;
+
+                    // click on row
+                    elem_table.off("click", "tbody tr").on("click", "tbody tr", function() {
+                    	
+                        var row_id = parseInt($(this).attr("id").substr(row_prefix_len)),
+                            row_status,
+                            idx = grid.selected_rows.call(elem, "selected_index", row_id);
+
+                        if(idx > -1) {
+                            grid.selected_rows.call(elem, "remove_id", idx);
+                            grid.selected_rows.call(elem, "mark_deselected", row_id);
+                            row_status = "deselected";
+                        } else {
+                            if(settings.row_selection_mode == "single") {
+                                grid.selected_rows.call(elem, "clear_all_ids");
+                                grid.selected_rows.call(elem, "mark_page_deselected");
+                            }
+                            grid.selected_rows.call(elem, "add_id", row_id);
+                            grid.selected_rows.call(elem, "mark_selected", row_id);
+                            row_status = "selected";
+                        }
+
+                        // update selected rows counter
+                        grid.selected_rows.call(elem, "update_counter");
+
+                        elem.triggerHandler("rowclick", {row_id: row_id, row_status: row_status});
+                    });
+
+                    // selection list
+                    var elem_selection_list = $("#" + selection_list_id);
+
+                    elem_selection_list.off("click", "li").on("click", "li", function() {
+                        var sel_index = $(this).index();
+
+                        if(settings.row_selection_mode == "single") {
+                            grid.selected_rows.call(elem, "clear_all_ids");
+                            grid.selected_rows.call(elem, "mark_page_deselected");
+                        } else if(settings.row_selection_mode == "multiple") {
+
+                            var selector_table_tr = "#" + table_id + " tbody tr",
+                                row_prefix_len = (table_id + "_tr_").length,
+                                row_id, idx;
+                            switch(sel_index) {
+                                case 0:
+                                    $(selector_table_tr).each(function() {
+                                        row_id = parseInt($(this).attr("id").substr(row_prefix_len));
+                                        idx = grid.selected_rows.call(elem, "selected_index", row_id);
+                                        if(idx == -1) {
+                                            grid.selected_rows.call(elem, "add_id", row_id);
+                                        }
+                                    });
+                                    grid.selected_rows.call(elem, "mark_page_selected");
+                                    break;
+                                case 1:
+                                    $(selector_table_tr).each(function() {
+                                        row_id = parseInt($(this).attr("id").substr(row_prefix_len));
+                                        idx = grid.selected_rows.call(elem, "selected_index", row_id);
+                                        if(idx > -1) {
+                                            grid.selected_rows.call(elem, "remove_id", idx);
+                                        }
+                                    });
+                                    grid.selected_rows.call(elem, "mark_page_deselected");
+                                    break;
+                                case 2:
+                                    $(selector_table_tr).each(function() {
+                                        row_id = parseInt($(this).attr("id").substr(row_prefix_len));
+                                        idx = grid.selected_rows.call(elem, "selected_index", row_id);
+                                        if(idx > -1) {
+                                            grid.selected_rows.call(elem, "remove_id", idx);
+                                        } else {
+                                            grid.selected_rows.call(elem, "add_id", row_id);
+                                        }
+                                    });
+                                    grid.selected_rows.call(elem, "mark_page_inversed");
+                                    break;
+                                case 4:
+                                    grid.selected_rows.call(elem, "clear_all_ids");
+                                    grid.selected_rows.call(elem, "mark_page_deselected");
+                                    break;
+                            }
+                        }
+
+                        // update selected rows counter
+                        grid.selected_rows.call(elem, "update_counter");
+
+                    });
+
+                }
             });
         },
         render_data: function(page_data, page, total_pages, num_rows, refresh_pag){
@@ -416,134 +513,12 @@
 
             // update selected rows counter
             grid.selected_rows.call(elem, "update_counter");
-            
-            
-            
-            /**
-             * EVENTS ******************************************************
-             */
 
-            //TOOLS - columns list -----------------------------------------
-            //Edit later
-            var settings = s;
-         // row selection -----------------------------------------------
-            if(settings.row_primary_key &&
-                (settings.row_selection_mode == "single" || settings.row_selection_mode == "multiple")) {
-
-                var row_prefix_len = (table_id + "_tr_").length;
-                
-                // click on row
-                elem_table.off("click", "tbody tr").on("click", "tbody tr", function() {
-                    var row_id = parseInt($(this).attr("id").substr(row_prefix_len)),
-                        row_status,
-                        idx = grid.selected_rows.call(elem, "selected_index", row_id);
-
-                    if(idx > -1) {
-                        grid.selected_rows.call(elem, "remove_id", idx);
-                        grid.selected_rows.call(elem, "mark_deselected", row_id);
-                        row_status = "deselected";
-                    } else {
-                        if(settings.row_selection_mode == "single") {
-                            grid.selected_rows.call(elem, "clear_all_ids");
-                            grid.selected_rows.call(elem, "mark_page_deselected");
-                        }
-                        grid.selected_rows.call(elem, "add_id", row_id);
-                        grid.selected_rows.call(elem, "mark_selected", row_id);
-                        row_status = "selected";
-                    }
-
-                    // update selected rows counter
-                    grid.selected_rows.call(elem, "update_counter");
-                    
-                    console.log(page_data);
-                    console.log(row_id);
-                    var row_data = null;
-                    console.log(settings.row_primary_key);
-                    for(var iter = 0; iter < page_data.length; iter++){
-                    	if(page_data[iter][settings.row_primary_key] ===  row_id){
-                    		row_data = page_data[iter];
-                    		break;
-                    	}
-                    }
-
-                    elem.triggerHandler("rowclick", {row_id: row_id, row_status: row_status, row_data:row_data});
-                });
-
-                // selection list
-                var container_id = elem.attr("id");
-                var selection_list_id = create_id(settings.selection_list_id_prefix, container_id);
-                var elem_selection_list = $("#" + selection_list_id);
-
-                elem_selection_list.off("click", "li").on("click", "li", function() {
-                    var sel_index = $(this).index();
-
-                    if(settings.row_selection_mode == "single") {
-                        grid.selected_rows.call(elem, "clear_all_ids");
-                        grid.selected_rows.call(elem, "mark_page_deselected");
-                    } else if(settings.row_selection_mode == "multiple") {
-
-                        var selector_table_tr = "#" + table_id + " tbody tr",
-                            row_prefix_len = (table_id + "_tr_").length,
-                            row_id, idx;
-                        switch(sel_index) {
-                            case 0:
-                                $(selector_table_tr).each(function() {
-                                    row_id = parseInt($(this).attr("id").substr(row_prefix_len));
-                                    idx = grid.selected_rows.call(elem, "selected_index", row_id);
-                                    if(idx == -1) {
-                                        grid.selected_rows.call(elem, "add_id", row_id);
-                                    }
-                                });
-                                grid.selected_rows.call(elem, "mark_page_selected");
-                                break;
-                            case 1:
-                                $(selector_table_tr).each(function() {
-                                    row_id = parseInt($(this).attr("id").substr(row_prefix_len));
-                                    idx = grid.selected_rows.call(elem, "selected_index", row_id);
-                                    if(idx > -1) {
-                                        grid.selected_rows.call(elem, "remove_id", idx);
-                                    }
-                                });
-                                grid.selected_rows.call(elem, "mark_page_deselected");
-                                break;
-                            case 2:
-                                $(selector_table_tr).each(function() {
-                                    row_id = parseInt($(this).attr("id").substr(row_prefix_len));
-                                    idx = grid.selected_rows.call(elem, "selected_index", row_id);
-                                    if(idx > -1) {
-                                        grid.selected_rows.call(elem, "remove_id", idx);
-                                    } else {
-                                        grid.selected_rows.call(elem, "add_id", row_id);
-                                    }
-                                });
-                                grid.selected_rows.call(elem, "mark_page_inversed");
-                                break;
-                            case 4:
-                                grid.selected_rows.call(elem, "clear_all_ids");
-                                grid.selected_rows.call(elem, "mark_page_deselected");
-                                break;
-                        }
-                    }
-
-                    // update selected rows counter
-                    grid.selected_rows.call(elem, "update_counter");
-
-                });
-
-            }
-            
-            
-            
-            
-            
-            
-            
-            
             // trigger event onDisplay
             elem.triggerHandler("render");
         },
         
-        display_grid: function(refresh_pag) {
+        display_grid_lc: function(refresh_pag) {
         	var elem = this,
 	            s = grid.get_all_options.call(elem);
         	
@@ -561,7 +536,6 @@
                         	var page = view.collection.page,
                         		num_rows = view.collection.num_rows,
                         		total_pages = view.collection.total_pages;
-                        	
                         	view.collection.each(function(model) {
                         		page_data.push(model.attributes);
 							});
@@ -593,6 +567,216 @@
             }
         },
         
+        
+        
+        
+        display_grid: function(refresh_pag) {
+
+            var elem = this,
+                container_id = elem.attr("id"),
+                s = grid.get_all_options.call(elem),
+
+                table_id = create_id(s.table_id_prefix, container_id),
+                elem_table = $("#" + table_id),
+                no_results_id = create_id(s.no_results_id_prefix, container_id),
+                elem_no_results = $("#" + no_results_id),
+                filter_rules_id = create_id(s.filter_rules_id_prefix, container_id),
+                pagination_id = create_id(s.pagination_id_prefix, container_id),
+                elem_pagination = $("#" + pagination_id),
+                err_msg;
+
+            // fetch page data and display datagrid
+            var res = $.ajax({
+                type: "POST",
+                url: s.ajaxFetchDataURL,
+                data: {
+                    page_num: s.page_num,
+                    rows_per_page: s.rows_per_page,
+                    columns: s.columns,
+                    sorting: s.sorting,
+                    filter_rules: s.filterOptions.filter_rules,
+                    debug_mode: s.debug_mode
+                },
+                dataType: "json",
+                success: function(data) {
+                    var server_error, filter_error, row_primary_key, total_rows, page_data, page_data_len, v,
+                        columns = s.columns,
+                        col_len = columns.length,
+                        column, c;
+
+                    server_error = data["error"];
+                    if(server_error != null) {
+                        err_msg = "ERROR: " + server_error;
+                        elem.html('<span style="color: red;">' + err_msg + '</span>');
+                        elem.triggerHandler("onDatagridError", {err_code: "server_error", err_description: server_error});
+                        $.error(err_msg);
+                    }
+
+                    if(s.useFilters) {
+                        var elem_filter_rules = $("#" + filter_rules_id);
+                        filter_error = data["filter_error"];
+                        if(filter_error["error_message"] != null) {
+                            elem_filter_rules.jui_filter_rules("markRuleAsError", filter_error["element_rule_id"], true);
+                            elem_filter_rules.triggerHandler("onValidationError", {err_code: "filter_validation_server_error", err_description: filter_error["error_message"]});
+                            $.error(filter_error["error_message"]);
+                        }
+                    }
+
+                    total_rows = data["total_rows"];
+                    page_data = data["page_data"];
+                    page_data_len = page_data.length;
+
+                    elem.data(pluginStatus)["total_rows"] = total_rows;
+
+                    row_primary_key = s.row_primary_key;
+
+                    if(s.debug_mode == "yes") {
+                        elem.triggerHandler("onDebug", {debug_message: data["debug_message"]});
+                    }
+
+                    // replace null with empty string
+                    if(page_data_len > 0) {
+                        for(v = 0; v < page_data_len; v++) {
+                            for(c = 0; c < col_len; c++) {
+                                column = columns[c];
+                                if(column_is_visible.call(elem,column)) {
+                                    if(page_data[v][column["field"]] == null) {
+                                        page_data[v][column["field"]] = '';
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    // create data table
+                    var page_num = parseInt(s.page_num),
+                        rows_per_page = parseInt(s.rows_per_page),
+                        sortingIndicator,
+                        row_id_html, i, row, tbl_html, row_index,
+                        offset = ((page_num - 1) * rows_per_page);
+
+                    tbl_html = '<thead>';
+                    row_id_html = (row_primary_key ? ' id="' + table_id + '_tr_0"' : '');
+                    tbl_html += '<tr' + row_id_html + '>';
+
+                    if(s.show_row_numbers) {
+                        tbl_html += '<th class="' + s.common_th_class + '">' + rsc_bs_dg.row_index_header + '</th>';
+                    }
+
+                    for(i in s.columns) {
+                        if(column_is_visible.call(elem,s.columns[i])) {
+                            sortingIndicator = "";
+                            if(s.showSortingIndicator) {
+                                var sorting_type = "none";
+                                for(var e in s.sorting) {
+                                    if(s.sorting[e].field == s.columns[i].field) {
+                                        sorting_type = s.sorting[e].order;
+                                        break;
+                                    }
+                                }
+                                switch(sorting_type) {
+                                    case "ascending":
+                                        sortingIndicator = '&nbsp;<span class="' + s.sorting_indicator_asc_class + '"></span>';
+                                        break;
+                                    case "descending":
+                                        sortingIndicator = '&nbsp;<span class="' + s.sorting_indicator_desc_class + '"></span>';
+                                        break;
+                                    default:
+                                        sortingIndicator = '';
+                                }
+                            }
+                            tbl_html += '<th class="' + s.common_th_class + '">' + s.columns[i].header + sortingIndicator + '</th>';
+                        }
+                    }
+                    tbl_html += '</tr>';
+                    tbl_html += '</thead>';
+
+                    tbl_html += '<tbody>';
+                    for(row in page_data) {
+
+                        row_id_html = (row_primary_key ? ' id="' + table_id + '_tr_' + page_data[row][row_primary_key] + '"' : '');
+                        tbl_html += '<tr' + row_id_html + '>';
+
+                        if(s.show_row_numbers) {
+                            row_index = offset + parseInt(row) + 1;
+                            tbl_html += '<td>' + row_index + '</td>';
+                        }
+
+                        for(i in s.columns) {
+                            if(column_is_visible.call(elem,s.columns[i])) {
+                                tbl_html += '<td>' + page_data[row][s.columns[i].field] + '</td>';
+                            }
+                        }
+
+                        tbl_html += '</tr>';
+                    }
+                    tbl_html += '<tbody>';
+
+                    elem_table.html(tbl_html);
+
+                    // refresh pagination (if needed)
+                    if(refresh_pag) {
+                        elem_pagination.bs_pagination({
+                            currentPage: s.page_num,
+                            totalPages: Math.ceil(total_rows / s.rows_per_page),
+                            totalRows: total_rows
+                        });
+                    }
+
+                    // no results
+                    if(total_rows == 0) {
+                        elem_pagination.hide();
+                        elem_no_results.show();
+                    } else {
+                        elem_pagination.show();
+                        elem_no_results.hide();
+                    }
+
+                    // apply given styles ------------------------------------------
+                    var col_index = s.show_row_numbers ? 1 : 0,
+                        headerClass = "", dataClass = "";
+                    for(i in s.columns) {
+                        if(column_is_visible.call(elem,s.columns[i])) {
+                            headerClass = "", dataClass = "";
+                            if(columns[i].hasOwnProperty("headerClass")) {
+                                headerClass = columns[i]["headerClass"];
+                            }
+                            if(columns[i].hasOwnProperty("dataClass")) {
+                                dataClass = columns[i]["dataClass"];
+                            }
+                            grid.setPageColClass.call(elem, col_index, headerClass, dataClass);
+                            col_index++;
+                        }
+                    }
+
+                    // apply row selections ----------------------------------------
+                    if(s.row_primary_key && s.selected_ids.length > 0) {
+
+                        if(s.row_selection_mode == "single" || s.row_selection_mode == "multiple") {
+                            var row_prefix_len = (table_id + "_tr_").length,
+                                row_id, idx;
+                            $("#" + table_id + " tbody tr").each(function() {
+                                row_id = parseInt($(this).attr("id").substr(row_prefix_len));
+                                idx = grid.selected_rows.call(elem, "selected_index", row_id);
+                                if(idx > -1) {
+                                    grid.selected_rows.call(elem, "mark_selected", row_id);
+                                }
+                            });
+                        }
+                    }
+
+                    // update selected rows counter
+                    grid.selected_rows.call(elem, "update_counter");
+
+                    // trigger event onDisplay
+                    elem.triggerHandler("onDisplay");
+
+                }
+            });
+
+            return res;
+
+        },
         selected_rows: function(action, id) {
             var elem = this,
                 container_id = elem.attr("id"),

@@ -296,9 +296,9 @@
 
                 visiblePageLinks: 5,
 
-                showGoToPage: true,
-                showRowsPerPage: true,
-                showRowsInfo: true,
+                showGoToPage: false,
+                showRowsPerPage: false,
+                showRowsInfo: false,
                 showRowsDefaultInfo: true,
 
                 directURL: false, // or a function with current page as argument
@@ -307,7 +307,7 @@
                 bootstrap_version: "3",
 
                 // bootstrap 3
-                containerClass: "well",
+                containerClass: "gonrin-pagination",
 
                 mainWrapperClass: "row",
 
@@ -566,18 +566,17 @@
         if(this.size() != 1) {
             var err_msg = "You must use this plugin (" + plugin_name + ") with a unique element (at once)";
             this.html('<span style="color: red;">' + 'ERROR: ' + err_msg + '</span>');
-            $.error(err_msg);
+            //$.error(err_msg);
+        }else{
+        	// Method calling logic
+            if(methods[method]) {
+                return methods[ method ].apply(this, Array.prototype.slice.call(arguments, 1));
+            } else if(typeof method === "object" || !method) {
+                return methods.init.apply(this, arguments);
+            } else {
+                $.error("Method " + method + " does not exist on jQuery." + plugin_name);
+            }
         }
-        
-        // Method calling logic
-        if(methods[method]) {
-            return methods[ method ].apply(this, Array.prototype.slice.call(arguments, 1));
-        } else if(typeof method === "object" || !method) {
-            return methods.init.apply(this, arguments);
-        } else {
-            $.error("Method " + method + " does not exist on jQuery." + plugin_name);
-        }
-
     };
 
 })(jQuery);

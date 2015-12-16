@@ -8,7 +8,7 @@
     } else {
         // Neither AMD nor CommonJS used. Use global variables.
         if (typeof jQuery === 'undefined') {
-            throw 'gonui.combobox requires jQuery to be loaded first';
+            throw 'gonrin combobox requires jQuery to be loaded first';
         }
         factory(jQuery);
     }
@@ -508,10 +508,10 @@
 		
         return this.each(function () {
             var $this = $(this);
-            if (!$this.data('combobox')) {
+            if (!$this.data('gonrin')) {
                 // create a private copy of the defaults object
                 options = $.extend(true, {}, $.fn.combobox.defaults, options);
-                $this.data('combobox', ComboBox($this, options));
+                $this.data('gonrin', ComboBox($this, options));
             }
         });
     };

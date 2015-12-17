@@ -127,8 +127,8 @@
     BLURRED = "blurred",
     BUTTON = "button",
     BUTTON_NAME = "buttonName",
-    CHANGE = "change",
-    GONRINEDITOR = "gonrinEditor",
+    CHANGE = "change.gonrin",
+    GONRINEDITOR = "gonrin",
     CLICK = "click",
     DISABLED = "disabled",
     DIV_TAG = "<div>",
@@ -964,6 +964,7 @@
             refreshButtons(editor);
 
         });
+        
 
     }
 
@@ -1146,11 +1147,12 @@
         // Update the iframe checksum
         if (options.updateTextArea)
             editor.frameChecksum = checksum(html);
-
+        console.log(html);
         // Update the iframe and trigger the change event
         if (html !== $body.html()) {
             $body.html(html);
             $(editor).triggerHandler(CHANGE);
+            editor.$area.triggerHandler(CHANGE);
         }
 
     }
@@ -1183,6 +1185,7 @@
         if (code !== $area.val()) {
             $area.val(code);
             $(editor).triggerHandler(CHANGE);
+            editor.$area.triggerHandler(CHANGE);
         }
 
     }

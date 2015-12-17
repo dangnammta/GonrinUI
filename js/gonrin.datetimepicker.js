@@ -450,6 +450,7 @@
                     return;
                 }
                 element.trigger(e);
+                
             },
 
             viewUpdate = function (e) {
@@ -834,6 +835,7 @@
                     date = targetMoment;
                     viewDate = date.clone();
                     input.val(date.format(actualFormat));
+                    
                     element.data('date', date.format(actualFormat));
                     unset = false;
                     update();

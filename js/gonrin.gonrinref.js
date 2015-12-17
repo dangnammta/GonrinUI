@@ -102,7 +102,7 @@
             				var seleted = options.data_source.selected_items;
             				textElement.val(seleted[0][options.data_text_field]);
             				input.val(seleted[0][options.data_value_field]);
-            				input.trigger('change');
+            				input.trigger('change.gonrin');
             			}
             			
             		},

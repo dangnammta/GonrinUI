@@ -2332,18 +2332,18 @@
 	
 	/*****************************************/
 	
-	$.fn.gonrinDatePicker = function (options) {
+	$.fn.datetimepicker = function (options) {
         return this.each(function () {
             var $this = $(this);
-            if (!$this.data('DateTimePicker')) {
+            if (!$this.data('gonrin')) {
                 // create a private copy of the defaults object
-                options = $.extend(true, {}, $.fn.gonrinDatePicker.defaults, options);
-                $this.data('DateTimePicker', dateTimePicker($this, options));
+                options = $.extend(true, {}, $.fn.datetimepicker.defaults, options);
+                $this.data('gorin', dateTimePicker($this, options));
             }
         });
     };
 
-    $.fn.gonrinDatePicker.defaults = {
+    $.fn.datetimepicker.defaults = {
         timeZone: 'Etc/UTC',
         format: false,
         dayViewHeaderFormat: 'MMMM YYYY',

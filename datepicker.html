@@ -10,13 +10,13 @@
 		<!-- Optional theme -->
 	<link rel="stylesheet" href="vendor/bootstrap/css/bootstrap-theme.min.css">
 	
-	<script src="js/gonui.datetimepicker.js"></script>
+	<script src="js/gonrin.datetimepicker.js"></script>
 	<link rel="stylesheet" href="css/gonrin.datetimepicker.css">
 	
 	<script type="text/javascript">
             $(function () {
-                $('#datetime').gonuiDatePicker();
-            	$('#datetime').on('change.gonui', function (e) {
+                $('#datetime').datetimepicker();
+            	$('#datetime').on('change.gonrin', function (e) {
 				  	console.log(e.date);
 				})
             });
@@ -25,14 +25,7 @@
 <body>
 	 <div class="container">
 	    <div class="row-fluid" id="content" style="margin-top:20px;">
-	    	<div style="width:50%; float:right">
-			    	<span class="input-group date" id='datetime'>
-			    		<input type='text' class="form-control" />
-		                <span class="input-group-addon">
-		                    <span class="glyphicon glyphicon-calendar"></span>
-		                </span>
-					</span>
-			</div>
+
 			<br/>
 			<div style="width:100%">
 	    		<div style="width:50%;">

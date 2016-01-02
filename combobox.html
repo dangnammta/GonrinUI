@@ -7,22 +7,51 @@
 	<link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css">
 		<!-- Optional theme -->
 	<link rel="stylesheet" href="vendor/bootstrap/css/bootstrap-theme.min.css">
+	
+	<script src="js/underscore.js"></script>
+	<script src="js/gonrin.core.js"></script>
 	<script src="js/gonrin.combobox.js"></script>
 
 	<script type="text/javascript">
             $(function () {
                 $('#combobox').combobox({
-                	data_text_field: "name",
-                    data_value_field: "id",
+                	text_field: "name",
+                    value_field: "id",
                     data_source: [
                         { name: "Parent1", id: 1 },
                         { name: "Parent2", id: 2 },
                         { name: "Parent3", id: 3 },
                         { name: "Parent4", id: 4 },
                     ],
+                    /*data_source: {
+                    	type:"",
+                    },*/
+                    index: -1,
+                    header_template: "<span>ABC CDE</span",
+                    template: '<span class="k-state-default" style="background-color: \'#666\'"></span>' +
+                    '<span class="k-state-default"><h3>{{ name }}</h3><p>{{ id }}</p></span>',
                 });
-                $('#combobox').on('change.gonui', function(e){
-                	console.log($('#combobox').data('combobox').get_value());
+                $('#combobox').on('change.gonrin', function(e){
+                	console.log($('#combobox').data('gonrin').get_value());
+                });
+                
+                
+                $('#combobox2').combobox({
+                	text_field: "name1",
+                    value_field: "id",
+                    data_source: [
+                        { name1: "Child 1", id: 1 },
+                        { name1: "Child 2", id: 2 },
+                        { name1: "Child 3", id: 3 },
+                        { name1: "Child 4", id: 4 },
+                    ],
+                    /*data_source: {
+                    	type:"",
+                    },*/
+                    index: 1,
+                    header_template: "<span>ABC CDE</span",
+                    template: '<span class="k-state-default" style="background-color: \'#666\'"></span>' +
+                    '<span class="k-state-default"><h3>{{ name1 }}</h3><p>{{ id }}</p></span>',
                 });
                 
             });
@@ -37,21 +66,12 @@
 				</div>
 			</div>
 			<br/>
-			<div style="width:50%;">
-				<div class="input-group">
-				  <input type="text" class="form-control" id='combobox2'>
-				  <div class="input-group-btn">
-				    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"> </span></button>
-			        <ul class="dropdown-menu dropdown-menu-right">
-			          <li><a href="#">Action</a></li>
-			          <li><a href="#">Another action</a></li>
-			          <li><a href="#">Something else here</a></li>
-			          <li role="separator" class="divider"></li>
-			          <li><a href="#">Separated link</a></li>
-			        </ul>
-				  </div>
+			<div style="width:100%">
+	    		<div style="width:50%;">
+					<input type='text' id='combobox2' placeholder="select2..."/>
 				</div>
 			</div>
+			<br/>
 	    </div> 
 	</div>
 </body>

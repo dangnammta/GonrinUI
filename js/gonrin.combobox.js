@@ -28,6 +28,7 @@
         item_template =  '<li><a href="javascript:void(0)"></a></li>',
         component = false,
         widget = false,
+        data_source_type,
 		keyMap = {
                 'up': 38,
                 38: 'up',
@@ -70,8 +71,9 @@
         bind_data = function(){
 			if($.isArray(data) && data.length > 0){
 				$.each(data, function (idx, item) {
-					if((options.value_field != null) && (options.text_field != null)){
-						if (typeof item === 'object') {
+					if (typeof item === 'object') {
+						data_source_type = 'object';
+						if((options.value_field != null) && (options.text_field != null)){
 							var $item = $(item_template);
 							if(!!options.template){
 								var tpl = gonrin.template(options.template);
@@ -90,16 +92,16 @@
 								hide();
 							});
 						}
-					}else{
-						if (typeof item === 'string') {
-							var $item = $(item_template);//.text(item);
-							$item.find('a').text(item);
-							widget.append($item);
-							$item.bind("click", function(){
-								set_value(item, item);
-								hide();
-							});
-						}
+						
+					}else {
+						data_source_type = 'common';
+						var $item = $(item_template);//.text(item);
+						$item.find('a').text(item);
+						widget.append($item);
+						$item.bind("click", function(){
+							set_value(item);
+							hide();
+						});
 					}
 				});
 			}
@@ -164,29 +166,33 @@
         		var txt = null;
         		for(var i = 0; i < data.length; i++){
         			var item = data[i];
-        			if((options.value_field != null) && (options.text_field != null)){
-        				if(value == item[options.value_field]){
-        					txt = item[options.text_field];
-        					set_text(txt);
+        			if(data_source_type === 'object'){
+        				if((options.value_field != null) && (options.text_field != null)){
+            				if(value == item[options.value_field]){
+            					txt = item[options.text_field];
+            					set_text(txt);
+            					index = i;
+            					input.val(value);
+            					widget.find('li').not(".dropdown-header").removeClass("active");
+            	        		$(widget.find('li').not(".dropdown-header")[i]).addClass("active");
+            	        		notifyEvent({
+            	                    type: 'change.gonrin',
+            	                    value: value,
+            	                    oldValue: oldvalue
+            	                });
+            	        		
+            					return;
+            				}
+            			}
+        			}
+        			else if(data_source_type === 'common'){
+        				if(value == item){
+        					console.log(value);
         					index = i;
+        					set_text(value);
         					input.val(value);
         					widget.find('li').not(".dropdown-header").removeClass("active");
         	        		$(widget.find('li').not(".dropdown-header")[i]).addClass("active");
-        	        		notifyEvent({
-        	                    type: 'change.gonrin',
-        	                    value: value,
-        	                    oldValue: oldvalue
-        	                });
-        	        		
-        					return;
-        				}
-        			}else{
-        				if(value == item){
-        					index = i;
-        					set_text(txt);
-        					input.val(value);
-        					widget.find('li').removeClass("active");
-        	        		$(widget.find('li')[i]).addClass("active");
         	        		notifyEvent({
         	                    type: 'change.gonrin',
         	                    value: value,
@@ -206,14 +212,19 @@
         		var item = data[idx];
         		var oldvalue = value;
         		var txt,val;
-        		if((options.value_field != null) && (options.text_field != null)){
-        			txt = item[options.text_field];
-        			val = item[options.value_field];
-        		}else{
+        		if(data_source_type === 'object'){
+        			if((options.value_field != null) && (options.text_field != null)){
+            			txt = item[options.text_field];
+            			val = item[options.value_field];
+            			
+            		}else{
+            			return;
+            		}
+        		}else if(data_source_type === 'common'){
         			txt = item;
         			val = item;
         		}
-    			if(text_element){
+        		if(text_element){
         			text = txt;
             		text_element.val(txt);
             	};
@@ -229,7 +240,6 @@
                     value: val,
                     oldValue: oldvalue
                 });
-        		
 				return;
         	}
         },
@@ -634,6 +644,12 @@
     	
     	if(!options.placeholder){
     		options.placeholder = input.attr("placeholder");
+    	}
+    	
+    	if(options.value_field != null){
+			if (options.text_field === null){
+				options.text_field = options.value_field;
+			}
     	}
     	if(text_element && options.placeholder){
     		text_element.attr("placeholder", options.placeholder);

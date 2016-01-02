@@ -40,10 +40,7 @@
                 	text_field: "name1",
                     value_field: "id",
                     data_source: [
-                        { name1: "Child 1", id: 1 },
-                        { name1: "Child 2", id: 2 },
-                        { name1: "Child 3", id: 3 },
-                        { name1: "Child 4", id: 4 },
+                        "Child 1","Child 2","Child 3","Child 4"
                     ],
                     /*data_source: {
                     	type:"",
@@ -52,6 +49,26 @@
                     header_template: "<span>ABC CDE</span",
                     template: '<span class="k-state-default" style="background-color: \'#666\'"></span>' +
                     '<span class="k-state-default"><h3>{{ name1 }}</h3><p>{{ id }}</p></span>',
+                });
+                $('#combobox2').on('change.gonrin', function(e){
+                	console.log($('#combobox2').data('gonrin').get_value());
+                });
+                
+                $('#combobox3').combobox({
+                	
+                    data_source: [
+                        3,5,7,9
+                    ],
+                    /*data_source: {
+                    	type:"",
+                    },*/
+                    index: 1,
+                    header_template: "<span>ABC CDE</span",
+                    template: '<span class="k-state-default" style="background-color: \'#666\'"></span>' +
+                    '<span class="k-state-default"><h3>{{ name1 }}</h3><p>{{ id }}</p></span>',
+                });
+                $('#combobox3').on('change.gonrin', function(e){
+                	console.log($('#combobox3').data('gonrin').get_value());
                 });
                 
             });
@@ -69,6 +86,12 @@
 			<div style="width:100%">
 	    		<div style="width:50%;">
 					<input type='text' id='combobox2' placeholder="select2..."/>
+				</div>
+			</div>
+			<br/>
+			<div style="width:100%">
+	    		<div style="width:50%;">
+					<input type='text' id='combobox3' placeholder="select3..."/>
 				</div>
 			</div>
 			<br/>

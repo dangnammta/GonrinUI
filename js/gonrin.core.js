@@ -21,11 +21,29 @@
   // our public object; augmented after our private API
   var gr_exports = {};
   
+  
+  
+  
+  
   /*gr_exports.removeLocale = function(name) {
     delete locales[name];
 
     return gr_exports;
   };*/
+  var id_counter = 0;
+  gr_exports.unique_id = function(prefix) {
+    var id = ++id_counter + '';
+    return prefix ? prefix + id : id;
+  };
+  
+  
+  
+  gr_exports.uuid = function() {
+		return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+			var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+			return v.toString(16);
+		});
+  };
   gr_exports.init = function(_$) {
     return init(_$ || $);
   };

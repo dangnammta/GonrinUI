@@ -16,11 +16,12 @@
     font-size: 100px;
     text-align: right;
     filter: alpha(opacity=0);
-    opacity: 0;
+    opacity:0;
     outline: none;
     background: white;
     cursor: inherit;
     display: block;
+    background-color: gray;
     
 }
 #uploadfile{
@@ -50,16 +51,33 @@
 .main-content{
     width: 300px;
     border-color: 1px solid green;
-    box-shadow: 10px 10px 5px #888888;
+    box-shadow: 2px 2px 2px #888888;
 
 }
 #btn-upload{
+    clear: both;
     float: right;
-    margin: 2px;
-}
+
+     
+   }
 .container{
     padding: 2px;
 
 }
 
 
+.btn-item{
+
+        float: right;
+        margin: 2px;
+        opacity: 0.5;
+}
+.btn-item:hover{
+  /*  background-color: red;*/
+    opacity: 1.0;
+
+}
+.item{
+    border: 1px solid gray;
+    border-opacity:0.5;
+}

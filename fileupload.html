@@ -15,10 +15,10 @@
     <script type="text/javascript">
 
          $(document).ready(function(){
-              $('#container').fileUpload();
-
-
-              
+              $('#container').fileUpload({
+                Url: 'https://api.imgur.com/3/image',
+                Authorization: 'Client-ID ee4a3ba23904db0'
+              });              
          });
    </script>
 

@@ -1,83 +1,61 @@
 
-
-.btn-file {
-    position: relative;
-    overflow: hidden;
-}
-.btn-file input[type=file] {
-
-    margin: 0;
-    padding: 0;
-    position: absolute;
-    top: 0;
-    right: 0;
-    min-width: 100%;
-    min-height: 100%;
-    font-size: 100px;
-    text-align: right;
-    filter: alpha(opacity=0);
-    opacity:0;
-    outline: none;
-    background: white;
-    cursor: inherit;
-    display: block;
-    background-color: gray;
-    
-}
-#uploadfile{
+#upload-header{
     clear: both;
-    margin: 10px;
-    border: 1px solid gray ;
-    opacity: 10;
-    width: 100%px;
-
-    border-radius:5px;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
-    -ms-border-radius: 5px;
-    -o-border-radius: 5px;
-   
-}
-#frame{
-    border: 1px solid red;
-
+   background-color: gray;
+    width: 100%;
+    margin-bottom: 0px;
+    padding-top: 2px;
+    padding-left: 2px;
 }
 
-.btn-item:hover {
-
-    background-color: 1px solid gray;
-
+.btn-upload-control{
+    width: 25px;
+    height: 25px;
 }
-.main-content{
-    width: 300px;
-    border-color: 1px solid green;
-    box-shadow: 2px 2px 2px #888888;
-
-}
-#btn-upload{
-    clear: both;
-    float: right;
-
-     
-   }
-.container{
-    padding: 2px;
-
-}
-
-
 .btn-item{
-
-        float: right;
-        margin: 2px;
-        opacity: 0.5;
+    float: right;
+    width: 20px;
+    height: 20px;
+    opacity: 0.5;
 }
 .btn-item:hover{
-  /*  background-color: red;*/
+   
     opacity: 1.0;
+}
+
+ul{
+   
+}
+.btn-upload-control{
+    opacity: 0.5;
+    padding-left: 2px;
+}
+.btn-upload-control:hover{
+    opacity: 1.0;
+}
+#btn-view-list{
+ margin-top: 0px;   
+ padding-top: 5px;
 
 }
 .item{
-    border: 1px solid gray;
-    border-opacity:0.5;
+   
+}
+#upload-container{
+    width:300px;
+}
+
+ul li{
+    clear: both;
+    width: 100%;
+   display: block;
+ 
+}
+ul{
+    display: none;
+
+}
+
+ul li p{
+    float: left;
 }

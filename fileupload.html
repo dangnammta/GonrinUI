@@ -11,14 +11,15 @@
     
     <script src="js/underscore.js"></script>
     <script src="js/gonrin.uploadfile.js"></script>
-    <script src="imgur.js"></script>
     <script type="text/javascript">
 
          $(document).ready(function(){
-              $('#container').fileUpload({
+             
+              $('.main-content').fileUpload({
+
                 Url: 'https://api.imgur.com/3/image',
                 Authorization: 'Client-ID ee4a3ba23904db0'
-              });              
+              });            
          });
    </script>
 
@@ -28,8 +29,8 @@
 <body>
 
   <div class="main-content">
-    <div class="container" id="uploadfile">    
-    <div>
+    
+      
   </div>
 </body>
 </html>

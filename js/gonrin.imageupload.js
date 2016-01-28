@@ -32,10 +32,16 @@
                     }
                   }
                 },false);
+                xhttp.addEventListener('error',function(){
+                    xhttp.abort();
+                    console.log("Upload error!");
+                },false);
+
                 xhttp.onreadystatechange = function () {
                     if (xhttp.status === 200 && xhttp.readyState === 4) {
                        // $('.btn-item').attr("src","images/complete.png");
                        var res = JSON.parse(xhttp.responseText), link, p, t;
+                       console.log(res);
                         link = res.data.link;                     
                           if(defaults.view_link == true)
                           {

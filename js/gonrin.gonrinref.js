@@ -20,13 +20,14 @@
 		value,
 		text,
 		data, //datalist
+		dataBound = false,
 		textElement = false,
 		unset = true,
         input,
-        menuTemplate = '<ul class="typeahead typeahead-long dropdown-menu"></ul>',
-        itemTemplate =  '<li><a href="javascript:void(0)"></a></li>',
+        menuTemplate = '<ul class="ref-selection-multiple"></ul>',
+        itemTemplate =  '<li class="ref-selection-choice"></li>',
         component = false,
-        widget = false,
+        widget = false,  //dialogView
         keyMap = {
                 'up': 38,
                 38: 'up',
@@ -64,70 +65,88 @@
         * Private functions
         *
         ********************************************************************************/
-        setup_widget = function () {
-			
-			if (!!options.data_source) {
-				console.log(options);
+        setupWidget = function () {
+			console.log("setupwidget");
+			if ((!!options.dataSource) && (typeof options.dataSource === "string")) {
+
+				require([ options.dataSource ], function ( RefView ) {
+					widget = new RefView({selectionMode: options.selectionMode});
+					options.textField = options.textField || widget.textField;
+					options.valueField = options.valueField || widget.valueField;
+					
+					if(!!input.val()){
+						if(widget.selectionMode === "single"){
+							var value = input.val();
+			            	var model = widget.model || null;
+			            	if(model){
+			            		model.set(options.valueField, value);
+								model.fetch({
+				                    success: function (data) {
+				                    	textElement.text(model.get(options.textField));
+				                    },
+				                    error:function(){},
+								});
+			            	}
+						}
+						if(widget.selectionMode === "multiple"){
+							var value = $.parseJSON(input.val());
+			            	//var model = widget.model || null;
+			            	
+			            	if(value){
+			            		$.each(value, function(key, item){
+			            			var txt = item[options.textField];
+			            			console.log(txt);
+			            			$(itemTemplate).html(txt).appendTo(textElement.find("ul"));
+			            		})
+			            		
+			            	}
+						}
+		            	
+		            }
+					
+		    	});
 			};
-			console.log('setup wiget');
+			
 			//show dialog
-            if(!!input.val()){
-            	var value = input.val();
-            	var view = options.data_source;
-            	var entity = view.entity || {};
-            	var model = entity.model || {};
-            	
-            	model.set(options.data_value_field, value);
-				model.fetch({
-                    success: function (data) {
-                    	console.log(model);
-                    	textElement.val(model.get(options.data_text_field));
-                    },
-                    error:function(){},
-				});
-            	console.log(view);
-            }
+            
 			return gonrin;
 		},
 		show = function () {
-        	if (input.prop('disabled') || (!options.ignore_readonly && input.prop('readonly'))) {
-                return combo;
+        	if (input.prop('disabled') || (!options.ignoreReadonly && input.prop('readonly'))) {
+                return gonrin;
             };
-            
-            if (!!options.data_source) {
-            	options.data_source.dialog({
-            		on_success: function(){
-            			if((!!options.data_source)&&(!!options.data_source.selected_items)&&(options.data_source.selected_items.length > 0)){
-            				//console.log(options.data_source.selected_items)
-            				var seleted = options.data_source.selected_items;
-            				textElement.val(seleted[0][options.data_text_field]);
-            				input.val(seleted[0][options.data_value_field]);
-            				input.trigger('change.gonrin');
+            if(widget){
+            	widget.dialog({
+            		success: function(){
+            			//console.log(widget.selectedItems);
+            			//console.log(widget.selectionMode);
+            			if((!!widget)&&(!!widget.selectedItems)&&(widget.selectedItems.length > 0)){
+            				var seleted = widget.selectedItems;
+            				if(widget.selectionMode === "single"){
+            					textElement.text(seleted[0][options.textField]);
+                				input.val(seleted[0][options.valueField]);
+                				input.trigger('change.gonrin');
+            				}
+            				if(widget.selectionMode === "multiple"){
+            					//textElement.html(JSON.stringify(seleted));
+            					textElement.find("ul").empty();
+    			            	$.each(seleted, function(key, item){
+    			            		var txt = item[options.textField];
+    			            		$(itemTemplate).html(txt).appendTo(textElement.find("ul"));
+    			            	});
+    			            	input.val(JSON.stringify(seleted));
+    			            	input.trigger('change.gonrin');
+            				}
             			}
-            			
-            		},
-					
-				});
-			};
-            
+            		}
+            	})
+            }
             /*notifyEvent({
                 type: 'show.gonui'
             });*/
             return gonrin;
         },
         hide = function(){
-        	/*if (widget.is(':hidden')) {
-                return gonrin;
-            }
-        	//$(window).off('resize', place);
-        	//widget.off('click', '[data-action]');
-            widget.off('mousedown', false);
-            widget.hide();
-            
-            notifyEvent({
-                type: 'hide.gonui',
-                value: value
-            });*/
             return gonrin;
         },
         
@@ -136,7 +155,7 @@
             //return (widget.is(':hidden') ? show() : hide());
         	return show();
         },
-		attach_element_events = function () {
+		attachElementEvents = function () {
             /*input.on({
                 'change': change,
                 'blur': options.debug ? '' : hide,
@@ -155,9 +174,7 @@
                 component.on('click', toggle);
                 component.on('mousedown', false);
             }
-            if(widget){
-            	
-            }
+           
         },
         detachElementEvents = function () {
             /*input.off({
@@ -212,7 +229,11 @@
             var componentButton = $('<span class="input-group-addon dropdown-toggle" data-dropdown="dropdown">').html('<span class="glyphicon glyphicon-th-list"></span><span class="glyphicon glyphicon-remove" style="display:none;"></span>');
             inputGroupSpan.append(componentButton);
             component = componentButton;
-            textElement = $('<input class="form-control" type="text">');
+            textElement = $('<span class="form-control ref-form-control">');
+            if(options.selectionMode === "multiple"){
+            	var selectRender = $(menuTemplate).appendTo(textElement);
+            	
+            }
             element.before(textElement);
             element.css("display", "none");
         } else {
@@ -221,7 +242,7 @@
         
         
     	if (input.is('input'))  {
-        	setup_widget();
+        	setupWidget();
         	if(!options.placeholder){
         		options.placeholder = input.attr("placeholder");
         	}
@@ -231,7 +252,7 @@
         	
         };
         
-        attach_element_events();
+        attachElementEvents();
         /*if (input.prop('disabled')) {
         	gonrin.disable();
         }
@@ -262,9 +283,12 @@
     	//height: null,
     	/*placeholder: null,
     	ignore_readonly: false,*/
+    	selectionMode: "single",
     	debug: false,
-    	data_text_field: null,
-        data_value_field: null,
-        data_source: null
+    	//hasMany: false,
+    	textField: null,
+        valueField: null,
+        dataSource: null,
+        selectedItems: []
     };
 }));

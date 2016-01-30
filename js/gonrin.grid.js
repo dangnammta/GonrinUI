@@ -1,8 +1,8 @@
 "use strict";
 (function($) {
-	var plugin_name = "gonrin_grid",
-    plugin_given_options = "gonrin_grid_options",
-    plugin_status = "gonrin_grid_status";
+	var pluginName = "gonrin_grid",
+    pluginGivenOptions = "gonrin_grid_options",
+    pluginStatus = "gonrin_grid_status";
 	
 	function classExists(c) {
 	    return typeof(c) == "function" && typeof(c.prototype) == "object" ? true : false;
@@ -19,79 +19,78 @@
                 /**
                  * store given options on first launch (in new object - no reference)
                  */
-                if(typeof  elem.data(plugin_given_options) === "undefined") {
-                    elem.data(plugin_given_options, $.extend(true, {}, options));
+                if(typeof  elem.data(pluginGivenOptions) === "undefined") {
+                    elem.data(pluginGivenOptions, $.extend(true, {}, options));
                 }
 
                 /**
                  * settings and defaults
-                 * settings modification will affect elem.data(plugin_name) and vice versa
+                 * settings modification will affect elem.data(pluginName) and vice versa
                  */
-                var settings = elem.data(plugin_name);
+                var settings = elem.data(pluginName);
                 if(typeof settings === "undefined") {
                     var bootstrap_version = "3";
                     
-                    var defaults = grid.get_defaults.call(elem, bootstrap_version);
+                    var defaults = grid.getDefaults.call(elem, bootstrap_version);
                     // deep merge ('true' arg) is required, as there are object attibutes (paginationOptions, filterOptions)
                     settings = $.extend(true, {}, defaults, options);
                 } else {
                     settings = $.extend(true, {}, settings, options);
                 }
-                elem.data(plugin_name, settings);
+                elem.data(pluginName, settings);
                 
                 // initialize plugin status
-                if(typeof  elem.data(plugin_status) === "undefined") {
-                    elem.data(plugin_status, {});
+                if(typeof  elem.data(pluginStatus) === "undefined") {
+                    elem.data(pluginStatus, {});
                 }
 
-                if(!settings.row_primary_key) {
-                    settings.selected_ids = [];
+                if(!settings.rowPrimaryKey) {
+                    settings.selectedItems = [];
                 } else {
-                    switch(settings.row_selection_mode) {
+                    switch(settings.rowSelectionMode) {
                         case "single":
-                            if(settings.selected_ids.length > 1) {
-                                settings.selected_ids = [];
+                            if(settings.selectedItems.length > 1) {
+                                settings.selectedItems = [];
                             }
                             break;
                         case false:
-                            settings.selected_ids = [];
+                            settings.selectedItems = [];
                             break;
                     }
                 }
                 
-                console.log('do grid');
                 var container_id = elem.attr("id");
 
                 // apply container style
                 elem.removeClass().addClass(settings.container_class);
 
                 // bind events
-                elem.unbind("cellclick").bind("cellclick", settings.on_cellclick);
-                elem.unbind("rowclick").bind("rowclick", settings.on_rowclick);
-                elem.unbind("griderror").bind("griderror", settings.on_griderror);
-                elem.unbind("debug").bind("debug", settings.on_debug);
-                elem.unbind("render").bind("render", settings.on_render);
+                elem.unbind("cellclick").bind("cellclick", settings.onCellClick);
+                elem.unbind("rowclick").bind("rowclick", settings.onRowClick);
+                elem.unbind("griderror").bind("griderror", settings.onGridError);
+                elem.unbind("debug").bind("debug", settings.onDebug);
+                elem.unbind("render").bind("render", settings.onRender);
 
                 // initialize plugin html
-                var tools_id = create_id(settings.tools_id_prefix, container_id),
-                    columns_list_id = create_id(settings.columns_list_id_prefix, container_id),
+                var tools_id = createId(settings.tools_id_prefix, container_id),
+                    columns_list_id = createId(settings.columns_list_id_prefix, container_id),
                     default_columns_list = "",
-                    sorting_list_id = create_id(settings.sorting_list_id_prefix, container_id),
+                    sorting_list_id = createId(settings.sorting_list_id_prefix, container_id),
                     default_sorting_list = "",
-                    sorting_radio_name = create_id(settings.sorting_radio_name_prefix, container_id) + "_",
+                    sorting_radio_name = createId(settings.sorting_radio_name_prefix, container_id) + "_",
                     startPos, newPos,
-                    selected_rows_id = create_id(settings.selected_rows_id_prefix, container_id),
-                    selection_list_id = create_id(settings.selection_list_id_prefix, container_id),
-                    table_container_id = create_id(settings.table_container_id_prefix, container_id),
-                    table_id = create_id(settings.table_id_prefix, container_id),
-                    no_results_id = create_id(settings.no_results_id_prefix, container_id),
-                    filter_toggle_id = create_id(settings.filter_toggle_id_prefix, container_id),
-                    custom_html1_id = create_id(settings.custom_html1_id_prefix, container_id),
-                    custom_html2_id = create_id(settings.custom_html2_id_prefix, container_id),
-                    pagination_id = create_id(settings.pagination_id_prefix, container_id),
-                    filter_container_id = create_id(settings.filter_container_id_prefix, container_id),
-                    filter_rules_id = create_id(settings.filter_rules_id_prefix, container_id),
-                    filter_tools_id = create_id(settings.filter_tools_id_prefix, container_id),
+                    selectedRows_id = createId(settings.selectedRows_id_prefix, container_id),
+                    selection_list_id = createId(settings.selection_list_id_prefix, container_id),
+                    table_container_id = createId(settings.table_container_id_prefix, container_id),
+                    table_id = createId(settings.tableIdPrefix, container_id),
+                    no_results_id = createId(settings.no_results_id_prefix, container_id),
+                    filter_toggle_id = createId(settings.filter_toggle_id_prefix, container_id),
+                    custom_html1_id = createId(settings.custom_html1_id_prefix, container_id),
+                    custom_html2_id = createId(settings.custom_html2_id_prefix, container_id),
+                    pagination_id = createId(settings.pagination_id_prefix, container_id),
+                    filter_container_id = createId(settings.filter_container_id_prefix, container_id),
+                    filter_rules_id = createId(settings.filter_rules_id_prefix, container_id),
+                    filter_tools_id = createId(settings.filter_tools_id_prefix, container_id),
                     elem_html = "", tools_html = "";
 
                 // create basic html structure ---------------------------------
@@ -150,12 +149,12 @@
                 var col_name, col_checked,
                     col_list_len = 0;
                 for(var i in settings.columns) {
-                    if(column_is_function(settings.columns[i])) {
+                    if(columnIsFunction(settings.columns[i])) {
                         continue;
                     }
                     col_list_len++;
-                    col_name = get_column_header(settings.columns[i]);
-                    col_checked = column_is_visible(settings.columns[i]) ? " checked" : "";
+                    col_name = getColumnHeader(settings.columns[i]);
+                    col_checked = columnIsVisible(settings.columns[i]) ? " checked" : "";
                     default_columns_list += '<li><a href="javascript:void(0);">' +
                         '<label class="' + settings.columns_list_label_class + '">' +
                         '<input type="checkbox" class="' + settings.columns_list_check_class + '"' + col_checked + '> ' + col_name +
@@ -170,8 +169,8 @@
                 default_columns_list += '<li class="not-sortable columns-li-padding"><button class="' + settings.columns_list_default_button_class + '">' + rsc_bs_dg.columns_default + '</button></li>';
 
                 //save default columns list
-                if(typeof elem.data(plugin_status)["default_columns_list"] === "undefined") {
-                    elem.data(plugin_status)["default_columns_list"] = default_columns_list;
+                if(typeof elem.data(pluginStatus)["default_columns_list"] === "undefined") {
+                    elem.data(pluginStatus)["default_columns_list"] = default_columns_list;
                 }
 
                 tools_html += default_columns_list;
@@ -191,7 +190,7 @@
                 tools_html += '<ul id="' + sorting_list_id + '" class="dropdown-menu dropdown-menu-right">';
 
                 for(var i in settings.sorting) {
-                    var sort_name = get_sorting_name(settings.sorting[i]),
+                    var sort_name = getSortingName(settings.sorting[i]),
                         checked_asc = settings.sorting[i]["order"] == "ascending" ? " checked" : "",
                         checked_desc = settings.sorting[i]["order"] == "descending" ? " checked" : "",
                         checked_none = settings.sorting[i]["order"] == "none" ? " checked" : "";
@@ -206,8 +205,8 @@
                 default_sorting_list += '<li class="not-sortable columns-li-padding"><button class="' + settings.columns_list_default_button_class + '">' + rsc_bs_dg.sorting_default + '</button></li>';
 
                 //save default columns list
-                if(typeof elem.data(plugin_status)["default_sorting_list"] === "undefined") {
-                    elem.data(plugin_status)["default_sorting_list"] = default_sorting_list;
+                if(typeof elem.data(pluginStatus)["default_sorting_list"] === "undefined") {
+                    elem.data(pluginStatus)["default_sorting_list"] = default_sorting_list;
                 }
 
                 tools_html += default_sorting_list;
@@ -217,19 +216,19 @@
                 tools_html += '</div>';
 
                 // selection list ----------------------------------------------
-                if(settings.row_primary_key &&
-                    (settings.row_selection_mode == "single" || settings.row_selection_mode == "multiple")) {
+                if(settings.rowPrimaryKey &&
+                    (settings.rowSelectionMode == "single" || settings.rowSelectionMode == "multiple")) {
                     tools_html += '<div class="btn-group pull-right">';
 
                     tools_html += '<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" title="' + rsc_bs_dg.select + '">';
                     tools_html += '<span class="' + settings.selectButtonIconClass + '"></span>';
-                    tools_html += '<span id="' + selected_rows_id + '" class="' + settings.selected_rowsClass + '">' + settings.selected_ids.length + '</span>';
+                    tools_html += '<span id="' + selectedRows_id + '" class="' + settings.selectedRowsClass + '">' + settings.selectedItems.length + '</span>';
                     tools_html += '<span class="caret"></span>';
                     tools_html += '</button>';
 
                     tools_html += '<ul id="' + selection_list_id + '" class="dropdown-menu dropdown-menu-right">';
 
-                    if(settings.row_selection_mode == "multiple") {
+                    if(settings.rowSelectionMode == "multiple") {
                         tools_html += '<li><a href="javascript:void(0);">' + rsc_bs_dg.select_all_in_page + '</a></li>';
                         tools_html += '<li><a href="javascript:void(0);">' + rsc_bs_dg.deselect_all_in_page + '</a></li>';
                         tools_html += '<li><a href="javascript:void(0);">' + rsc_bs_dg.select_inverse_in_page + '</a></li>';
@@ -261,21 +260,21 @@
         	console.log('render_data');
         	var elem = this,
             container_id = elem.attr("id"),
-	            s = grid.get_all_options.call(elem),
+	            s = grid.getAllOptions.call(elem),
 	            
-	            table_id = create_id(s.table_id_prefix, container_id),
+	            table_id = createId(s.tableIdPrefix, container_id),
 	            elem_table = $("#" + table_id),
 	            
-	            no_results_id = create_id(s.no_results_id_prefix, container_id),
+	            no_results_id = createId(s.no_results_id_prefix, container_id),
 	            elem_no_results = $("#" + no_results_id),
 	            
-	            filter_rules_id = create_id(s.filter_rules_id_prefix, container_id),
+	            filter_rules_id = createId(s.filter_rules_id_prefix, container_id),
 	            
-	            pagination_id = create_id(s.pagination_id_prefix, container_id),
+	            pagination_id = createId(s.pagination_id_prefix, container_id),
 	            elem_pagination = $("#" + pagination_id),
 	            err_msg;
         	
-        	var server_error, filter_error, row_primary_key, total_rows, page_data_len, v,
+        	var server_error, filter_error, rowPrimaryKey, total_rows, page_data_len, v,
             columns = s.fields,
             col_len = columns.length,
             column, c;
@@ -283,7 +282,7 @@
         	total_rows = page_data.length;
             page_data_len = page_data.length;
             
-            row_primary_key = s.row_primary_key;
+            rowPrimaryKey = s.rowPrimaryKey;
             
          // replace null with empty string
             if(page_data_len > 0) {
@@ -291,7 +290,7 @@
                     for(c = 0; c < col_len; c++) {
                         column = columns[c];
                         
-                        if(column_is_visible.call(elem,column)) {
+                        if(columnIsVisible.call(elem,column)) {
                         	
                             if(page_data[v][column["field"]] == null) {
                                 page_data[v][column["field"]] = '';
@@ -303,13 +302,13 @@
             
          // create data table
             var page_num = parseInt(s.page),
-                rows_per_page = parseInt(s.rows_per_page),
+                rowsPerPage = parseInt(s.rowsPerPage),
                 sorting_indicator,
                 row_id_html, i, row, tbl_html, row_index,
-                offset = ((page_num - 1) * rows_per_page);
+                offset = ((page_num - 1) * rowsPerPage);
 
             tbl_html = '<thead>';
-            row_id_html = (row_primary_key ? ' id="' + table_id + '_tr_0"' : '');
+            row_id_html = (rowPrimaryKey ? ' id="' + table_id + '_tr_0"' : '');
             tbl_html += '<tr' + row_id_html + '>';
 
             if(s.show_row_numbers) {
@@ -317,7 +316,7 @@
             };
             
             for(i in s.fields) {
-                if(column_is_visible.call(elem,s.fields[i])) {
+                if(columnIsVisible.call(elem,s.fields[i])) {
                     sorting_indicator = "";
                     if(s.show_sorting_indicator) {
                         var sorting_type = "none";
@@ -352,7 +351,7 @@
             var grid_data = elem_table.find('tbody.grid-data');
             
             for(row in page_data) {
-            	row_id_html = (row_primary_key ? table_id + '_tr_' + page_data[row][row_primary_key] : '');
+            	row_id_html = (rowPrimaryKey ? table_id + '_tr_' + page_data[row][rowPrimaryKey] : '');
             	var trow = $("<tr>").attr("id",row_id_html);
             	trow.data("row_data",page_data[row]);
                 var tr_tbl_html = '';
@@ -363,7 +362,7 @@
                 }
 
                 for(i in s.fields) {
-                    if(column_is_visible.call(elem,s.fields[i])) {
+                    if(columnIsVisible.call(elem,s.fields[i])) {
                     	tr_tbl_html += '<td>' + page_data[row][s.fields[i].field] + '</td>';
                     }
                 }
@@ -375,7 +374,6 @@
             
          // refresh pagination (if needed)
             if(refresh_pag) {
-            	
                 elem_pagination.pagination({
                     currentPage: page,
                     totalPages: total_pages,
@@ -395,7 +393,7 @@
             var col_index = s.show_row_numbers ? 1 : 0,
                 headerClass = "", dataClass = "";
             for(i in s.columns) {
-                if(column_is_visible.call(elem,s.columns[i])) {
+                if(columnIsVisible.call(elem,s.columns[i])) {
                     headerClass = "", dataClass = "";
                     if(columns[i].hasOwnProperty("headerClass")) {
                         headerClass = columns[i]["headerClass"];
@@ -409,23 +407,23 @@
             }
 
             // apply row selections ----------------------------------------
-            if(s.row_primary_key && s.selected_ids.length > 0) {
+            if(s.rowPrimaryKey && s.selectedItems.length > 0) {
 
-                if(s.row_selection_mode == "single" || s.row_selection_mode == "multiple") {
+                if(s.rowSelectionMode == "single" || s.rowSelectionMode == "multiple") {
                     var row_prefix_len = (table_id + "_tr_").length,
                         row_id, idx;
                     $("#" + table_id + " tbody tr").each(function() {
                         row_id = parseInt($(this).attr("id").substr(row_prefix_len));
-                        idx = grid.selected_rows.call(elem, "selected_index", row_id);
+                        idx = grid.selectedRows.call(elem, "selected_index", row_id);
                         if(idx > -1) {
-                            grid.selected_rows.call(elem, "mark_selected", row_id);
+                            grid.selectedRows.call(elem, "mark_selected", row_id);
                         }
                     });
                 }
             }
 
             // update selected rows counter
-            grid.selected_rows.call(elem, "update_counter");
+            grid.selectedRows.call(elem, "update_counter");
             
             
             
@@ -437,8 +435,8 @@
             //Edit later
             var settings = s;
          // row selection -----------------------------------------------
-            if(settings.row_primary_key &&
-                (settings.row_selection_mode == "single" || settings.row_selection_mode == "multiple")) {
+            if(settings.rowPrimaryKey &&
+                (settings.rowSelectionMode == "single" || settings.rowSelectionMode == "multiple")) {
 
                 var row_prefix_len = (table_id + "_tr_").length;
                 
@@ -446,41 +444,43 @@
                 elem_table.off("click", "tbody tr").on("click", "tbody tr", function() {
                     var row_id = parseInt($(this).attr("id").substr(row_prefix_len)),
                         row_status,
-                        idx = grid.selected_rows.call(elem, "selected_index", row_id);
-                    var row_data = $(this).data("row_data");
-                    console.log(idx);
+                        row_data = $(this).data("row_data"),
+                        idx = grid.selectedRows.call(elem, "selected_index", row_data);
+
+                    
                     if(idx > -1) {
-                        grid.selected_rows.call(elem, "remove_id", idx);
-                        grid.selected_rows.call(elem, "mark_deselected", row_id);
+                        grid.selectedRows.call(elem, "remove_id", idx);
+                        grid.selectedRows.call(elem, "mark_deselected", row_data);
                         row_status = "deselected";
                     } else {
-                        if(settings.row_selection_mode == "single") {
-                            grid.selected_rows.call(elem, "clear_all_ids");
-                            grid.selected_rows.call(elem, "mark_page_deselected");
-                        }
-                        grid.selected_rows.call(elem, "add_id", row_id);
-                        grid.selected_rows.call(elem, "mark_selected", row_id);
+                        if(settings.rowSelectionMode == "single") {
+                            grid.selectedRows.call(elem, "clear_all_ids");
+                            grid.selectedRows.call(elem, "mark_page_deselected");
+                        };
+                        grid.selectedRows.call(elem, "add_id", row_data);
+                        grid.selectedRows.call(elem, "mark_selected", row_data);
                         row_status = "selected";
                     }
-
+                    console.log(settings.selectedItems);
                     // update selected rows counter
-                    grid.selected_rows.call(elem, "update_counter");
-                 
-                    elem.triggerHandler("rowclick", {row_id: row_id, row_status: row_status, row_data:row_data});
+                    grid.selectedRows.call(elem, "update_counter");
+                    elem.triggerHandler("rowclick", {row_id: row_id, row_status: row_status, row_data:row_data, selectedItems: settings.selectedItems, source : settings["dataSource"]});
                 });
 
+                
+                
                 // selection list
                 var container_id = elem.attr("id");
-                var selection_list_id = create_id(settings.selection_list_id_prefix, container_id);
+                var selection_list_id = createId(settings.selection_list_id_prefix, container_id);
                 var elem_selection_list = elem.find("#" + selection_list_id);
 
                 elem_selection_list.off("click", "li").on("click", "li", function() {
                     var sel_index = $(this).index();
 
-                    if(settings.row_selection_mode == "single") {
-                        grid.selected_rows.call(elem, "clear_all_ids");
-                        grid.selected_rows.call(elem, "mark_page_deselected");
-                    } else if(settings.row_selection_mode == "multiple") {
+                    if(settings.rowSelectionMode == "single") {
+                        grid.selectedRows.call(elem, "clear_all_ids");
+                        grid.selectedRows.call(elem, "mark_page_deselected");
+                    } else if(settings.rowSelectionMode == "multiple") {
 
                         var selector_table_tr = "#" + table_id + " tbody tr",
                             row_prefix_len = (table_id + "_tr_").length,
@@ -489,44 +489,44 @@
                             case 0:
                                 $(selector_table_tr).each(function() {
                                     row_id = parseInt($(this).attr("id").substr(row_prefix_len));
-                                    idx = grid.selected_rows.call(elem, "selected_index", row_id);
+                                    idx = grid.selectedRows.call(elem, "selected_index", row_id);
                                     if(idx == -1) {
-                                        grid.selected_rows.call(elem, "add_id", row_id);
+                                        grid.selectedRows.call(elem, "add_id", row_id);
                                     }
                                 });
-                                grid.selected_rows.call(elem, "mark_page_selected");
+                                grid.selectedRows.call(elem, "mark_page_selected");
                                 break;
                             case 1:
                                 $(selector_table_tr).each(function() {
                                     row_id = parseInt($(this).attr("id").substr(row_prefix_len));
-                                    idx = grid.selected_rows.call(elem, "selected_index", row_id);
+                                    idx = grid.selectedRows.call(elem, "selected_index", row_id);
                                     if(idx > -1) {
-                                        grid.selected_rows.call(elem, "remove_id", idx);
+                                        grid.selectedRows.call(elem, "remove_id", idx);
                                     }
                                 });
-                                grid.selected_rows.call(elem, "mark_page_deselected");
+                                grid.selectedRows.call(elem, "mark_page_deselected");
                                 break;
                             case 2:
                                 $(selector_table_tr).each(function() {
                                     row_id = parseInt($(this).attr("id").substr(row_prefix_len));
-                                    idx = grid.selected_rows.call(elem, "selected_index", row_id);
+                                    idx = grid.selectedRows.call(elem, "selected_index", row_id);
                                     if(idx > -1) {
-                                        grid.selected_rows.call(elem, "remove_id", idx);
+                                        grid.selectedRows.call(elem, "remove_id", idx);
                                     } else {
-                                        grid.selected_rows.call(elem, "add_id", row_id);
+                                        grid.selectedRows.call(elem, "add_id", row_id);
                                     }
                                 });
-                                grid.selected_rows.call(elem, "mark_page_inversed");
+                                grid.selectedRows.call(elem, "mark_page_inversed");
                                 break;
                             case 4:
-                                grid.selected_rows.call(elem, "clear_all_ids");
-                                grid.selected_rows.call(elem, "mark_page_deselected");
+                                grid.selectedRows.call(elem, "clear_all_ids");
+                                grid.selectedRows.call(elem, "mark_page_deselected");
                                 break;
                         }
                     }
 
                     // update selected rows counter
-                    grid.selected_rows.call(elem, "update_counter");
+                    grid.selectedRows.call(elem, "update_counter");
 
                 });
 
@@ -538,17 +538,16 @@
         
         display_grid: function(refresh_pag) {
         	var elem = this,
-	            s = grid.get_all_options.call(elem);
+	            s = grid.getAllOptions.call(elem);
         	
-        	var data_source = s["data_source"];
+        	var dataSource = s["dataSource"];
         	var page_data = [];
         	
-        	//check data_source is Gonrin.CollectionView
-        	if(typeof data_source === "object"){
-        		if((!!data_source['_is_gonrin_view']) && (!!data_source.collection)){
+        	//check dataSource is Gonrin.CollectionView
+        	if(typeof dataSource === "object"){
+        		if((!!dataSource['_is_gonrin_view']) && (!!dataSource.collection)){
         			console.log('instance of collection view');
-        
-        			var view = data_source;
+        			var view = dataSource;
         			view.collection.fetch({
                         success: function (data) {
                         	var page = view.collection.page,
@@ -580,40 +579,49 @@
                         },
                     });
         		}else{
-        			grid.render_data.call(elem, data_source, refresh_pag);
+        			grid.render_data.call(elem, dataSource, refresh_pag);
         		}
             	
             }
         },
         
-        selected_rows: function(action, id) {
+        selectedRows: function(action, row_data) {
             var elem = this,
                 container_id = elem.attr("id"),
-                s = grid.get_all_options.call(elem),
-                table_id = create_id(grid.get_option.call(elem, "table_id_prefix"), container_id),
-                selected_tr_class = grid.get_option.call(elem, "selected_tr_class"),
+                settings = grid.getAllOptions.call(elem),
+                table_id = createId(grid.getOption.call(elem, "tableIdPrefix"), container_id),
+                selected_tr_class = grid.getOption.call(elem, "selected_tr_class"),
                 selector_table_tr = "#" + table_id + " tbody tr",
                 table_tr_prefix = "#" + table_id + "_tr_";
-
+            
+            var id = row_data ? row_data[settings.rowPrimaryKey] : null;
+            //if(settings.rowSelectionMode == "single") {
             switch(action) {
                 case "get_ids":
-                    return s.selected_ids;
+                	if(settings.rowSelectionMode == "single") {
+                		return settings.selectedItems;
+                	};
+                	if(settings.rowSelectionMode == "multiple") {
+                		/*TODO*/
+                		return settings.selectedItems;
+                	};
+                    
                     break;
                 case "clear_all_ids":
-                    s.selected_ids = [];
+                	settings.selectedItems = [];
                     break;
                 case "update_counter":
-                    var selected_rows_id = create_id(grid.get_option.call(elem, "selected_rows_id_prefix"), container_id);
-                    $("#" + selected_rows_id).text(s.selected_ids.length);
+                    var selectedRows_id = createId(grid.getOption.call(elem, "selectedRows_id_prefix"), container_id);
+                    $("#" + selectedRows_id).text(settings.selectedItems.length);
                     break;
                 case "selected_index":
-                    return $.inArray(id, s.selected_ids);
+                	return $.inArray(row_data, settings.selectedItems);
                     break;
                 case "add_id":
-                    s.selected_ids.push(id);
+                	settings.selectedItems.push(row_data);
                     break;
                 case "remove_id":
-                    s.selected_ids.splice(id, 1);
+                	settings.selectedItems.splice(row_data, 1);
                     break;
                 case "mark_selected":
                 	elem.find(table_tr_prefix + id).addClass(selected_tr_class);
@@ -643,23 +651,23 @@
         /**
          * Get any option set to plugin using its name (as string)
          *
-         * @example $(element).bs_grid("get_option", some_option);
+         * @example $(element).bs_grid("getOption", some_option);
          * @param {String} opt
          * @return {*}
          */
-        get_option: function(opt) {
+        getOption: function(opt) {
             var elem = this;
-            return elem.data(plugin_name)[opt];
+            return elem.data(pluginName)[opt];
         },
 
         /**
          * Get all options
-         * @example $(element).bs_grid("get_all_options");
+         * @example $(element).bs_grid("getAllOptions");
          * @return {*}
          */
-        get_all_options: function() {
+        getAllOptions: function() {
             var elem = this;
-            return elem.data(plugin_name);
+            return elem.data(pluginName);
         },
 
         /**
@@ -667,14 +675,15 @@
          * @example $(element).bs_grid("getDefaults", "3");
          * @return {Object}
          */
-        get_defaults: function(bootstrap_version) {
+        getDefaults: function(bootstrap_version) {
             var default_settings = {
             	page: 1,
-                rows_per_page: 10,
-                max_rows_per_page: 100,
-                row_primary_key: "",
-                row_selection_mode: "single", // "multiple", "single", false
-                selected_ids: [],
+                rowsPerPage: 10,
+                maxRowsPerPage: 100,
+                rowPrimaryKey: "",
+                rowSelectionMode: "single", // "multiple", "single", false
+                selectedItems: [],
+                
 
                 /**
                  * MANDATORY PROPERTIES: field
@@ -682,7 +691,7 @@
                  * {field: "customer_id", header: "Code", visible: "no", is_function: "no", "headerClass": "th_code hidden-xs", "dataClass": "td_code hidden-xs"},
                  */
                 fields: [],
-                visible_columns : [],
+                //visible_columns : [],
 
                 /**
                  * MANDATORY PROPERTIES: field, order
@@ -699,11 +708,11 @@
                     container_class: "well pagination-container",
                     visible_page_links: 5,
                     show_goto_page: false,
-                    show_rows_per_page: false,
+                    show_rowsPerPage: false,
                     show_rows_info: false,
                     show_rows_default_info: true,
                     disable_text_selection_in_navpane: true
-                }, // "currentPage", "rows_per_page", "maxrows_per_page", "totalPages", "totalRows", "bootstrap_version", "onChangePage" will be ignored
+                }, // "currentPage", "rowsPerPage", "maxrowsPerPage", "totalPages", "totalRows", "bootstrap_version", "onChangePage" will be ignored
 
                 /**
                  * See jui_filter_rules plugin documentation
@@ -742,7 +751,7 @@
                 sorting_name_class: "sorting-name",
 
                 select_button_icon_class: "glyphicon  glyphicon-check",
-                selected_rows_class: "selected-rows",
+                selectedRows_class: "selected-rows",
 
                 filter_toggle_button_icon_class: "glyphicon glyphicon-filter",
                 filter_toggle_active_class: "btn-info",
@@ -765,12 +774,12 @@
                 columns_list_id_prefix: "columns_list_",
                 sorting_list_id_prefix: "sorting_list_",
                 sorting_radio_name_prefix: "sort_radio_",
-                selected_rows_id_prefix: "selected_rows_",
+                selectedRows_id_prefix: "selectedRows_",
                 selection_list_id_prefix: "selection_list_",
                 filter_toggle_id_prefix: "filter_toggle_",
 
                 table_container_id_prefix: "tbl_container_",
-                table_id_prefix: "tbl_",
+                tableIdPrefix: "tbl_",
 
                 no_results_id_prefix: "no_res_",
 
@@ -786,15 +795,15 @@
                 debug_mode: "no",
 
                 // events
-                on_cellclick: function() {
+                onCellClick: function() {
                 },
-                on_rowclick: function() {
+                onRowClick: function() {
                 },
-                on_griderror: function() {
+                onGridError: function() {
                 },
-                on_debug: function() {
+                onDebug: function() {
                 },
-                on_render: function() {
+                onRender: function() {
                 }
             };
             return default_settings;
@@ -807,11 +816,11 @@
      * Create element id
      * @function
      * @param prefix
-     * @param plugin_container_id
+     * @param pluginContainerId
      * @return {*}
      */
-    var create_id = function(prefix, plugin_container_id) {
-        return prefix + plugin_container_id;
+    var createId = function(prefix, pluginContainerId) {
+        return prefix + pluginContainerId;
     };
 	
 	var array_move = function(arr, fromIndex, toIndex) {
@@ -820,12 +829,12 @@
         arr.splice(toIndex, 0, element);
     };
     
-    var column_is_function = function(column) {
+    var columnIsFunction = function(column) {
         var is_function = "is_function";
         return column.hasOwnProperty(is_function) && column[is_function] == "yes";
     };
     
-    var get_column_header = function(column) {
+    var getColumnHeader = function(column) {
         return column.hasOwnProperty("header") ? column["header"] : column["field"];
     };
     /**
@@ -834,7 +843,7 @@
      * @param {object} sorting
      * @returns {string}
      */
-    var get_sorting_name = function(sorting) {
+    var getSortingName = function(sorting) {
         return sorting.hasOwnProperty("sortingName") ? sorting["sortingName"] : sorting["field"];
     };
 
@@ -844,7 +853,7 @@
      * @param {object} column
      * @returns {boolean}
      */
-    var column_is_sortable = function(column) {
+    var columnIsSortable = function(column) {
         return !column.hasOwnProperty("sortable") || (column.hasOwnProperty("sortable") && column["sortable"] == "yes");
     };
     
@@ -854,18 +863,19 @@
      * @param {object} column
      * @returns {boolean}
      */
-    var column_is_visible = function(column) {
-    	var elem = this,
-    	s = grid.get_all_options.call(elem);
+    var columnIsVisible = function(column) {
+    	//var elem = this,
+    	//s = grid.getAllOptions.call(elem);
     	
-    	var visible_columns = s.visible_columns;
-        //var visible = "visible";
-        //return !column.hasOwnProperty(visible) || (column.hasOwnProperty(visible) && column[visible] === true);
-    	if(column && column.field && visible_columns){
+    	
+        var visible = "visible";
+        return !column.hasOwnProperty(visible) || (column.hasOwnProperty(visible) && column[visible] === true);
+      //var visible_columns = s.visible_columns;
+        /*if(column && column.field && visible_columns){
     		if(visible_columns)
     			return ($.inArray( column.field, visible_columns ) !== -1);
     	};
-    	return false;
+    	return false;*/
     };
 
     /**
@@ -874,7 +884,7 @@
      * @param {object} column
      * @param {boolean} status
      */
-    var set_column_visible = function(column, status) {
+    var setColumnVisible = function(column, status) {
         var visible = "visible";
         if(status) {
             if(column.hasOwnProperty(visible)) {
@@ -888,7 +898,7 @@
     $.fn.grid = function(method) {
     	console.log('do int grid');
         if(this.size() != 1) {
-            var err_msg = "You must use this plugin (" + plugin_name + ") with a unique element (at once)";
+            var err_msg = "You must use this plugin (" + pluginName + ") with a unique element (at once)";
             this.html('<span style="color: red;">' + 'ERROR: ' + err_msg + '</span>');
             $.error(err_msg);
         }
@@ -900,7 +910,7 @@
         	//init options
             return grid.init.apply(this, arguments);
         } else {
-            $.error("Method " + method + " does not exist on jQuery." + plugin_name);
+            $.error("Method " + method + " does not exist on jQuery." + pluginName);
         }
 
     };

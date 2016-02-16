@@ -62,7 +62,7 @@
                 var container_id = elem.attr("id");
 
                 // apply container style
-                elem.removeClass().addClass(settings.container_class);
+                elem.removeClass().addClass(settings.containerClass);
 
                 // bind events
                 elem.unbind("cellclick").bind("cellclick", settings.onCellClick);
@@ -72,35 +72,35 @@
                 elem.unbind("render").bind("render", settings.onRender);
 
                 // initialize plugin html
-                var tools_id = createId(settings.tools_id_prefix, container_id),
-                    columns_list_id = createId(settings.columns_list_id_prefix, container_id),
+                var tools_id = createId(settings.toolsIdPrefix, container_id),
+                    columns_list_id = createId(settings.columnsListIdPrefix, container_id),
                     default_columns_list = "",
-                    sorting_list_id = createId(settings.sorting_list_id_prefix, container_id),
+                    sorting_list_id = createId(settings.sortingListIdPrefix, container_id),
                     default_sorting_list = "",
-                    sorting_radio_name = createId(settings.sorting_radio_name_prefix, container_id) + "_",
+                    sorting_radio_name = createId(settings.sortingRadioNamePrefix, container_id) + "_",
                     startPos, newPos,
-                    selectedRows_id = createId(settings.selectedRows_id_prefix, container_id),
-                    selection_list_id = createId(settings.selection_list_id_prefix, container_id),
-                    table_container_id = createId(settings.table_container_id_prefix, container_id),
+                    selectedRows_id = createId(settings.selectedRowsIdPrefix, container_id),
+                    selection_list_id = createId(settings.selectionListIdPrefix, container_id),
+                    table_container_id = createId(settings.tableContainerIdPrefix, container_id),
                     table_id = createId(settings.tableIdPrefix, container_id),
-                    no_results_id = createId(settings.no_results_id_prefix, container_id),
-                    filter_toggle_id = createId(settings.filter_toggle_id_prefix, container_id),
+                    no_results_id = createId(settings.noResultsIdPrefix, container_id),
+                    filter_toggle_id = createId(settings.filterToggleIdPrefix, container_id),
                     custom_html1_id = createId(settings.custom_html1_id_prefix, container_id),
                     custom_html2_id = createId(settings.custom_html2_id_prefix, container_id),
-                    pagination_id = createId(settings.pagination_id_prefix, container_id),
-                    filter_container_id = createId(settings.filter_container_id_prefix, container_id),
-                    filter_rules_id = createId(settings.filter_rules_id_prefix, container_id),
-                    filter_tools_id = createId(settings.filter_tools_id_prefix, container_id),
+                    pagination_id = createId(settings.paginationIdPrefix, container_id),
+                    filter_container_id = createId(settings.filterContainerIdPrefix, container_id),
+                    filter_rules_id = createId(settings.filterRulesIdPrefix, container_id),
+                    filter_tools_id = createId(settings.filterToolsIdPrefix, container_id),
                     elem_html = "", tools_html = "";
 
                 // create basic html structure ---------------------------------
-                elem_html += '<div id="' + tools_id + '" class="' + settings.tools_class + '"></div>';
+                elem_html += '<div id="' + tools_id + '" class="' + settings.toolsClass + '"></div>';
 
-                elem_html += '<div id="' + table_container_id + '" class="' + settings.datatable_container_class + '">';
-                elem_html += '<table id="' + table_id + '" class="' + settings.datatable_class + '"></table>';
+                elem_html += '<div id="' + table_container_id + '" class="' + settings.datatableContainerClass + '">';
+                elem_html += '<table id="' + table_id + '" class="' + settings.datatableClass + '"></table>';
                 elem_html += '</div>';
 
-                elem_html += '<div id="' + no_results_id + '" class="' + settings.no_results_class + '">' + rsc_bs_dg.no_records_found + '</div>';
+                elem_html += '<div id="' + no_results_id + '" class="' + settings.noResultsClass + '">' + rsc_bs_dg.no_records_found + '</div>';
 
                 if(settings.custom_html_element_id1) {
                     elem_html += '<div id="' + custom_html1_id + '"></div>';
@@ -113,13 +113,13 @@
                 }
 
                 if(settings.useFilters) {
-                    elem_html += '<div id="' + filter_container_id + '" class="' + settings.filter_container_class + '">';
+                    elem_html += '<div id="' + filter_container_id + '" class="' + settings.filterContainerClass + '">';
 
                     elem_html += '<div id="' + filter_rules_id + '"></div>';
 
-                    elem_html += '<div id="' + filter_tools_id + '" class="' + settings.filter_tools_class + '">';
-                    elem_html += '<button class="' + settings.filter_apply_btn_class + '">' + rsc_bs_dg.filters_apply + '</button>';
-                    elem_html += '<button class="' + settings.filter_reset_btn_class + '">' + rsc_bs_dg.filters_reset + '</button>';
+                    elem_html += '<div id="' + filter_tools_id + '" class="' + settings.filterToolsClass + '">';
+                    elem_html += '<button class="' + settings.filterApplyBtnClass + '">' + rsc_bs_dg.filters_apply + '</button>';
+                    elem_html += '<button class="' + settings.filterResetBtnClass + '">' + rsc_bs_dg.filters_reset + '</button>';
 
                     elem_html += '</div>';
                 }
@@ -139,12 +139,12 @@
                 // columns list
                 /*tools_html += '<div class="btn-group pull-right">';
 
-                tools_html += '<button type="button" class="' + settings.columns_list_launch_button_class + '" data-toggle="dropdown" title="' + rsc_bs_dg.columns + '">';
-                tools_html += '<span class="' + settings.columns_list_launch_button_icon_class + '"></span>';
+                tools_html += '<button type="button" class="' + settings.columnsListLaunchButtonClass + '" data-toggle="dropdown" title="' + rsc_bs_dg.columns + '">';
+                tools_html += '<span class="' + settings.columnsListLaunchButtonIconClass + '"></span>';
                 tools_html += '<span class="caret"></span>';
                 tools_html += '</button>';
 
-                tools_html += '<ul id="' + columns_list_id + '" class="' + settings.columns_list_class + '">';
+                tools_html += '<ul id="' + columns_list_id + '" class="' + settings.columnsListClass + '">';
 
                 var col_name, col_checked,
                     col_list_len = 0;
@@ -153,20 +153,20 @@
                         continue;
                     }
                     col_list_len++;
-                    col_name = getColumnHeader(settings.columns[i]);
+                    col_name = getColumnLabel(settings.columns[i]);
                     col_checked = columnIsVisible(settings.columns[i]) ? " checked" : "";
                     default_columns_list += '<li><a href="javascript:void(0);">' +
-                        '<label class="' + settings.columns_list_label_class + '">' +
-                        '<input type="checkbox" class="' + settings.columns_list_check_class + '"' + col_checked + '> ' + col_name +
+                        '<label class="' + settings.columnsListLabelClass + '">' +
+                        '<input type="checkbox" class="' + settings.columnsListCheckClass + '"' + col_checked + '> ' + col_name +
                         '</label>' +
                         '</a></li>';
                 }
-                default_columns_list += '<li class="not-sortable ' + settings.columns_list_divider_class + '"></li>';
+                default_columns_list += '<li class="not-sortable ' + settings.columnsListDividerClass + '"></li>';
 
                 var row_index_checked = settings.showRowNumbers ? " checked" : "";
-                default_columns_list += '<li class="not-sortable columns-li-padding"><label class="' + settings.columns_list_label_class + '"><input type="checkbox" class="' + settings.columns_list_check_class + '"' + row_index_checked + '>&nbsp;' + rsc_bs_dg.columns_showRowNumbers + '</label></li>';
-                default_columns_list += '<li class="not-sortable ' + settings.columns_list_divider_class + '"></li>';
-                default_columns_list += '<li class="not-sortable columns-li-padding"><button class="' + settings.columns_list_default_button_class + '">' + rsc_bs_dg.columns_default + '</button></li>';
+                default_columns_list += '<li class="not-sortable columns-li-padding"><label class="' + settings.columnsListLabelClass + '"><input type="checkbox" class="' + settings.columnsListCheckClass + '"' + row_index_checked + '>&nbsp;' + rsc_bs_dg.columns_showRowNumbers + '</label></li>';
+                default_columns_list += '<li class="not-sortable ' + settings.columnsListDividerClass + '"></li>';
+                default_columns_list += '<li class="not-sortable columns-li-padding"><button class="' + settings.columnsListDefaultButtonClass + '">' + rsc_bs_dg.columns_default + '</button></li>';
 
                 //save default columns list
                 if(typeof elem.data(pluginStatus)["default_columns_list"] === "undefined") {
@@ -201,8 +201,8 @@
                         '<span class="' + settings.sortingNameClass + '">' + sort_name + '</span>' +
                         '</a></li>';
                 }
-                default_sorting_list += '<li class="not-sortable ' + settings.columns_list_divider_class + '"></li>';
-                default_sorting_list += '<li class="not-sortable columns-li-padding"><button class="' + settings.columns_list_default_button_class + '">' + rsc_bs_dg.sorting_default + '</button></li>';
+                default_sorting_list += '<li class="not-sortable ' + settings.columnsListDividerClass + '"></li>';
+                default_sorting_list += '<li class="not-sortable columns-li-padding"><button class="' + settings.columnsListDefaultButtonClass + '">' + rsc_bs_dg.sorting_default + '</button></li>';
 
                 //save default columns list
                 if(typeof elem.data(pluginStatus)["default_sorting_list"] === "undefined") {
@@ -232,7 +232,7 @@
                         tools_html += '<li><a href="javascript:void(0);">' + rsc_bs_dg.select_all_in_page + '</a></li>';
                         tools_html += '<li><a href="javascript:void(0);">' + rsc_bs_dg.deselect_all_in_page + '</a></li>';
                         tools_html += '<li><a href="javascript:void(0);">' + rsc_bs_dg.select_inverse_in_page + '</a></li>';
-                        tools_html += '<li class="not-sortable ' + settings.columns_list_divider_class + '"></li>';
+                        tools_html += '<li class="not-sortable ' + settings.columnsListDividerClass + '"></li>';
                     }
 
                     tools_html += '<li><a href="javascript:void(0);">' + rsc_bs_dg.deselect_all + '</a></li>';
@@ -265,12 +265,12 @@
 	            table_id = createId(s.tableIdPrefix, container_id),
 	            elem_table = $("#" + table_id),
 	            
-	            no_results_id = createId(s.no_results_id_prefix, container_id),
+	            no_results_id = createId(s.noResultsIdPrefix, container_id),
 	            elem_no_results = $("#" + no_results_id),
 	            
-	            filter_rules_id = createId(s.filter_rules_id_prefix, container_id),
+	            filter_rules_id = createId(s.filterRulesIdPrefix, container_id),
 	            
-	            pagination_id = createId(s.pagination_id_prefix, container_id),
+	            pagination_id = createId(s.paginationIdPrefix, container_id),
 	            elem_pagination = $("#" + pagination_id),
 	            err_msg;
         	
@@ -312,7 +312,7 @@
             tbl_html += '<tr' + row_id_html + '>';
 
             if(s.showRowNumbers) {
-                tbl_html += '<th class="' + s.common_th_class + '">' + rsc_bs_dg.row_index_header + '</th>';
+                tbl_html += '<th class="' + s.commonThClass + '">' + rsc_bs_dg.row_index_header + '</th>';
             };
             
             for(i in s.fields) {
@@ -328,16 +328,16 @@
                         }
                         switch(sorting_type) {
                             case "ascending":
-                            	sorting_indicator = '&nbsp;<span class="' + s.sorting_indicator_asc_class + '"></span>';
+                            	sorting_indicator = '&nbsp;<span class="' + s.sortingIndicatorAscClass + '"></span>';
                                 break;
                             case "descending":
-                            	sorting_indicator = '&nbsp;<span class="' + s.sorting_indicator_desc_class + '"></span>';
+                            	sorting_indicator = '&nbsp;<span class="' + s.sortingIndicatorDescClass + '"></span>';
                                 break;
                             default:
                             	sorting_indicator = '';
                         }
                     }
-                    tbl_html += '<th class="' + s.common_th_class + '">' + s.fields[i].label + sorting_indicator + '</th>';
+                    tbl_html += '<th class="' + s.commonThClass + '">' + s.fields[i].label + sorting_indicator + '</th>';
                 }
             }
             tbl_html += '</tr>';
@@ -471,7 +471,7 @@
                 
                 // selection list
                 var container_id = elem.attr("id");
-                var selection_list_id = createId(settings.selection_list_id_prefix, container_id);
+                var selection_list_id = createId(settings.selectionListIdPrefix, container_id);
                 var elem_selection_list = elem.find("#" + selection_list_id);
 
                 elem_selection_list.off("click", "li").on("click", "li", function() {
@@ -590,12 +590,12 @@
                 container_id = elem.attr("id"),
                 settings = grid.getAllOptions.call(elem),
                 table_id = createId(grid.getOption.call(elem, "tableIdPrefix"), container_id),
-                selected_tr_class = grid.getOption.call(elem, "selected_tr_class"),
+                selectedTrClass = grid.getOption.call(elem, "selectedTrClass"),
                 selector_table_tr = "#" + table_id + " tbody tr",
                 table_tr_prefix = "#" + table_id + "_tr_";
             
             var id = row_data ? row_data[settings.primaryField] : null;
-            //if(settings.selectionMode == "single") {
+            
             switch(action) {
                 case "get_ids":
                 	if(settings.selectionMode == "single") {
@@ -611,7 +611,7 @@
                 	settings.selectedItems = [];
                     break;
                 case "update_counter":
-                    var selectedRows_id = createId(grid.getOption.call(elem, "selectedRows_id_prefix"), container_id);
+                    var selectedRows_id = createId(grid.getOption.call(elem, "selectedRowsIdPrefix"), container_id);
                     $("#" + selectedRows_id).text(settings.selectedItems.length);
                     break;
                 case "selected_index":
@@ -624,19 +624,19 @@
                 	settings.selectedItems.splice(row_data, 1);
                     break;
                 case "mark_selected":
-                	elem.find(table_tr_prefix + id).addClass(selected_tr_class);
+                	elem.find(table_tr_prefix + id).addClass(selectedTrClass);
                     break;
                 case "mark_deselected":
-                	elem.find(table_tr_prefix + id).removeClass(selected_tr_class);
+                	elem.find(table_tr_prefix + id).removeClass(selectedTrClass);
                     break;
                 case "mark_page_selected":
-                	elem.find(selector_table_tr).addClass(selected_tr_class);
+                	elem.find(selector_table_tr).addClass(selectedTrClass);
                     break;
                 case "mark_page_deselected":
-                	elem.find(selector_table_tr).removeClass(selected_tr_class);
+                	elem.find(selector_table_tr).removeClass(selectedTrClass);
                     break;
                 case "mark_page_inversed":
-                	elem.find(selector_table_tr).toggleClass(selected_tr_class);
+                	elem.find(selector_table_tr).toggleClass(selectedTrClass);
                     break;
             }
 
@@ -676,22 +676,19 @@
          * @return {Object}
          */
         getDefaults: function(bootstrap_version) {
-            var default_settings = {
+            var defaultSettings = {
             	page: 1,
                 rowsPerPage: 10,
                 maxRowsPerPage: 100,
                 primaryField: "",
                 selectionMode: "single", // "multiple", "single", false
                 selectedItems: [],
-                
-
                 /**
                  * MANDATORY PROPERTIES: field
                  * UNIQUE PROPERTIES: field
                  * {field: "customer_id", header: "Code", visible: "no", is_function: "no", "headerClass": "th_code hidden-xs", "dataClass": "td_code hidden-xs"},
                  */
                 fields: [],
-                //visible_columns : [],
 
                 /**
                  * MANDATORY PROPERTIES: field, order
@@ -705,7 +702,7 @@
                  * See bs_pagination plugin documentation
                  */
                 paginationOptions: {
-                    container_class: "well pagination-container",
+                    containerClass: "well pagination-container",
                     visiblePageLinks: 5,
                     showGotoPage: false,
                     showRowsPerPage: false,
@@ -717,83 +714,13 @@
                 /**
                  * See jui_filter_rules plugin documentation
                  */
+                useFilters: true,
                 filterOptions: {
                     filters: [],
                     filter_rules: []
                 }, // "bootstrap_version", "onSetRules", "onValidationError" will be ignored
-
-                use_filters: true,
                 showRowNumbers: false,
-                showSortingIndicator: true,
-                use_sortable_ists: true,
-                custom_html_element_id1: "",
-                custom_html_element_id2: "",
-
-                /* STYLES ----------------------------------------------------*/
-                bootstrap_version: "3",
-
-                // bs 3
-                container_class: "grid_container",
-                no_results_class: "alert alert-warning no-records-found",
-
-                tools_class: "tools",
-
-                columns_list_launch_button_class: "btn btn-default dropdown-toggle",
-                columns_list_launch_button_icon_class: "glyphicon glyphicon-th",
-                columns_list_class: "dropdown-menu dropdown-menu-right",
-                columns_list_label_class: "columns-label",
-                columns_list_check_class: "col-checkbox",
-                columns_list_divider_class: "divider",
-                columns_list_default_button_class: "btn btn-primary btn-xs btn-block",
-
-                sorting_list_launch_button_icon_class: "glyphicon glyphicon-sort",
-                sorting_label_checkbox_class: "radio-inline",
-                sorting_name_class: "sorting-name",
-
-                select_button_icon_class: "glyphicon  glyphicon-check",
-                selectedRows_class: "selected-rows",
-
-                filter_toggle_button_icon_class: "glyphicon glyphicon-filter",
-                filter_toggle_active_class: "btn-info",
-
-                sorting_indicator_asc_class: "glyphicon glyphicon-chevron-up text-muted",
-                sorting_indicator_desc_class: "glyphicon glyphicon-chevron-down text-muted",
-
-                datatable_container_class: "table-responsive",
-                datatable_class: "table table-bordered table-hover",
-                common_th_class: "th-common",
-                selected_tr_class: "warning",
-
-                filter_container_class: "well filters-container",
-                filter_tools_class: "",
-                filter_apply_btn_class: "btn btn-primary btn-sm filters-button",
-                filter_reset_btn_class: "btn btn-default btn-sm filters-button",
-
-                // prefixes
-                tools_id_prefix: "tools_",
-                columns_list_id_prefix: "columns_list_",
-                sorting_list_id_prefix: "sorting_list_",
-                sorting_radio_name_prefix: "sort_radio_",
-                selectedRows_id_prefix: "selectedRows_",
-                selection_list_id_prefix: "selection_list_",
-                filter_toggle_id_prefix: "filter_toggle_",
-
-                table_container_id_prefix: "tbl_container_",
-                tableIdPrefix: "tbl_",
-
-                no_results_id_prefix: "no_res_",
-
-                custom_html1_id_prefix: "custom1_",
-                custom_html2_id_prefix: "custom2_",
-
-                pagination_id_prefix: "pag_",
-                filter_container_id_prefix: "flt_container_",
-                filter_rules_id_prefix: "flt_rules_",
-                filter_tools_id_prefix: "flt_tools_",
-
-                // misc
-                debug_mode: "no",
-
+                
                 // events
                 onCellClick: function() {
                 },
@@ -804,9 +731,78 @@
                 onDebug: function() {
                 },
                 onRender: function() {
-                }
+                },
+                
+                showSortingIndicator: true,
+                useSortableLists: true,
+                custom_html_element_id1: "",
+                custom_html_element_id2: "",
+
+                /* STYLES ----------------------------------------------------*/
+                bootstrap_version: "3",
+
+                // bs 3
+                containerClass: "grid_container",
+                noResultsClass: "alert alert-warning no-records-found",
+
+                toolsClass: "tools",
+
+                columnsListLaunchButtonClass: "btn btn-default dropdown-toggle",
+                columnsListLaunchButtonIconClass: "glyphicon glyphicon-th",
+                columnsListClass: "dropdown-menu dropdown-menu-right",
+                columnsListLabelClass: "columns-label",
+                columnsListCheckClass: "col-checkbox",
+                columnsListDividerClass: "divider",
+                columnsListDefaultButtonClass: "btn btn-primary btn-xs btn-block",
+
+                sortingListLaunchButtonIconClass: "glyphicon glyphicon-sort",
+                sortingLabelCheckboxClass: "radio-inline",
+                sortingNameClass: "sorting-name",
+
+                selectButtonIconClass: "glyphicon  glyphicon-check",
+                selectedRowsClass: "selected-rows",
+
+                filterToggleButtonIconClass: "glyphicon glyphicon-filter",
+                filterToggleActiveClass: "btn-info",
+
+                sortingIndicatorAscClass: "glyphicon glyphicon-chevron-up text-muted",
+                sortingIndicatorDescClass: "glyphicon glyphicon-chevron-down text-muted",
+
+                datatableContainerClass: "table-responsive",
+                datatableClass: "table table-bordered table-hover",
+                commonThClass: "th-common",
+                selectedTrClass: "warning",
+
+                filterContainerClass: "well filters-container",
+                filterToolsClass: "",
+                filterApplyBtnClass: "btn btn-primary btn-sm filters-button",
+                filterResetBtnClass: "btn btn-default btn-sm filters-button",
+
+                // prefixes
+                toolsIdPrefix: "tools_",
+                columnsListIdPrefix: "columns_list_",
+                sortingListIdPrefix: "sorting_list_",
+                sortingRadioNamePrefix: "sort_radio_",
+                selectedRowsIdPrefix: "selectedRows_",
+                selectionListIdPrefix: "selection_list_",
+                filterToggleIdPrefix: "filter_toggle_",
+
+                tableContainerIdPrefix: "tbl_container_",
+                tableIdPrefix: "tbl_",
+
+                noResultsIdPrefix: "no_res_",
+
+                custom_html1_id_prefix: "custom1_",
+                custom_html2_id_prefix: "custom2_",
+
+                paginationIdPrefix: "pag_",
+                filterContainerIdPrefix: "flt_container_",
+                filterRulesIdPrefix: "flt_rules_",
+                filterToolsIdPrefix: "flt_tools_",
+                // misc
+                debugMode: false
             };
-            return default_settings;
+            return defaultSettings;
         },
 
         
@@ -831,11 +827,11 @@
     
     var columnIsFunction = function(column) {
         var is_function = "is_function";
-        return column.hasOwnProperty(is_function) && column[is_function] == "yes";
+        return column.hasOwnProperty(is_function) && column[is_function] === true;
     };
     
-    var getColumnHeader = function(column) {
-        return column.hasOwnProperty("header") ? column["header"] : column["field"];
+    var getColumnLabel = function(column) {
+        return column.hasOwnProperty("label") ? column["label"] : column["field"];
     };
     /**
      * Get sorting name (utility function)
@@ -854,7 +850,7 @@
      * @returns {boolean}
      */
     var columnIsSortable = function(column) {
-        return !column.hasOwnProperty("sortable") || (column.hasOwnProperty("sortable") && column["sortable"] == "yes");
+        return !column.hasOwnProperty("sortable") || (column.hasOwnProperty("sortable") && column["sortable"] === true);
     };
     
     /**
@@ -864,18 +860,8 @@
      * @returns {boolean}
      */
     var columnIsVisible = function(column) {
-    	//var elem = this,
-    	//s = grid.getAllOptions.call(elem);
-    	
-    	
         var visible = "visible";
         return !column.hasOwnProperty(visible) || (column.hasOwnProperty(visible) && column[visible] === true);
-      //var visible_columns = s.visible_columns;
-        /*if(column && column.field && visible_columns){
-    		if(visible_columns)
-    			return ($.inArray( column.field, visible_columns ) !== -1);
-    	};
-    	return false;*/
     };
 
     /**
@@ -891,7 +877,7 @@
                 delete column[visible];
             }
         } else {
-            column[visible] = "no";
+            column[visible] = false;
         }
     };
     

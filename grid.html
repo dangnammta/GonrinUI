@@ -15,17 +15,18 @@
 	<script type="text/javascript">
             $(function () {
                 $("#grid").grid({
-                	show_row_numbers: true,
+                	showRowNumbers: true,
                 	fields: [
                          {field: "id", label: "Code", visible: true, width:250, readonly: true},
                          {field: "name", label: "Ten"},
                          {field: "address", label: "Dia Chi", visible: true, "sortable": false}
                      ],
-                     data_source: [
+                     dataSource: [
                          {id:1,name:"ABC", address: "22 Huynh thuc khang"},
                          {id:2,name:"CDE", address: "33 Huynh thuc khang"},
+                         {id:3,name:"XYZ", address: "abc dhyas 1873"},
                      ],
-                     primary:"id",
+                     primaryField:"id",
                 });
                 
             });

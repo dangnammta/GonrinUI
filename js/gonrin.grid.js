@@ -44,10 +44,10 @@
                     elem.data(pluginStatus, {});
                 }
 
-                if(!settings.rowPrimaryKey) {
+                if(!settings.primaryField) {
                     settings.selectedItems = [];
                 } else {
-                    switch(settings.rowSelectionMode) {
+                    switch(settings.selectionMode) {
                         case "single":
                             if(settings.selectedItems.length > 1) {
                                 settings.selectedItems = [];
@@ -163,8 +163,8 @@
                 }
                 default_columns_list += '<li class="not-sortable ' + settings.columns_list_divider_class + '"></li>';
 
-                var row_index_checked = settings.show_row_numbers ? " checked" : "";
-                default_columns_list += '<li class="not-sortable columns-li-padding"><label class="' + settings.columns_list_label_class + '"><input type="checkbox" class="' + settings.columns_list_check_class + '"' + row_index_checked + '>&nbsp;' + rsc_bs_dg.columns_show_row_numbers + '</label></li>';
+                var row_index_checked = settings.showRowNumbers ? " checked" : "";
+                default_columns_list += '<li class="not-sortable columns-li-padding"><label class="' + settings.columns_list_label_class + '"><input type="checkbox" class="' + settings.columns_list_check_class + '"' + row_index_checked + '>&nbsp;' + rsc_bs_dg.columns_showRowNumbers + '</label></li>';
                 default_columns_list += '<li class="not-sortable ' + settings.columns_list_divider_class + '"></li>';
                 default_columns_list += '<li class="not-sortable columns-li-padding"><button class="' + settings.columns_list_default_button_class + '">' + rsc_bs_dg.columns_default + '</button></li>';
 
@@ -216,8 +216,8 @@
                 tools_html += '</div>';
 
                 // selection list ----------------------------------------------
-                if(settings.rowPrimaryKey &&
-                    (settings.rowSelectionMode == "single" || settings.rowSelectionMode == "multiple")) {
+                if(settings.primaryField &&
+                    (settings.selectionMode == "single" || settings.selectionMode == "multiple")) {
                     tools_html += '<div class="btn-group pull-right">';
 
                     tools_html += '<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" title="' + rsc_bs_dg.select + '">';
@@ -228,7 +228,7 @@
 
                     tools_html += '<ul id="' + selection_list_id + '" class="dropdown-menu dropdown-menu-right">';
 
-                    if(settings.rowSelectionMode == "multiple") {
+                    if(settings.selectionMode == "multiple") {
                         tools_html += '<li><a href="javascript:void(0);">' + rsc_bs_dg.select_all_in_page + '</a></li>';
                         tools_html += '<li><a href="javascript:void(0);">' + rsc_bs_dg.deselect_all_in_page + '</a></li>';
                         tools_html += '<li><a href="javascript:void(0);">' + rsc_bs_dg.select_inverse_in_page + '</a></li>';
@@ -274,7 +274,7 @@
 	            elem_pagination = $("#" + pagination_id),
 	            err_msg;
         	
-        	var server_error, filter_error, rowPrimaryKey, total_rows, page_data_len, v,
+        	var server_error, filter_error, primaryField, total_rows, page_data_len, v,
             columns = s.fields,
             col_len = columns.length,
             column, c;
@@ -282,7 +282,7 @@
         	total_rows = page_data.length;
             page_data_len = page_data.length;
             
-            rowPrimaryKey = s.rowPrimaryKey;
+            primaryField = s.primaryField;
             
          // replace null with empty string
             if(page_data_len > 0) {
@@ -308,17 +308,17 @@
                 offset = ((page_num - 1) * rowsPerPage);
 
             tbl_html = '<thead>';
-            row_id_html = (rowPrimaryKey ? ' id="' + table_id + '_tr_0"' : '');
+            row_id_html = (primaryField ? ' id="' + table_id + '_tr_0"' : '');
             tbl_html += '<tr' + row_id_html + '>';
 
-            if(s.show_row_numbers) {
+            if(s.showRowNumbers) {
                 tbl_html += '<th class="' + s.common_th_class + '">' + rsc_bs_dg.row_index_header + '</th>';
             };
             
             for(i in s.fields) {
                 if(columnIsVisible.call(elem,s.fields[i])) {
                     sorting_indicator = "";
-                    if(s.show_sorting_indicator) {
+                    if(s.showSortingIndicator) {
                         var sorting_type = "none";
                         for(var e in s.sorting) {
                             if(s.sorting[e].field == s.fields[i].field) {
@@ -351,12 +351,12 @@
             var grid_data = elem_table.find('tbody.grid-data');
             
             for(row in page_data) {
-            	row_id_html = (rowPrimaryKey ? table_id + '_tr_' + page_data[row][rowPrimaryKey] : '');
+            	row_id_html = (primaryField ? table_id + '_tr_' + page_data[row][primaryField] : '');
             	var trow = $("<tr>").attr("id",row_id_html);
             	trow.data("row_data",page_data[row]);
                 var tr_tbl_html = '';
 
-                if(s.show_row_numbers) {
+                if(s.showRowNumbers) {
                     row_index = offset + parseInt(row) + 1;
                     tr_tbl_html += '<td>' + row_index + '</td>';
                 }
@@ -390,7 +390,7 @@
             }
             
          // apply given styles ------------------------------------------
-            var col_index = s.show_row_numbers ? 1 : 0,
+            var col_index = s.showRowNumbers ? 1 : 0,
                 headerClass = "", dataClass = "";
             for(i in s.columns) {
                 if(columnIsVisible.call(elem,s.columns[i])) {
@@ -407,9 +407,9 @@
             }
 
             // apply row selections ----------------------------------------
-            if(s.rowPrimaryKey && s.selectedItems.length > 0) {
+            if(s.primaryField && s.selectedItems.length > 0) {
 
-                if(s.rowSelectionMode == "single" || s.rowSelectionMode == "multiple") {
+                if(s.selectionMode == "single" || s.selectionMode == "multiple") {
                     var row_prefix_len = (table_id + "_tr_").length,
                         row_id, idx;
                     $("#" + table_id + " tbody tr").each(function() {
@@ -435,8 +435,8 @@
             //Edit later
             var settings = s;
          // row selection -----------------------------------------------
-            if(settings.rowPrimaryKey &&
-                (settings.rowSelectionMode == "single" || settings.rowSelectionMode == "multiple")) {
+            if(settings.primaryField &&
+                (settings.selectionMode == "single" || settings.selectionMode == "multiple")) {
 
                 var row_prefix_len = (table_id + "_tr_").length;
                 
@@ -453,7 +453,7 @@
                         grid.selectedRows.call(elem, "mark_deselected", row_data);
                         row_status = "deselected";
                     } else {
-                        if(settings.rowSelectionMode == "single") {
+                        if(settings.selectionMode == "single") {
                             grid.selectedRows.call(elem, "clear_all_ids");
                             grid.selectedRows.call(elem, "mark_page_deselected");
                         };
@@ -477,10 +477,10 @@
                 elem_selection_list.off("click", "li").on("click", "li", function() {
                     var sel_index = $(this).index();
 
-                    if(settings.rowSelectionMode == "single") {
+                    if(settings.selectionMode == "single") {
                         grid.selectedRows.call(elem, "clear_all_ids");
                         grid.selectedRows.call(elem, "mark_page_deselected");
-                    } else if(settings.rowSelectionMode == "multiple") {
+                    } else if(settings.selectionMode == "multiple") {
 
                         var selector_table_tr = "#" + table_id + " tbody tr",
                             row_prefix_len = (table_id + "_tr_").length,
@@ -594,14 +594,14 @@
                 selector_table_tr = "#" + table_id + " tbody tr",
                 table_tr_prefix = "#" + table_id + "_tr_";
             
-            var id = row_data ? row_data[settings.rowPrimaryKey] : null;
-            //if(settings.rowSelectionMode == "single") {
+            var id = row_data ? row_data[settings.primaryField] : null;
+            //if(settings.selectionMode == "single") {
             switch(action) {
                 case "get_ids":
-                	if(settings.rowSelectionMode == "single") {
+                	if(settings.selectionMode == "single") {
                 		return settings.selectedItems;
                 	};
-                	if(settings.rowSelectionMode == "multiple") {
+                	if(settings.selectionMode == "multiple") {
                 		/*TODO*/
                 		return settings.selectedItems;
                 	};
@@ -645,7 +645,7 @@
          * Get plugin version
          * @returns {string}
          */
-        get_version: function() {
+        getVersion: function() {
             return "0.0.1";
         },
         /**
@@ -680,8 +680,8 @@
             	page: 1,
                 rowsPerPage: 10,
                 maxRowsPerPage: 100,
-                rowPrimaryKey: "",
-                rowSelectionMode: "single", // "multiple", "single", false
+                primaryField: "",
+                selectionMode: "single", // "multiple", "single", false
                 selectedItems: [],
                 
 
@@ -704,27 +704,27 @@
                 /**
                  * See bs_pagination plugin documentation
                  */
-                pagination_options: {
+                paginationOptions: {
                     container_class: "well pagination-container",
-                    visible_page_links: 5,
-                    show_goto_page: false,
-                    show_rowsPerPage: false,
-                    show_rows_info: false,
-                    show_rows_default_info: true,
-                    disable_text_selection_in_navpane: true
+                    visiblePageLinks: 5,
+                    showGotoPage: false,
+                    showRowsPerPage: false,
+                    showRowsInfo: false,
+                    showRowsDefaultInfo: true,
+                    //disable_text_selection_in_navpane: true
                 }, // "currentPage", "rowsPerPage", "maxrowsPerPage", "totalPages", "totalRows", "bootstrap_version", "onChangePage" will be ignored
 
                 /**
                  * See jui_filter_rules plugin documentation
                  */
-                filter_options: {
+                filterOptions: {
                     filters: [],
                     filter_rules: []
                 }, // "bootstrap_version", "onSetRules", "onValidationError" will be ignored
 
                 use_filters: true,
-                show_row_numbers: false,
-                show_sorting_indicator: true,
+                showRowNumbers: false,
+                showSortingIndicator: true,
                 use_sortable_ists: true,
                 custom_html_element_id1: "",
                 custom_html_element_id2: "",
@@ -896,7 +896,6 @@
     };
     
     $.fn.grid = function(method) {
-    	console.log('do int grid');
         if(this.size() != 1) {
             var err_msg = "You must use this plugin (" + pluginName + ") with a unique element (at once)";
             this.html('<span style="color: red;">' + 'ERROR: ' + err_msg + '</span>');

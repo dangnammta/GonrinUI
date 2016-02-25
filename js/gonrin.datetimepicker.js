@@ -2322,7 +2322,8 @@
             picker.disable();
         }
         if (input.is('input') && input.val().trim().length !== 0) {
-            setValue(parseInputDate(input.val().trim()));
+         // setValue(parseInputDate(input.val().trim()));
+			parseInputDate(input.val().trim());          
         }
         else if (options.defaultDate && input.attr('placeholder') === undefined) {
             setValue(options.defaultDate);

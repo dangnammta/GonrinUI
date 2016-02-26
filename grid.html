@@ -7,6 +7,10 @@
 	<link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css">
 		<!-- Optional theme -->
 	<link rel="stylesheet" href="vendor/bootstrap/css/bootstrap-theme.min.css">
+	<script src="js/underscore.js"></script>
+	<script src="js/gonrin.query.js"></script>
+	
+	
 	<script src="js/localization/gonrin.grid.lang.en.js"></script>
 	<script src="js/localization/gonrin.pagination.lang.en.js"></script>
 	<script src="js/gonrin.pagination.js"></script>
@@ -15,19 +19,56 @@
 	<script type="text/javascript">
             $(function () {
                 $("#grid").grid({
-                	showRowNumbers: true,
+                	//showRowNumbers: true,
+                	showSortingIndicator: true,
                 	fields: [
-                         {field: "id", label: "Code", visible: true, width:250, readonly: true},
-                         {field: "name", label: "Ten"},
-                         {field: "address", label: "Dia Chi", visible: true, "sortable": false}
+                         {field: "id", label: "Code", visible: true, width:"250px", sortable: {order:false}},
+                         {
+                        	 field: "name", 
+                        	 label: "Ten",
+                        	 textField: "name",
+                             valueField: "id",
+                       	 },
+                         {field: "address", label: "Dia Chi", visible: true, "sortable": {order:"desc"}},
+                         { field: "age",
+                        	 //label:"Age",
+                             groupable: false,
+                             aggregates: [ "count", "min", "max" ],
+                             groupFooterTemplate: "age total: #: count #, min: #: min #, max: #: max #",
+                             sortable:{
+                            	 order: "asc",
+                            	 /*compare: function(a, b) {
+                                     return a - b;
+                                 },*/
+                             }
+                         }
                      ],
                      dataSource: [
-                         {id:1,name:"ABC", address: "22 Huynh thuc khang"},
-                         {id:2,name:"CDE", address: "33 Huynh thuc khang"},
-                         {id:3,name:"XYZ", address: "abc dhyas 1873"},
+                         {id:1,name:"ABC", address: "22 Huynh thuc khang", age: 30},
+                         {id:2,name:"CDE", address: "33 Huynh thuc khang", age: 40},
+                         {id:3,name:"XYZ", address: "abc dhyas 1873", age:25},
+                         {id:4,name:"ABC1", address: "223 Huynh thuc khang", age: 40},
+                         {id:5,name:"CDE1", address: "333 Huynh thuc khang", age : 47},
+                         {id:6,name:"XYZ1", address: "abc3 dhyas 1873", age: 22},
                      ],
                      primaryField:"id",
+                     selectionMode: "multiple"
                 });
+                
+                var data = [
+                            {id:1,name:"ABC", address: "22 Huynh thuc khang"},
+                            {id:2,name:"CDE", address: "33 Huynh thuc khang"},
+                            {id:3,name:"XYZ", address: "abc dhyas 1873"},
+                            {id:4,name:"ABC1", address: "223 Huynh thuc khang"},
+                            {id:5,name:"CDE1", address: "333 Huynh thuc khang"},
+                            {id:6,name:"XYZ1", address: "abc3 dhyas 1873"},
+                        ];
+                
+                var ret = _.query( data, {
+                    //featured:true, 
+                    id: {$gt:3}
+                });
+                console.log(ret);
                 
             });
      </script>

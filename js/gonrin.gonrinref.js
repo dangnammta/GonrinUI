@@ -66,7 +66,6 @@
         *
         ********************************************************************************/
         setupWidget = function () {
-			console.log("setupwidget");
 			if ((!!options.dataSource) && (typeof options.dataSource === "string")) {
 
 				require([ options.dataSource ], function ( RefView ) {
@@ -118,8 +117,6 @@
             if(widget){
             	widget.dialog({
             		success: function(){
-            			//console.log(widget.selectedItems);
-            			//console.log(widget.selectionMode);
             			if((!!widget)&&(!!widget.selectedItems)&&(widget.selectedItems.length > 0)){
             				var seleted = widget.selectedItems;
             				if(widget.selectionMode === "single"){

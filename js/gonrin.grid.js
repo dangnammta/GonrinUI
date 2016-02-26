@@ -19,7 +19,7 @@
 		var grobject = {},
 		language = {},
 		selectedItems = [],
-		data, //datalist
+		data = [], //datalist
 		filteredData,
 		dataSource,
 		filterExp, 
@@ -530,10 +530,49 @@
         initDataSource = function(refresh){
         	dataSource = options["dataSource"];
         	if(typeof dataSource === "object"){
-        		data = dataSource;
-        		sortData();
-        		//sort Data
-        		renderData(data, refresh);
+        		if((!!dataSource['_is_gonrin_view']) && (!!dataSource.collection)){
+        			console.log('instance of collection view');
+        			var view = dataSource;
+        			view.collection.fetch({
+                        success: function (objs) {
+                        	var page = view.collection.page,
+                        		num_rows = view.collection.num_rows,
+                        		total_pages = view.collection.total_pages;
+                        	
+                        	view.collection.each(function(model) {
+                        		data.push(model.attributes);
+							});
+                        	sortData();
+                    		//sort Data
+                    		renderData(data, refresh);
+                        	//grid.render_data.call(elem, page_data, page, total_pages, num_rows, refresh_pag);
+                        },
+                        error:function(){
+                        	var filter_error;
+                            var err_msg = "ERROR: " + "Collection fetch error";
+                            element.html('<span style="color: red;">' + err_msg + '</span>');
+                            element.triggerHandler("griderror", {err_code: "server_error", err_description: err_msg});
+                            $.error(err_msg);
+
+                            /*if(s.useFilters) {
+                                var elem_filter_rules = $("#" + filter_rules_id);
+                                filter_error = data["filter_error"];
+                                if(filter_error["error_message"] != null) {
+                                    elem_filter_rules.jui_filter_rules("markRuleAsError", filter_error["element_rule_id"], true);
+                                    elem_filter_rules.triggerHandler("onValidationError", {err_code: "filter_validation_server_error", err_description: filter_error["error_message"]});
+                                    $.error(filter_error["error_message"]);
+                                }
+                            }*/
+                        },
+                    });
+        		}else{
+        			data = dataSource;
+            		sortData();
+            		//sort Data
+            		renderData(data, refresh);
+        			//grid.render_data.call(elem, dataSource, refresh_pag);
+        		}
+        		
         	}
         },
         

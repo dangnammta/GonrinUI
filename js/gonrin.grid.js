@@ -251,12 +251,22 @@
             }
             
          // refresh pagination (if needed)
-            if(refresh) {
-            	/*elemPagination.pagination({
-                    currentPage: pageNum,
-                    totalPages: totalPages,
-                    totalRows: numRows
-                });*/
+            if(options.pagination !== false) {
+            	if($.fn.pagination !== undefined){
+            		elemPagination.pagination({
+                		page: 1,
+                    	pageSize: 10,
+                    	totalPages: 100,
+                    	virtualTotalPages:null,
+                        visiblePageLinks: 5,
+                        showGotoPage: false,
+                        showRowsPerPage: false,
+                        showRowsInfo: false,
+                        showRowsDefaultInfo: true,
+                        containerClass: "well pagination-container",
+                    });
+            	}
+            	
             }
             // no results
             if(totalRows == 0) {
@@ -613,8 +623,7 @@
             table_id = createId(options.tableIdPrefix, container_id),
             noResultsId = createId(options.noResultsIdPrefix, container_id),
             filter_toggle_id = createId(options.filterToggleIdPrefix, container_id),
-            custom_html1_id = createId(options.custom_html1_id_prefix, container_id),
-            custom_html2_id = createId(options.custom_html2_id_prefix, container_id),
+            
             pagination_id = createId(options.paginationIdPrefix, container_id),
             filter_container_id = createId(options.filterContainerIdPrefix, container_id),
             filter_rules_id = createId(options.filterRulesIdPrefix, container_id),
@@ -658,9 +667,9 @@
             element.html(elemHtml);
             element.find("#" + noResultsId).hide();
             
-            var elem_tools = element.find("#" + tools_id),
+            /*var elem_tools = element.find("#" + tools_id),
             elemTable = element.find("#" + table_id),
-            elem_pagination = element.find("#" + pagination_id);
+            elem_pagination = element.find("#" + pagination_id);*/
             
             initDataSource(true);
         },

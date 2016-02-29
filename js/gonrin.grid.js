@@ -780,10 +780,10 @@
 /*****************************************/
 	
 	$.fn.grid = function (options) {
-		
         return this.each(function () {
             var $this = $(this);
-            if ($this.data('gonrin')){
+            options.refresh = options.refresh || false;
+            if ($this.data('gonrin') && options.refresh){
             	$this.data('gonrin', null);
             }
             if (!$this.data('gonrin')) {
@@ -795,6 +795,7 @@
     };
 
     $.fn.grid.defaults = {
+    	refresh: false,
         primaryField: "",
         selectionMode: "single", // "multiple", "single", false
         selectedItems: [],

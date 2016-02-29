@@ -453,9 +453,9 @@
                     		}
             			}
             		}
-            		
+            		filterData();
             		sortData();
-            		renderData(data, true);
+            		renderData(filteredData, true);
             	}
             	
 
@@ -493,21 +493,19 @@
                     		continue;
                     	}
                     	
-                    	//console.log(sortable + " " + field + " " + compare + " " + sortingType);
-                    	if((data != null) && (field !== false)){
+                    	if((filteredData != null) && (field !== false)){
 	                        switch(sortingType) {
 	                            case "asc":
-                            		data.sort(function(a,b){
+	                            	filteredData.sort(function(a,b){
                             			if(compare !== false){
                             				return compare(a[field], b[field]);
                             			}else{
                             				return a[field] > b[field];
                             			}
                             		});
-	                            	
 	                                break;
 	                            case "desc":
-	                            	data.sort(function(a,b){
+	                            	filteredData.sort(function(a,b){
                             			if(compare !== false){
                             				return compare(b[field], a[field]);
                             			}else{
@@ -542,10 +540,9 @@
                         	view.collection.each(function(model) {
                         		data.push(model.attributes);
 							});
-                        	sortData();
-                    		//sort Data
-                    		renderData(data, refresh);
-                        	//grid.render_data.call(elem, page_data, page, total_pages, num_rows, refresh_pag);
+                        	filterData();
+                			sortData();
+                    		renderData(filteredData, refresh);
                         },
                         error:function(){
                         	var filter_error;
@@ -567,10 +564,9 @@
                     });
         		}else{
         			data = dataSource;
-            		sortData();
-            		//sort Data
-            		renderData(data, refresh);
-        			//grid.render_data.call(elem, dataSource, refresh_pag);
+        			filterData();
+        			sortData();
+            		renderData(filteredData, refresh);
         		}
         		
         	}
@@ -721,6 +717,15 @@
                     break;
             }
 
+        },
+        filterData = function(){
+        	var query = options.filters;
+        	if(query !== null){
+        		filteredData = _.query( data, query);
+        	}else{
+        		filteredData = data
+        	}
+        	
         };
         
         /********************************************************************************
@@ -752,6 +757,13 @@
             return options;
         };
         
+        grobject.filter = function(query){
+        	options.filters = query;
+        	filterData();
+        	sortData();
+        	renderData(filteredData);
+        };
+        
         
 
         $.extend(true, options, dataToOptions());
@@ -771,6 +783,9 @@
 		
         return this.each(function () {
             var $this = $(this);
+            if ($this.data('gonrin')){
+            	$this.data('gonrin') = null;
+            }
             if (!$this.data('gonrin')) {
                 // create a private copy of the defaults object
                 options = $.extend(true, {}, $.fn.grid.defaults, options);
@@ -810,12 +825,9 @@
         /**
          * See jui_filter_rules plugin documentation
          */
-        useFilters: true,
+        //useFilters: true,
         //customize filter dialog
-        filters: {
-            filters: [],
-            filterRules: []
-        }, // "bootstrap_version", "onSetRules", "onValidationError" will be ignored
+        filters: null, // "bootstrap_version", "onSetRules", "onValidationError" will be ignored
         showRowNumbers: false,
         
         // events

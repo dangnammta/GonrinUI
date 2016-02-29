@@ -784,7 +784,7 @@
         return this.each(function () {
             var $this = $(this);
             if ($this.data('gonrin')){
-            	$this.data('gonrin') = null;
+            	$this.data('gonrin', null);
             }
             if (!$this.data('gonrin')) {
                 // create a private copy of the defaults object

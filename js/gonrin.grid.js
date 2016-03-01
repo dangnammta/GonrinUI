@@ -607,32 +607,32 @@
                 }
             }
             
-            var container_id = element.attr("id");
+            var containerId = element.attr("id");
             element.removeClass().addClass(options.containerClass);
             
-            var tools_id = createId(options.toolsIdPrefix, container_id),
-            columns_list_id = createId(options.columnsListIdPrefix, container_id),
+            var toolsId = createId(options.toolsIdPrefix, containerId),
+            columns_list_id = createId(options.columnsListIdPrefix, containerId),
             default_columns_list = "",
-            sorting_list_id = createId(options.sortingListIdPrefix, container_id),
+            sorting_list_id = createId(options.sortingListIdPrefix, containerId),
             default_sorting_list = "",
-            sorting_radio_name = createId(options.sortingRadioNamePrefix, container_id) + "_",
+            sorting_radio_name = createId(options.sortingRadioNamePrefix, containerId) + "_",
             startPos, newPos,
-            selectedRows_id = createId(options.selectedRowsIdPrefix, container_id),
-            selection_list_id = createId(options.selectionListIdPrefix, container_id),
-            table_container_id = createId(options.tableContainerIdPrefix, container_id),
-            table_id = createId(options.tableIdPrefix, container_id),
-            noResultsId = createId(options.noResultsIdPrefix, container_id),
-            filter_toggle_id = createId(options.filterToggleIdPrefix, container_id),
+            selectedRows_id = createId(options.selectedRowsIdPrefix, containerId),
+            selection_list_id = createId(options.selectionListIdPrefix, containerId),
+            table_container_id = createId(options.tableContainerIdPrefix, containerId),
+            table_id = createId(options.tableIdPrefix, containerId),
+            noResultsId = createId(options.noResultsIdPrefix, containerId),
+            filter_toggle_id = createId(options.filterToggleIdPrefix, containerId),
             
-            pagination_id = createId(options.paginationIdPrefix, container_id),
-            filter_container_id = createId(options.filterContainerIdPrefix, container_id),
-            filter_rules_id = createId(options.filterRulesIdPrefix, container_id),
-            filter_tools_id = createId(options.filterToolsIdPrefix, container_id),
-            elemHtml = "", tools_html = "";
+            pagination_id = createId(options.paginationIdPrefix, containerId),
+            filter_container_id = createId(options.filterContainerIdPrefix, containerId),
+            filter_rules_id = createId(options.filterRulesIdPrefix, containerId),
+            filter_tools_id = createId(options.filterToolsIdPrefix, containerId),
+            elemHtml = "";
             
             
          // create basic html structure ---------------------------------
-            elemHtml += '<div id="' + tools_id + '" class="' + options.toolsClass + '"></div>';
+            elemHtml += '<div id="' + toolsId + '" class="' + options.toolsClass + '"></div>';
 
             elemHtml += '<div id="' + table_container_id + '" class="' + options.datatableContainerClass + '">';
             elemHtml += '<table id="' + table_id + '" class="' + options.datatableClass + '"></table>';
@@ -666,6 +666,29 @@
 
             element.html(elemHtml);
             element.find("#" + noResultsId).hide();
+            
+            var elemTools = element.find("#" + toolsId);
+            
+            var toolsHtml = $("<div>").addClass("btn-group").appendTo(elemTools);
+            
+            if(options.tools){
+            	for(var i = 0; i < options.tools.length; i ++){
+            		var button = $("<button>").addClass("btn btn-sm").attr({"type":"button","name": options.tools[i].name}).html(options.tools[i].label || options.tools[i].name);
+            		button.addClass(options.tools[i].buttonClass || "btn-default");
+            		if(options.tools[i].command){
+            			button.bind("click", $.proxy(options.tools[i].command, options.context));
+            		}
+            		toolsHtml.append(button);
+            	}
+            }
+            
+            
+            //<div role="group" class="toolbar btn-group"><button btn-name="back" class="btn btn-default btn-sm" type="button">Quay lại</button><button btn-name="save" class="btn btn-success btn-sm" type="button">Lưu</button><button btn-name="delete" class="btn btn-danger btn-sm" type="button">Xoá</button></div>
+            
+            
+            
+            
+            
             
             /*var elem_tools = element.find("#" + tools_id),
             elemTable = element.find("#" + table_id),
@@ -805,6 +828,7 @@
 
     $.fn.grid.defaults = {
     	refresh: false,
+    	context: null,
         primaryField: "",
         selectionMode: "single", // "multiple", "single", false
         selectedItems: [],
@@ -832,12 +856,9 @@
             //disable_text_selection_in_navpane: true
         }, // "currentPage", "rowsPerPage", "maxrowsPerPage", "totalPages", "totalRows", "bootstrap_version", "onChangePage" will be ignored
 
-        /**
-         * See jui_filter_rules plugin documentation
-         */
-        //useFilters: true,
-        //customize filter dialog
-        filters: null, // "bootstrap_version", "onSetRules", "onValidationError" will be ignored
+        
+        filters: null,
+        tools: null,
         showRowNumbers: false,
         
         // events

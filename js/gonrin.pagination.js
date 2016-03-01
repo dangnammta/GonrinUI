@@ -57,10 +57,25 @@
                 'delete': 46,
                 46: 'delete'
         },
+        
         keyState = {},
         _lastkey,
         _prev,
         _typing_timeout,
+        language = {
+				go_to_page_title: 'Go to page',
+			    rows_per_page_title: 'Rows per page',
+			    current_page_label: 'Page',
+			    current_page_abbr_label: 'p.',
+			    total_pages_label: 'of',
+			    total_pages_abbr_label: '/',
+			    total_rows_label: 'of',
+			    rows_info_records: 'records',
+			    go_top_text: '&laquo;',
+			    go_prev_text: '&larr;',
+			    go_next_text: '&rarr;',
+			    go_last_text: '&raquo;'
+		},
         
         /********************************************************************************
         *
@@ -95,26 +110,30 @@
                 throw new Error('Cannot apply to non input, select element');
             }
             
+         // bind events
+            element.unbind("onChangePage").bind("onChangePage", options.context? $.proxy(options.onChangePage, options.context): options.onChangePage);
+            element.unbind("onLoad").bind("onLoad", options.context? $.proxy(options.onLoad, options.context): options.onLoad);
+            
          // retrieve options
-            var container_id = element.attr("id"),
+            var containerId = element.attr("id"),
 
-                nav_list_id = createId(options.nav_list_id_prefix, container_id),
-                nav_top_id = createId(options.nav_top_id_prefix, container_id),
-                nav_prev_id = createId(options.nav_prev_id_prefix, container_id),
-                nav_item_id_prefix = createId(options.nav_item_id_prefix, container_id) + "_",
-                nav_next_id = createId(options.nav_next_id_prefix, container_id),
-                nav_last_id = createId(options.nav_last_id_prefix, container_id),
+                nav_list_id = createId(options.navListIdPrefix, containerId),
+                nav_top_id = createId(options.navTopIdPrefix, containerId),
+                nav_prev_id = createId(options.navPrevIdPrefix, containerId),
+                navItemIdPrefix = createId(options.navItemIdPrefix, containerId) + "_",
+                nav_next_id = createId(options.navNextIdPrefix, containerId),
+                nav_last_id = createId(options.navLastIdPrefix, containerId),
 
-                goto_page_id = createId(options.nav_goto_page_id_prefix, container_id),
-                rows_per_page_id = createId(options.nav_rows_per_page_id_prefix, container_id),
-                rows_info_id = createId(options.nav_rows_info_id_prefix, container_id),
+                goto_page_id = createId(options.nav_goto_page_id_prefix, containerId),
+                rows_per_page_id = createId(options.nav_rows_per_page_id_prefix, containerId),
+                rows_info_id = createId(options.nav_rows_info_id_prefix, containerId),
 
                 html = "",
-                previous_selection, current_selection,
-                selector_nav_top, selector_nav_prev, selector_nav_pages, selector_nav_next, selector_nav_last,
+                previousSelection, currentSelection,
+                selector_nav_top, selector_nav_prev, selectorNavPages, selectorNavNext, selector_nav_last,
                 selector_go_to_page, selector_rows_per_page;
             
-            console.log(options);
+            
             html += '<div class="' + options.mainWrapperClass + '">';
 
             html += '<div class="' + options.navListContainerClass + '">';
@@ -127,16 +146,16 @@
             if(options.showGoToPage && options.visiblePageLinks < options.totalPages) {
                 html += '<div class="' + options.navGoToPageContainerClass + '">';
                 html += '<div class="input-group">';
-                html += '<span class="input-group-addon" title="' + rsc_bs_pag.go_to_page_title + '"><i class="' + options.navGoToPageIconClass + '"></i></span>';
-                html += '<input id="' + goto_page_id + '" type="text" class="' + options.navGoToPageClass + '" title="' + rsc_bs_pag.go_to_page_title + '">';
+                html += '<span class="input-group-addon" title="' + language.go_to_page_title + '"><i class="' + options.navGoToPageIconClass + '"></i></span>';
+                html += '<input id="' + goto_page_id + '" type="text" class="' + options.navGoToPageClass + '" title="' + language.go_to_page_title + '">';
                 html += '</div>';
                 html += '</div>';
             }
             if(options.showRowsPerPage) {
                 html += '<div class="' + options.navRowsPerPageContainerClass + '">';
                 html += '<div class="input-group">';
-                html += '<span class="input-group-addon" title="' + rsc_bs_pag.rows_per_page_title + '"><i class="' + options.navRowsPerPageIconClass + '"></i></span>';
-                html += '<input id="' + rows_per_page_id + '" value="' + options.rowsPerPage + '" type="text" class="' + options.navRowsPerPageClass + '" title="' + rsc_bs_pag.rows_per_page_title + '">';
+                html += '<span class="input-group-addon" title="' + language.rows_per_page_title + '"><i class="' + options.navRowsPerPageIconClass + '"></i></span>';
+                html += '<input id="' + rows_per_page_id + '" value="' + options.pageSize + '" type="text" class="' + options.navRowsPerPageClass + '" title="' + language.rows_per_page_title + '">';
                 html += '</div>';
                 html += '</div>';
             }
@@ -151,7 +170,175 @@
             // set nav_pane_html
             element.html(html);
             
+            previousSelection = null;
+            currentSelection = options.page;
+            changePage(containerId, previousSelection, currentSelection, true, false);
             
+            //apply style
+            element.addClass(options.containerClass);
+            
+            
+            //Events
+         // panel events ------------------------------------------------
+            if(!options.directURL) {
+
+                // click on go to top
+                /*selector_nav_top = "#" + nav_top_id;
+                element.off("click", selector_nav_top).on("click", selector_nav_top, function() {
+                    var previous_selection = options.page;
+                    options.page = 1;
+                    var current_selection = options.page;
+                    changePage(container_id, previous_selection, current_selection, true, true);
+                });
+
+                // click on go to prev
+                selector_nav_prev = "#" + nav_prev_id;
+                element.off("click", selector_nav_prev).on("click", selector_nav_prev, function() {
+                    if(options.currentPage > 1) {
+                        var previous_selection = options.currentPage;
+                        options.currentPage = parseInt(options.currentPage) - 1;
+                        var current_selection = options.currentPage;
+                        var recreate_nav = (elem.data("nav_start") == previous_selection);
+                        change_page(container_id, previous_selection, current_selection, recreate_nav, true);
+                    }
+                });
+
+                // click on go to next
+                selectorNavNext = "#" + nav_next_id;
+                element.off("click", selectorNavNext).on("click", selectorNavNext, function() {
+                    if(options.currentPage < options.totalPages) {
+                        var previous_selection = options.currentPage;
+                        options.currentPage = parseInt(options.currentPage) + 1;
+                        var current_selection = options.currentPage;
+                        var recreate_nav = (elem.data("nav_end") == previous_selection);
+                        change_page(container_id, previous_selection, current_selection, recreate_nav, true);
+                    }
+                });
+
+                // click on go to last
+                selector_nav_last = "#" + nav_last_id;
+                element.off("click", selector_nav_last).on("click", selector_nav_last, function() {
+                    var previous_selection = options.currentPage;
+                    options.currentPage = parseInt(options.totalPages);
+                    var current_selection = options.currentPage;
+                    changePage(container_id, previous_selection, current_selection, true, true);
+                });*/
+
+                // click on nav page item
+                selectorNavPages = '[id^="' + navItemIdPrefix + '"]';
+                element.off("click", selectorNavPages).on("click", selectorNavPages, function(event) {
+                    var previousSelection = options.page;
+                    var len = navItemIdPrefix.length;
+                    options.page = parseInt($(event.target).attr("id").substr(len));
+                    var currentSelection = options.page;
+                    changePage(containerId, previousSelection, currentSelection, false, true);
+                });
+            }
+            
+        },
+        disableSelection = function(ele) {
+            return ele
+                .attr("unselectable", "on")
+                .css("user-select", "none")
+                .on("selectstart", false);
+        },
+        changePage = function(container_id, previousSelection, currentSelection, updateNavItems, triggerChangePage){
+        	var navItemIdPrefix = createId(options.navItemIdPrefix, container_id) + "_";
+	
+	        if(updateNavItems) {
+	
+	            var nav_list = createId(options.navListIdPrefix, container_id),
+	                nav_top_id = createId(options.navTopIdPrefix, container_id),
+	                nav_prev_id = createId(options.navPrevIdPrefix, container_id),
+	                nav_next_id = createId(options.navNextIdPrefix, container_id),
+	                nav_last_id = createId(options.navLastIdPrefix, container_id),
+	
+	                elem_nav_list = element.find("#" + nav_list),
+	                nav_html = "",
+	                nav_start = parseInt(options.page),
+	                nav_end,
+	                i, mod, offset, totalSections,
+	                nav_url = "",
+	                no_url = "javascript:void(0);";
+	
+	            // navigation pages numbers
+	            if(options.totalPages < options.visiblePageLinks) {
+	                nav_start = 1;
+	                nav_end = options.totalPages;
+	            } else {
+	                totalSections = Math.ceil(options.totalPages / options.visiblePageLinks);
+	                if(nav_start > options.visiblePageLinks * (totalSections - 1)) {
+	                    nav_start = options.totalPages - options.visiblePageLinks + 1;
+	                } else {
+	                    mod = nav_start % options.visiblePageLinks;
+	                    offset = mod == 0 ? - options.visiblePageLinks + 1 : -mod + 1;
+	                    nav_start += offset;
+	                }
+	                nav_end = nav_start + options.visiblePageLinks - 1;
+	            }
+	
+	            // store nav_start nav_end
+	            element.data("nav_start", nav_start);
+	            element.data("nav_end", nav_end);
+	
+	            // create nav pages html -----------------------------------------------
+	            // show - hide backward nav controls
+	            if(nav_start > 1) {
+	                nav_url = options.directURL ? options.directURL(1) : no_url;
+	                nav_html += '<li><a id="' + nav_top_id + '" href="' + nav_url + '">' + language.go_top_text + '</a></li>';
+	                nav_url = options.directURL ? options.directURL(nav_start - 1) : no_url;
+	                nav_html += '<li><a id="' + nav_prev_id + '" href="' + nav_url + '">' + language.go_prev_text + '</a></li>';
+	            }
+	            // show nav pages
+	            for(i = nav_start; i <= nav_end; i++) {
+	                nav_url = options.directURL ? options.directURL(i) : no_url;
+	                nav_html += '<li><a id="' + navItemIdPrefix + i + '" href="' + nav_url + '">' + i + '</a></li>';
+	            }
+	            // show - hide forward nav controls
+	            if(nav_end < options.totalPages) {
+	                nav_url = options.directURL ? options.directURL(nav_end + 1) : no_url;
+	                nav_html += '<li><a id="' + nav_next_id + '" href="' + nav_url + '">' + language.go_next_text + '</a></li>';
+	                nav_url = options.directURL ? options.directURL(options.totalPages) : no_url;
+	                nav_html += '<li><a id="' + nav_last_id + '" href="' + nav_url + '">' + language.go_last_text + '</a></li>';
+	            }
+	            elem_nav_list.html(nav_html);
+	
+	            if(options.disableTextSelectionInNavPane) {
+	                disableSelection(elem_nav_list);
+	            }
+	
+	        }
+	
+	        // retrieve options
+	        var prev_elem = $("#" + navItemIdPrefix + previousSelection),
+	            current_elem = $("#" + navItemIdPrefix + currentSelection);
+	
+	        // change selected page, applying appropriate styles
+	        prev_elem.closest("li").removeClass(options.navListActiveItemClass);
+	        current_elem.closest("li").addClass(options.navListActiveItemClass);
+	
+	
+	        // update title
+	        var active_title = language.current_page_label + " " + currentSelection + " " + language.total_pages_label + " " + options.totalPages;
+	        prev_elem.prop("title", "");
+	        current_elem.prop("title", active_title);
+	
+	        if(options.showRowsInfo && options.showRowsDefaultInfo) {
+	            var page_first_row = ((options.currentPage - 1) * options.pageSize) + 1,
+	                page_last_row = Math.min(page_first_row + options.pageSize - 1, options.totalRows),
+	                info_html = page_first_row + "-" + page_last_row + " " +
+	                    language.total_rows_label + " " + options.totalRows + " " + language.rows_info_records +
+	                    " (" + language.current_page_abbr_label + options.currentPage + language.total_pages_abbr_label + options.totalPages + ")",
+	                rows_info_id = createId(options.nav_rows_info_id_prefix, container_id);
+	            element.find("#" + rows_info_id).html(info_html);
+	        }
+	
+	        // trigger event onChangePage (only after some link pressed, not on plugin load)
+	        if(triggerChangePage) {
+	            element.triggerHandler("onChangePage", {page: currentSelection, pageSize: options.pageSize});
+	        } else {
+	            element.triggerHandler("onLoad", {page: currentSelection, pageSize: options.pageSize});
+	        }
         };
         
         /********************************************************************************
@@ -213,6 +400,7 @@
 
     $.fn.pagination.defaults = {
     	refresh: false,
+    	context: null,
     	page: 1,
     	pageSize: 10,
     	totalPages: null,
@@ -246,12 +434,12 @@
         navInfoClass: "",
 
         // element IDs
-        nav_list_id_prefix: "nav_list_",
-        nav_top_id_prefix: "top_",
-        nav_prev_id_prefix: "prev_",
-        nav_item_id_prefix: "nav_item_",
-        nav_next_id_prefix: "next_",
-        nav_last_id_prefix: "last_",
+        navListIdPrefix: "nav_list_",
+        navTopIdPrefix: "top_",
+        navPrevIdPrefix: "prev_",
+        navItemIdPrefix: "nav_item_",
+        navNextIdPrefix: "next_",
+        navLastIdPrefix: "last_",
 
         nav_goto_page_id_prefix: "goto_page_",
         nav_rows_per_page_id_prefix: "rows_per_page_",

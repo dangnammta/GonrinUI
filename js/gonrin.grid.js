@@ -20,7 +20,7 @@
 		language = {},
 		selectedItems = [],
 		data = [], //datalist
-		filteredData,
+		filteredData = [],
 		dataSource,
 		filterExp, 
 		unset = true,
@@ -85,11 +85,13 @@
 			return grobject;
         },
         attachElementEvents = function () {
-        	element.unbind("cellclick").bind("cellclick", options.onCellClick);
-        	element.unbind("rowclick").bind("rowclick", options.onRowClick);
-        	element.unbind("griderror").bind("griderror", options.onGridError);
-        	element.unbind("debug").bind("debug", options.onDebug);
-        	element.unbind("render").bind("render", options.onRender);
+        	
+        	element.unbind("cellclick").bind("cellclick", options.context? $.proxy(options.onCellClick, options.context): options.onCellClick);
+            element.unbind("rowclick").bind("rowclick", options.context? $.proxy(options.onRowClick, options.context): options.onRowClick);
+            element.unbind("griderror").bind("griderror", options.context? $.proxy(options.onGridError, options.context): options.onGridError);
+            element.unbind("debug").bind("debug", options.context? $.proxy(options.onDebug, options.context): options.onDebug);
+            element.unbind("render").bind("render", options.context? $.proxy(options.onRender, options.context): options.onRender);
+            
         },
         detachElementEvents = function () {
         	element.unbind("cellclick");
@@ -129,7 +131,7 @@
             }
             return sortable
         }, 
-        renderData = function(dataToRender ,refresh){
+        renderData = function(dataToRender){
         	
         	var containerId = element.attr("id"),
 	            tableId = createId(options.tableIdPrefix, containerId),
@@ -172,8 +174,8 @@
                 }
             };
             
-            var pageNum = parseInt(options.page),
-	            rowsPerPage = parseInt(options.rowsPerPage),
+            var pageNum = parseInt(options.pagination.page),
+	            rowsPerPage = parseInt(options.pagination.pageSize),
 	            sortingIndicator,
 	            rowIdHtml, i, row, tblHtml, rowIndex, colIdHtml,
 	            offset = ((pageNum - 1) * rowsPerPage);
@@ -249,21 +251,18 @@
                 }
                 gridData.append(trow);
             }
-            
          // refresh pagination (if needed)
             if(options.pagination !== false) {
             	if($.fn.pagination !== undefined){
             		elemPagination.pagination({
-                		page: 1,
+                		page: options.pagination.page || 1,
                     	pageSize: 10,
-                    	totalPages: 100,
+                    	totalPages: filteredData.length,
                     	virtualTotalPages:null,
-                        visiblePageLinks: 5,
-                        showGotoPage: false,
-                        showRowsPerPage: false,
-                        showRowsInfo: false,
-                        showRowsDefaultInfo: true,
-                        containerClass: "well pagination-container",
+                    	onChangePage: function(event, params){
+                    		console.log("change page");
+                    		console.log(params);
+                    	}
                     });
             	}
             	
@@ -301,7 +300,7 @@
                 if(options.selectionMode == "single" || options.selectionMode == "multiple") {
                     var rowPrefixLen = (tableId + "_tr_").length,
                         rowId, idx;
-                    $("#" + tableId + " tbody tr").each(function() {
+                    element.find("#" + tableId + " tbody tr").each(function() {
                         rowId = parseInt($(this).attr("id").substr(rowPrefixLen));
                         idx = selectedRows("selected_index", rowId);
                         if(idx > -1) {
@@ -465,7 +464,7 @@
             		}
             		filterData();
             		sortData();
-            		renderData(filteredData, true);
+            		renderData(filteredData);
             	}
             	
 
@@ -552,7 +551,7 @@
 							});
                         	filterData();
                 			sortData();
-                    		renderData(filteredData, refresh);
+                    		renderData(filteredData);
                         },
                         error:function(){
                         	var filter_error;
@@ -576,7 +575,7 @@
         			data = dataSource;
         			filterData();
         			sortData();
-            		renderData(filteredData, refresh);
+            		renderData(filteredData);
         		}
         		
         	}

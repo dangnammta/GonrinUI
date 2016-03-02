@@ -17,7 +17,43 @@
 	var Grid = function (element, options) {
 		var gonrin = window.gonrin;
 		var grobject = {},
-		language = {},
+		paginationOptions = {
+        	serverPaging: false,
+        	page: 1,
+        	pageSize: 10,
+        	//totalPages: null,
+        	//virtualTotalPages:null,
+            pageLinks: 5,
+            showGotoPage: false,
+            showRowsPerPage: false,
+            showRowsInfo: false,
+            showRowsDefaultInfo: true,
+            //disable_text_selection_in_navpane: true
+	    },
+		language = {
+			columns: "Columns",
+		    columns_show_row_numbers: "Row numbers",
+		    columns_default: "Default",
+
+		    sorting: "Sorting",
+		    sort_ascending: "<i class='glyphicon glyphicon-chevron-up'></i>&nbsp;&nbsp;",
+		    sort_descending: "<i class='glyphicon glyphicon-chevron-down'></i>&nbsp;&nbsp;",
+		    sort_none: "<i class='glyphicon glyphicon-minus'></i>&nbsp;&nbsp;",
+		    sorting_default: "Default",
+
+		    filters: "Filters",
+		    filters_apply: "Apply",
+		    filters_reset: "Reset",
+
+		    select: "Select",
+		    select_all_in_page: "All in page",
+		    deselect_all_in_page: "None in page",
+		    select_inverse_in_page: "Inverse",
+		    deselect_all: "Deselect all",
+
+		    row_index_header: "#",
+		    no_records_found: "No records found"
+		},
 		selectedItems = [],
 		data = [], //datalist
 		filteredData = [],
@@ -175,10 +211,10 @@
             };
             
             var pageNum = parseInt(options.pagination.page),
-	            rowsPerPage = parseInt(options.pagination.pageSize),
+            	pageSize = parseInt(options.pagination.pageSize),
 	            sortingIndicator,
 	            rowIdHtml, i, row, tblHtml, rowIndex, colIdHtml,
-	            offset = ((pageNum - 1) * rowsPerPage);
+	            offset = ((pageNum - 1) * pageSize);
 	
 	        tblHtml = '<thead>';
 	        //rowIdHtml = (primaryField ? ' id="' + tableId + '_tr_0"' : '');
@@ -256,12 +292,13 @@
             	if($.fn.pagination !== undefined){
             		elemPagination.pagination({
                 		page: options.pagination.page || 1,
-                    	pageSize: 10,
-                    	totalPages: filteredData.length,
+                    	pageSize: options.pagination.pageSize || 10,
+                    	totalPages: options.pagination.totalPages || filteredData.length,
                     	virtualTotalPages:null,
                     	onChangePage: function(event, params){
-                    		console.log("change page");
-                    		console.log(params);
+                    		//console.log("change page");
+                    		options.pagination.page = params.page;
+                    		renderData(pagingData());
                     	}
                     });
             	}
@@ -350,7 +387,7 @@
                     //console.log(settings.selectedItems);
                     // update selected rows counter
                     selectedRows("update_counter");
-                    element.triggerHandler("rowclick", {rowId: rowId, rowStatus: rowStatus, rowData:rowData, selectedItems: options.selectedItems, source : options["dataSource"]});
+                    element.triggerHandler("rowclick", {rowId: rowId, rowStatus: rowStatus, rowData:rowData, selectedItems: options.selectedItems});
                 });
             	
             	
@@ -462,9 +499,10 @@
                     		}
             			}
             		}
+            		//options.pagination.page = 1;
             		filterData();
             		sortData();
-            		renderData(filteredData);
+            		renderData(pagingData());
             	}
             	
 
@@ -474,6 +512,34 @@
          // trigger event onDisplay
             element.triggerHandler("render.gonrin");
             
+        },
+        pagingData = function(){
+        	//serverPage
+        	if(options.pagination.serverPaging !== true){
+        		if(filteredData.length == 0){
+        			options.pagination.totalPages = 0;
+        			options.pagination.page = 0;
+        			return filteredData;
+        		}
+        		options.pagination.totalPages = (filteredData.length % options.pagination.pageSize) == 0 ? filteredData.length / options.pagination.pageSize: parseInt(filteredData.length / options.pagination.pageSize) + 1;
+        		if (options.pagination.page > options.pagination.totalPages){
+        			options.pagination.page = options.pagination.totalPages;
+        		}
+        		
+        		var pagingData = [];
+        		var startIndex = (options.pagination.page - 1) * options.pagination.pageSize;
+        		var endIndex = (options.pagination.page - 1) * options.pagination.pageSize + options.pagination.pageSize;
+        		if(endIndex > filteredData.length){
+        			endIndex = filteredData.length;
+        		}
+        		
+        		for (var i = startIndex; i < endIndex ; i++){
+        			pagingData.push(filteredData[i]);
+        		}
+        		return pagingData;
+        	}
+        	
+        	return filteredData;
         },
         sortData = function(){
         	var sortableMode = getSortableMode(), i;
@@ -575,7 +641,7 @@
         			data = dataSource;
         			filterData();
         			sortData();
-            		renderData(filteredData);
+        			renderData(pagingData());
         		}
         		
         	}
@@ -637,7 +703,7 @@
             elemHtml += '<table id="' + table_id + '" class="' + options.datatableClass + '"></table>';
             elemHtml += '</div>';
 
-            elemHtml += '<div id="' + noResultsId + '" class="' + options.noResultsClass + '">' + rsc_bs_dg.no_records_found + '</div>';
+            elemHtml += '<div id="' + noResultsId + '" class="' + options.noResultsClass + '">' + language.no_records_found + '</div>';
 
             /*if(options.custom_html_element_id1) {
                 elem_html += '<div id="' + custom_html1_id + '"></div>';
@@ -655,8 +721,8 @@
                 elem_html += '<div id="' + filter_rules_id + '"></div>';
 
                 elem_html += '<div id="' + filter_tools_id + '" class="' + options.filterToolsClass + '">';
-                elem_html += '<button class="' + options.filterApplyBtnClass + '">' + rsc_bs_dg.filters_apply + '</button>';
-                elem_html += '<button class="' + options.filterResetBtnClass + '">' + rsc_bs_dg.filters_reset + '</button>';
+                elem_html += '<button class="' + options.filterApplyBtnClass + '">' + language.filters_apply + '</button>';
+                elem_html += '<button class="' + options.filterResetBtnClass + '">' + language.filters_reset + '</button>';
 
                 elem_html += '</div>';
             }*/
@@ -680,15 +746,7 @@
             		toolsHtml.append(button);
             	}
             }
-            
-            
-            //<div role="group" class="toolbar btn-group"><button btn-name="back" class="btn btn-default btn-sm" type="button">Quay lại</button><button btn-name="save" class="btn btn-success btn-sm" type="button">Lưu</button><button btn-name="delete" class="btn btn-danger btn-sm" type="button">Xoá</button></div>
-            
-            
-            
-            
-            
-            
+
             /*var elem_tools = element.find("#" + tools_id),
             elemTable = element.find("#" + table_id),
             elem_pagination = element.find("#" + pagination_id);*/
@@ -792,18 +850,19 @@
         	options.filters = query;
         	filterData();
         	sortData();
-        	renderData(filteredData);
+        	renderData(pagingData());
         };
         
         
 
         $.extend(true, options, dataToOptions());
+        
+        options.pagination = $.extend({}, paginationOptions, options.pagination || {});
+        language = $.extend({}, language, options.language || {});
         grobject.options(options);
         initialize();
     	setupWidget();
         attachElementEvents();
-
-        
         return grobject;
 		
 	};
@@ -840,21 +899,7 @@
         /**
          * See bs_pagination plugin documentation
          */
-        pagination: {
-        	page: 1,
-        	pageSize: 10,
-        	totalPages: null,
-        	virtualTotalPages:null,
-            visiblePageLinks: 5,
-            showGotoPage: false,
-            showRowsPerPage: false,
-            showRowsInfo: false,
-            showRowsDefaultInfo: true,
-            
-            containerClass: "well pagination-container",
-            //disable_text_selection_in_navpane: true
-        }, // "currentPage", "rowsPerPage", "maxrowsPerPage", "totalPages", "totalRows", "bootstrap_version", "onChangePage" will be ignored
-
+        pagination: null,
         
         filters: null,
         tools: null,

@@ -24,7 +24,7 @@
                          {field: "id", label: "Code", visible: true, width:"250px", sortable: {order:false}},
                          {
                         	 field: "name", 
-                        	 label: "Ten",
+                        	 label: 'Ten',
                         	 textField: "name",
                              valueField: "id",
                        	 },
@@ -48,22 +48,61 @@
                          {id:4,name:"ABC1", address: "223 Huynh thuc khang", age: 40},
                          {id:5,name:"CDE1", address: "333 Huynh thuc khang", age : 47},
                          {id:6,name:"XYZ1", address: "abc3 dhyas 1873", age: 22},
+                         
+                         {id:7,name:"ABC", address: "22 Huynh thuc khang", age: 30},
+                         {id:8,name:"CDE", address: "33 Huynh thuc khang", age: 40},
+                         {id:9,name:"XYZ", address: "abc dhyas 1873", age:25},
+                         {id:10,name:"ABC1", address: "223 Huynh thuc khang", age: 40},
+                         {id:11,name:"CDE1", address: "333 Huynh thuc khang", age : 47},
+                         {id:12,name:"XYZ1", address: "abc3 dhyas 1873", age: 22},
+                         
+                         {id:13,name:"ABC", address: "22 Huynh thuc khang", age: 30},
+                         {id:14,name:"CDE", address: "33 Huynh thuc khang", age: 40},
+                         {id:15,name:"XYZ", address: "abc dhyas 1873", age:25},
+                         {id:16,name:"ABC1", address: "223 Huynh thuc khang", age: 40},
+                         {id:17,name:"CDE1", address: "333 Huynh thuc khang", age : 47},
+                         {id:18,name:"XYZ1", address: "abc3 dhyas 1873", age: 22},
+                         {id:19,name:"XYZ1", address: "abc3 dhyas 1873", age: 22},
+                         {id:20,name:"XYZ1", address: "abc3 dhyas 1873", age: 22},
+                         
+                         
+                         {id:21,name:"ABC", address: "22 Huynh thuc khang", age: 30},
+                         {id:22,name:"CDE", address: "33 Huynh thuc khang", age: 40},
+                         {id:23,name:"XYZ", address: "abc dhyas 1873", age:25},
+                         {id:24,name:"ABC1", address: "223 Huynh thuc khang", age: 40},
+                         {id:25,name:"CDE1", address: "333 Huynh thuc khang", age : 47},
+                         {id:26,name:"XYZ1", address: "abc3 dhyas 1873", age: 22},
+                         
+                         {id:27,name:"ABC", address: "22 Huynh thuc khang", age: 30},
+                         {id:28,name:"CDE", address: "33 Huynh thuc khang", age: 40},
+                         {id:29,name:"XYZ", address: "abc dhyas 1873", age:25},
+                         {id:30,name:"ABC1", address: "223 Huynh thuc khang", age: 40},
+                         {id:31,name:"CDE1", address: "333 Huynh thuc khang", age : 47},
+                         {id:32,name:"XYZ1", address: "abc3 dhyas 1873", age: 22},
+                         
+                         {id:33,name:"ABC", address: "22 Huynh thuc khang", age: 30},
+                         {id:34,name:"CDE", address: "33 Huynh thuc khang", age: 40},
+                         {id:35,name:"XYZ", address: "abc dhyas 1873", age:25},
+                         {id:36,name:"ABC1", address: "223 Huynh thuc khang", age: 40},
+                         {id:37,name:"CDE1", address: "333 Huynh thuc khang", age : 47},
+                         {id:38,name:"XYZ1", address: "abc3 dhyas 1873", age: 22},
+                         {id:39,name:"XYZ1", address: "abc3 dhyas 1873", age: 22},
                      ],
                      primaryField:"id",
                      selectionMode: "multiple",
-                     filters: {
+                     /*filters: {
                          id: {$gt:3}
-                     },
+                     },*/
                      pagination: {
                      	page: 2,
-                     	pageSize: 10
+                     	pageSize: 3
                      }
                 });
                 
                 
                 $("#filter").bind("click", function(){
                 	$('#grid').data('gonrin').filter({
-                        id: {$gt:2}
+                        id: {$gt:25}
                     });
                 })
                 

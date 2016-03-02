@@ -291,9 +291,10 @@
             if(options.pagination !== false) {
             	if($.fn.pagination !== undefined){
             		elemPagination.pagination({
-                		page: options.pagination.page || 1,
-                    	pageSize: options.pagination.pageSize || 10,
-                    	totalPages: options.pagination.totalPages || filteredData.length,
+            			refresh : true,
+                		page: options.pagination.page,
+                    	pageSize: options.pagination.pageSize,
+                    	totalPages: options.pagination.totalPages,
                     	virtualTotalPages:null,
                     	onChangePage: function(event, params){
                     		//console.log("change page");
@@ -499,7 +500,7 @@
                     		}
             			}
             		}
-            		//options.pagination.page = 1;
+            		options.pagination.page = 1;
             		filterData();
             		sortData();
             		renderData(pagingData());

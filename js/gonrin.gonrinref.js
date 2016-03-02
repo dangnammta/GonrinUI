@@ -94,7 +94,6 @@
 			            	if(value){
 			            		$.each(value, function(key, item){
 			            			var txt = item[options.textField];
-			            			console.log(txt);
 			            			$(itemTemplate).html(txt).appendTo(textElement.find("ul"));
 			            		})
 			            		
@@ -122,7 +121,13 @@
             				if(widget.selectionMode === "single"){
             					textElement.text(seleted[0][options.textField]);
                 				input.val(seleted[0][options.valueField]);
-                				input.trigger('change.gonrin');
+                				//console.log(seleted[0]);
+                				notifyEvent({
+                					type:"change.gonrin",
+                					value : seleted[0]
+                				});
+                				// trigger here
+                				//input.trigger('change.gonrin', seleted[0]);
             				}
             				if(widget.selectionMode === "multiple"){
             					//textElement.html(JSON.stringify(seleted));
@@ -132,7 +137,12 @@
     			            		$(itemTemplate).html(txt).appendTo(textElement.find("ul"));
     			            	});
     			            	input.val(JSON.stringify(seleted));
-    			            	input.trigger('change.gonrin');
+    			            	
+    			            	notifyEvent({
+                					type:"change.gonrin",
+                					value : seleted
+                				});
+    			            	//input.trigger('change.gonrin');
             				}
             			}
             		}
@@ -142,6 +152,12 @@
                 type: 'show.gonui'
             });*/
             return gonrin;
+        },
+        notifyEvent = function (e) {
+            if ((e.type === 'change.gonrin')  && ((e.value && (e.value === e.oldValue)) || (!e.value && !e.oldValue))) {
+                return;
+            }
+            element.trigger(e);
         },
         hide = function(){
             return gonrin;
@@ -153,6 +169,10 @@
         	return show();
         },
 		attachElementEvents = function () {
+        	if(options.onChange){
+        		element.bind("change.gonrin", options.context !== null ? $.proxy(options.onChange, options.context ) : options.onChange);
+        	}
+
             /*input.on({
                 'change': change,
                 'blur': options.debug ? '' : hide,
@@ -270,12 +290,15 @@
             if (!$this.data('gonrin')) {
                 // create a private copy of the defaults object
                 options = $.extend(true, {}, $.fn.gonrinref.defaults, options);
+               
+                console.log(options);
                 $this.data('gonrin', GonrinRef($this, options));
             }
         });
     };
 
     $.fn.gonrinref.defaults = {
+    	context: null,
     	//template: null,
     	//height: null,
     	/*placeholder: null,
@@ -286,6 +309,7 @@
     	textField: null,
         valueField: null,
         dataSource: null,
-        selectedItems: []
+        selectedItems: [],
+        onChange : function(){}
     };
 }));

@@ -283,7 +283,35 @@
 							var tpl = gonrin.template(options.fields[i].template);
 							tcol.html(tpl(dataToRender[row]));
 						}else{
-							tcol.text(dataToRender[row][options.fields[i].field]);
+							var value = dataToRender[row][options.fields[i].field];
+							if (options.fields[i].hasOwnProperty("foreign") && options.fields[i].foreign !== false){
+								var foreignObj = dataToRender[row][options.fields[i].foreign];
+								var foreignValueField = options.fields[i].foreignValueField;
+								var foreignTextField = options.fields[i].foreignTextField;
+								if((!!foreignObj) && (!!foreignValueField) && (typeof foreignObj === "object") && (foreignObj[foreignValueField] === value)){
+									value = foreignObj[foreignTextField] || "";
+								}else{
+									value = "";
+								}
+							}if (options.fields[i].hasOwnProperty("foreignValues") && $.isArray(options.fields[i].foreignValues)){
+								var foreignValueField = options.fields[i].foreignValueField || "value";
+								var foreignTextField = options.fields[i].foreignTextField || "text";
+								
+								var foreignObj = $.grep(options.fields[i].foreignValues, function(obj){
+									return obj[foreignValueField] === value;
+								});
+								
+								if(foreignObj.length == 1){
+									foreignObj = foreignObj[0];
+								}else{
+									foreignObj = null;
+								}
+								
+								value = !!foreignObj? foreignObj[foreignTextField] : "";
+							}
+							
+							//tcol.text(dataToRender[row][options.fields[i].field]);
+							tcol.text(value);
 						}
                     	
                     	//class
@@ -458,9 +486,7 @@
 
                     // update selected rows counter
                     grid.selectedRows.call(elem, "update_counter");
-
                 });*/
-            	
             	
             };
             

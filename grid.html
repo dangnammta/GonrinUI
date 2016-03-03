@@ -19,12 +19,13 @@
                 	showSortingIndicator: true,
                 	fields: [
                 	     {field: "command", label:" ",width:"50px", template: '<a href="javascript:alert(\'delete {{age}}\')">Delete</a>', sortable:false},
-                         {field: "id", label: "Code", visible: true, width:"250px", sortable: {order:false}},
+                         {field: "id", label: "Code", visible: true, width:"250px", sortable: {order:"asc"}},
                          {
                         	 field: "name", 
                         	 label: 'Ten',
                              template: '<a href="http://abc.com/{{ id }}"><img src="http://img.abc.com/{{ id }}"><span>{{ name }}</span></a></span>',
-                       	 },
+                    
+                         },
                          {field: "address", label: "Dia Chi", visible: true, "sortable": {order:"desc"}},
                          { field: "age",
                              groupable: false,
@@ -36,10 +37,39 @@
                                      return a - b;
                                  },
                              }
-                         }
+                         },
+                         {
+                        	 field: "order_id", 
+                        	 label: "Order",
+                        	 foreign: "order",
+                        	 foreignValueField: "id",
+                        	 foreignTextField: "code",
+                       	 },
+                       	 {
+                        	 field: "company", 
+                        	 label: "Company",
+                        	 foreignValues: [
+                        	     {value2: 1, text: "FPT GMC"},
+                        	     {value2: 2, text: "FIS"},
+                        	     {value2: 3, text: "Gonrin Inc"},
+                        	 ],
+                        	 foreignValueField: "value2",
+                        	 foreignTextField: "text",
+                       	 },
                      ],
                      dataSource: [
-                         {id:1,name:"ABC", address: "22 Huynh thuc khang", age: 30},
+                         {
+                        	 id:1,name:"ABC", 
+                        	 address: "22 Huynh thuc khang", 
+                        	 age: 30, 
+                        	 order_id: 1,
+                        	 order: {
+                        	        "code": "01A", 
+                        	        "datetime": "2016-02-15T12:00:00", 
+                        	        "id": 1, 
+                        	 },
+                        	 company: 3
+                         },
                          {id:2,name:"CDE", address: "33 Huynh thuc khang", age: 40},
                          {id:3,name:"XYZ", address: "abc dhyas 1873", age:25},
                          {id:4,name:"ABC1", address: "223 Huynh thuc khang", age: 40},
@@ -91,7 +121,7 @@
                          id: {$gt:3}
                      },*/
                      pagination: {
-                     	page: 2,
+                     	page: 1,
                      	pageSize: 3
                      }
                 });

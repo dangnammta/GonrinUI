@@ -7,10 +7,9 @@
 	<link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css">
 		<!-- Optional theme -->
 	<link rel="stylesheet" href="vendor/bootstrap/css/bootstrap-theme.min.css">
-	<script src="js/underscore.js"></script>
-	
-	<script src="js/gonrin.query.js"></script>
+
 	<script src="js/gonrin.core.js"></script>
+	<script src="js/gonrin.query.js"></script>
 	<script src="js/gonrin.pagination.js"></script>
 	<script src="js/gonrin.grid.js"></script>
 
@@ -19,12 +18,11 @@
                 $("#grid").grid({
                 	showSortingIndicator: true,
                 	fields: [
+                	     {field: "command", label:" ",width:"50px", template: '<a href="javascript:alert(\'delete {{age}}\')">Delete</a>', sortable:false},
                          {field: "id", label: "Code", visible: true, width:"250px", sortable: {order:false}},
                          {
                         	 field: "name", 
                         	 label: 'Ten',
-                        	 //textField: "name",
-                             //valueField: "id",
                              template: '<a href="http://abc.com/{{ id }}"><img src="http://img.abc.com/{{ id }}"><span>{{ name }}</span></a></span>',
                        	 },
                          {field: "address", label: "Dia Chi", visible: true, "sortable": {order:"desc"}},
@@ -105,8 +103,8 @@
                     });
                 })
                 
-               /*
-                var data = [
+               
+                var dataqe = [
                             {id:1,name:"ABC", address: "22 Huynh thuc khang"},
                             {id:2,name:"CDE", address: "33 Huynh thuc khang"},
                             {id:3,name:"XYZ", address: "abc dhyas 1873"},
@@ -115,11 +113,11 @@
                             {id:6,name:"XYZ1", address: "abc3 dhyas 1873"},
                         ];
                 
-                var ret = _.query( data, {
+                var ret = gonrin.query( dataqe, {
                     //featured:true, 
                     id: {$gt:3}
                 });
-                console.log(ret);*/
+                console.log(ret);
                 
             });
      </script>

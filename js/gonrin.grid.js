@@ -279,7 +279,6 @@
                     if(columnIsVisible(options.fields[i])) {
                     	var tcol = $("<td>");
                     	//apply cell template here:
-                    	console.log(options.fields[i].template + " " + options.fields[i].field);
                     	if((!!options.fields[i].template) && (!!gonrin.template)){
 							var tpl = gonrin.template(options.fields[i].template);
 							tcol.html(tpl(dataToRender[row]));
@@ -485,7 +484,6 @@
                 		if(field.field !== fieldName){
                 			continue;
                 		}
-                		//field.sortable = field.sortable || {};
                 		
                 		if(field.hasOwnProperty("sortable") && (field.sortable !== false)){
                 			sortable = true;
@@ -498,7 +496,6 @@
                 		}
                 		break;
                 	}
-            		//console.log(sortable);
             		if(sortable){
             			for(var j = 0; j < options.fields.length; j ++){
             				var field = options.fields[j];
@@ -508,20 +505,15 @@
                     			}
                     		}
             			}
+            			options.pagination.page = 1;
+                		filterData();
+                		sortData();
+                		renderData(pagingData());
             		}
-            		options.pagination.page = 1;
-            		filterData();
-            		sortData();
-            		renderData(pagingData());
             	}
-            	
-
             });
-            
-            
          // trigger event onDisplay
             element.triggerHandler("render.gonrin");
-            
         },
         pagingData = function(){
         	//serverPage
@@ -692,7 +684,7 @@
             default_sorting_list = "",
             sorting_radio_name = createId(options.sortingRadioNamePrefix, containerId) + "_",
             startPos, newPos,
-            selectedRows_id = createId(options.selectedRowsIdPrefix, containerId),
+            selectedRowsId = createId(options.selectedRowsIdPrefix, containerId),
             selection_list_id = createId(options.selectionListIdPrefix, containerId),
             table_container_id = createId(options.tableContainerIdPrefix, containerId),
             table_id = createId(options.tableIdPrefix, containerId),
@@ -819,8 +811,8 @@
         },
         filterData = function(){
         	var query = options.filters;
-        	if(query !== null){
-        		filteredData = _.query( data, query);
+        	if((query !== null) && (!! gonrin) && (!! gonrin.query)){
+        		filteredData = gonrin.query( data, query);
         	}else{
         		filteredData = data
         	}
@@ -840,7 +832,6 @@
             if (arguments.length === 0) {
                 return $.extend(true, {}, options);
             }
-
             if (!(newOptions instanceof Object)) {
                 throw new TypeError('options() options parameter should be an object');
             }

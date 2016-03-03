@@ -8,11 +8,9 @@
 		<!-- Optional theme -->
 	<link rel="stylesheet" href="vendor/bootstrap/css/bootstrap-theme.min.css">
 	<script src="js/underscore.js"></script>
+	
 	<script src="js/gonrin.query.js"></script>
-	
-	
-	<script src="js/localization/gonrin.grid.lang.en.js"></script>
-	
+	<script src="js/gonrin.core.js"></script>
 	<script src="js/gonrin.pagination.js"></script>
 	<script src="js/gonrin.grid.js"></script>
 
@@ -25,8 +23,9 @@
                          {
                         	 field: "name", 
                         	 label: 'Ten',
-                        	 textField: "name",
-                             valueField: "id",
+                        	 //textField: "name",
+                             //valueField: "id",
+                             template: '<a href="http://abc.com/{{ id }}"><img src="http://img.abc.com/{{ id }}"><span>{{ name }}</span></a></span>',
                        	 },
                          {field: "address", label: "Dia Chi", visible: true, "sortable": {order:"desc"}},
                          { field: "age",

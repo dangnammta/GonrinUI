@@ -156,7 +156,7 @@
         setValue = function (val) {
         	var oldvalue = value;
         	value = val;
-        	function set_text(txt){
+        	function setText(txt){
         		if(text_element){
         			text = txt;
             		text_element.val(txt);
@@ -170,7 +170,7 @@
         				if((options.valueField != null) && (options.textField != null)){
             				if(value == item[options.valueField]){
             					txt = item[options.textField];
-            					set_text(txt);
+            					setText(txt);
             					index = i;
             					input.val(value);
             					widget.find('li').not(".dropdown-header").removeClass("active");
@@ -189,7 +189,7 @@
         				if(value == item){
         					console.log(value);
         					index = i;
-        					set_text(value);
+        					setText(value);
         					input.val(value);
         					widget.find('li').not(".dropdown-header").removeClass("active");
         	        		$(widget.find('li').not(".dropdown-header")[i]).addClass("active");

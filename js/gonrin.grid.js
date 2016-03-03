@@ -269,7 +269,8 @@
                     gridHeader.append(thcol);
                 }
             }
-
+	        
+	        
             for(row in dataToRender) {
             	rowIdHtml = (primaryField ? tableId + '_tr_' + dataToRender[row][primaryField] : '');
             	var trow = $("<tr>").attr("id",rowIdHtml);
@@ -278,7 +279,15 @@
                     if(columnIsVisible(options.fields[i])) {
                     	var tcol = $("<td>");
                     	//apply cell template here:
-                    	tcol.html(dataToRender[row][options.fields[i].field]);
+                    	console.log(options.fields[i].template + " " + options.fields[i].field);
+                    	if((!!options.fields[i].template) && (!!gonrin.template)){
+							var tpl = gonrin.template(options.fields[i].template);
+							tcol.html(tpl(dataToRender[row]));
+						}else{
+							tcol.text(dataToRender[row][options.fields[i].field]);
+						}
+                    	
+                    	//class
                     	if(options.fields[i].hasOwnProperty("dataClass")){
                     		tcol.addClass(options.fields[i].hasOwnProperty("dataClass"))
                         };

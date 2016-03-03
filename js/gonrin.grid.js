@@ -782,9 +782,10 @@
             
             var elemTools = element.find("#" + toolsId);
             
-            var toolsHtml = $("<div>").addClass("btn-group").appendTo(elemTools);
+            var toolsHtml = $("<div>").addClass("btn-group");
             
-            if(options.tools){
+            if((!!options.tools) && (options.tools.length > 0)){
+            	toolsHtml.appendTo(elemTools);
             	for(var i = 0; i < options.tools.length; i ++){
             		var button = $("<button>").addClass("btn btn-sm").attr({"type":"button","name": options.tools[i].name}).html(options.tools[i].label || options.tools[i].name);
             		button.addClass(options.tools[i].buttonClass || "btn-default");

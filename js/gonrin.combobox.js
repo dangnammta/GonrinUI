@@ -28,7 +28,7 @@
         item_template =  '<li><a href="javascript:void(0)"></a></li>',
         component = false,
         widget = false,
-        data_source_type,
+        dataSource_type,
 		keyMap = {
                 'up': 38,
                 38: 'up',
@@ -68,38 +68,38 @@
          * Private functions
          *
          ********************************************************************************/
-        bind_data = function(){
+        renderData = function(){
 			if($.isArray(data) && data.length > 0){
 				$.each(data, function (idx, item) {
 					if (typeof item === 'object') {
-						data_source_type = 'object';
-						if((options.value_field != null) && (options.text_field != null)){
+						dataSource_type = 'object';
+						if((options.valueField != null) && (options.textField != null)){
 							var $item = $(item_template);
-							if(!!options.template){
+							if((!!options.template)&& (!!gonrin.template)){
 								var tpl = gonrin.template(options.template);
 								$item.find('a').html(tpl(item));
 								//console.log($item);
 							}else{
 								var $item = $(item_template);
-								$item.find('a').text(item[options.text_field]);
-								if(value == item[options.value_field]){
-									set_value(item[options.value_field]);
+								$item.find('a').text(item[options.textField]);
+								if(value == item[options.valueField]){
+									setValue(item[options.valueField]);
 								}
 							}
 							widget.append($item);
 							$item.bind("click", function(){
-								set_value(item[options.value_field]);
+								setValue(item[options.valueField]);
 								hide();
 							});
 						}
 						
 					}else {
-						data_source_type = 'common';
+						dataSource_type = 'common';
 						var $item = $(item_template);//.text(item);
 						$item.find('a').text(item);
 						widget.append($item);
 						$item.bind("click", function(){
-							set_value(item);
+							setValue(item);
 							hide();
 						});
 					}
@@ -107,27 +107,27 @@
 			}
 			return grobject;
 		},
-        setup_widget = function () {
-			if (!!options.data_source) {
+        setupWidget = function () {
+			if (!!options.dataSource) {
 				//var menu = $(menu_template);
 				widget = $(menu_template);
-				if(!!options.header_template){
-					widget.prepend($("<li>").addClass("dropdown-header").html(options.header_template))
+				if(!!options.headerTemplate){
+					widget.prepend($("<li>").addClass("dropdown-header").html(options.headerTemplate))
 				}
 				
 				if(component){
 					component.before(widget);
 				}
 				
-				if($.isArray(options.data_source)){
-					data = options.data_source;
-					bind_data();
+				if($.isArray(options.dataSource)){
+					data = options.dataSource;
+					renderData();
 				}
-				if($.isPlainObject(options.data_source)){
+				if($.isPlainObject(options.dataSource)){
 					if(options.auto_bind){
 						console.log("bind to Ajax datasource");
 					}
-					//getdata_source json from HTTP
+					//getdataSource json from HTTP
 					//setup_data();
 				}
 				
@@ -144,16 +144,16 @@
             }
 			return grobject;
         },
-        get_value = function(){
+        getValue = function(){
         	return value;
         },
-        get_text = function(){
+        getText = function(){
         	return text;
         },
-        get_index = function(){
+        getIndex = function(){
         	return index;
         },
-        set_value = function (val) {
+        setValue = function (val) {
         	var oldvalue = value;
         	value = val;
         	function set_text(txt){
@@ -166,10 +166,10 @@
         		var txt = null;
         		for(var i = 0; i < data.length; i++){
         			var item = data[i];
-        			if(data_source_type === 'object'){
-        				if((options.value_field != null) && (options.text_field != null)){
-            				if(value == item[options.value_field]){
-            					txt = item[options.text_field];
+        			if(dataSource_type === 'object'){
+        				if((options.valueField != null) && (options.textField != null)){
+            				if(value == item[options.valueField]){
+            					txt = item[options.textField];
             					set_text(txt);
             					index = i;
             					input.val(value);
@@ -185,7 +185,7 @@
             				}
             			}
         			}
-        			else if(data_source_type === 'common'){
+        			else if(dataSource_type === 'common'){
         				if(value == item){
         					console.log(value);
         					index = i;
@@ -207,20 +207,20 @@
         		
         	}
         },
-        set_index = function(idx){
+        setIndex = function(idx){
         	if(data && (data.length > 0) && (data.length > idx) && (idx > -1)){
         		var item = data[idx];
         		var oldvalue = value;
         		var txt,val;
-        		if(data_source_type === 'object'){
-        			if((options.value_field != null) && (options.text_field != null)){
-            			txt = item[options.text_field];
-            			val = item[options.value_field];
+        		if(dataSource_type === 'object'){
+        			if((options.valueField != null) && (options.textField != null)){
+            			txt = item[options.textField];
+            			val = item[options.valueField];
             			
             		}else{
             			return;
             		}
-        		}else if(data_source_type === 'common'){
+        		}else if(dataSource_type === 'common'){
         			txt = item;
         			val = item;
         		}
@@ -233,7 +233,7 @@
 				value = val;
 				widget.find('li').not(".dropdown-header").removeClass("active");
         		$(widget.find('li').not(".dropdown-header")[idx]).addClass("active");
-        		scroll_to_index(idx);
+        		scrollToIndex(idx);
         		
         		notifyEvent({
                     type: 'change.gonrin',
@@ -244,7 +244,7 @@
         	}
         },
         
-        data_to_options = function () {
+        dataToOptions = function () {
             var eData,
                 data_options = {};
 
@@ -319,7 +319,7 @@
 
                 content.scrollTop = contentScrollTop;
         },
-        scroll_to_index = function(index) {
+        scrollToIndex = function(index) {
             //var item = this.element[0].children[index];
             var item = $(widget.find('li').not(".dropdown-header")[index])
             if (item) {
@@ -337,15 +337,15 @@
                     toggle();
                 } else {
                 	show();
-                	current = get_index();
+                	current = getIndex();
                 	if (!current > -1) {
                 		if(down){
                 			if(current < data.length - 1){
-                				set_index(current + 1);
+                				setIndex(current + 1);
                 			}
                 		} else {
                 			if(current > 0){
-                				set_index(current - 1);
+                				setIndex(current - 1);
                 			}
                 		}
                 	}
@@ -460,13 +460,13 @@
         search = function(word) {
             word = typeof word === "string" ? word : text_element.val();
             var length = word.length;
-            var ignore_case = options.ignore_case;
+            var ignoreCase = options.ignoreCase;
             var filter = options.filter;
-            var field = options.text_field;
+            var field = options.textField;
 
             clearTimeout(_typing_timeout);
 
-            if (!length || length >= options.min_length) {
+            if (!length || length >= options.minLength) {
                 /*that._state = "filter";
                 that.listView.filter(true);
                 if (filter === "none") {
@@ -494,7 +494,7 @@
                 }, options.delay);
         	}
         },
-        attach_element_events = function () {
+        attachElementEvents = function () {
         	if (text_element) {
         		text_element.on({
                     //'change': change,
@@ -559,12 +559,12 @@
         grobject.toggle = toggle;
         grobject.show = show;
         grobject.hide = hide;
-        grobject.set_value = set_value;
-        grobject.get_value = get_value;
-        grobject.get_text = get_text;
-        grobject.set_index = set_index;
-        grobject.select = set_index;
-        grobject.get_index = get_index;
+        grobject.setValue = setValue;
+        grobject.getValue = getValue;
+        grobject.getText = getText;
+        grobject.setIndex = setIndex;
+        grobject.select = setIndex;
+        grobject.getIndex = getIndex;
         grobject.disable = function () {
             ///<summary>Disables the input element, the component is attached to, by adding a disabled="true" attribute to it.
             ///If the widget was visible before that call it is hidden. Possibly emits dp.hide</summary>
@@ -636,29 +636,29 @@
             throw new Error('Cannot apply to non input, select element');
         }
 
-        $.extend(true, options, data_to_options());
+        $.extend(true, options, dataToOptions());
         
         grobject.options(options);
         
-    	setup_widget();
+    	setupWidget();
     	
     	if(!options.placeholder){
     		options.placeholder = input.attr("placeholder");
     	}
     	
-    	if(options.value_field != null){
-			if (options.text_field === null){
-				options.text_field = options.value_field;
+    	if(options.valueField != null){
+			if (options.textField === null){
+				options.textField = options.valueField;
 			}
     	}
     	if(text_element && options.placeholder){
     		text_element.attr("placeholder", options.placeholder);
     	}
     	if((options.index) && (options.index > -1)){
-    		grobject.set_index(options.index);
+    		grobject.setIndex(options.index);
     	}
 
-        attach_element_events();
+        attachElementEvents();
         if (input.prop('disabled')) {
             grobject.disable();
         }
@@ -686,36 +686,36 @@
     $.fn.combobox.defaults = {
     	/*autobind: Controls whether to bind the widget to the data source on initialization.*/
     	autobind: true,
-    	/*cascade_from: Use it to set the Id of the parent ComboBox widget.*/
-    	cascade_from: null,
+    	/*cascadeFrom: Use it to set the Id of the parent ComboBox widget.*/
+    	cascadeFrom: null,
     	/*Defines the field to be used to filter the data source.*/
-    	cascade_from_field: null,
+    	cascadeFromField: null,
     	/**/
     	placeholder: null,
     	readonly: false,
     	debug: false,
     	/*The delay in milliseconds between a keystroke and when the widget displays the popup.*/
     	delay: 200,
-    	text_field: null,
-        value_field: null,
-        /*data_source: The data source of the widget which is used to display a list of values. 
+    	textField: null,
+        valueField: null,
+        /*dataSource: The data source of the widget which is used to display a list of values. 
          * Can be a JavaScript object which represents a valid data source configuration, a JavaScript array 
          * or an existing kendo.data.DataSource instance.*/
-        data_source: null,
+        dataSource: null,
         enable:true,
         index: -1,
         /*filter: The filtering method used to determine the suggestions for the current value. Filtration is turned off by default. The supported filter values are startswith, endswith and contains.*/
         filter: false,
         height: 200,
         /*If set to false case-sensitive search will be performed to find suggestions. The widget performs case-insensitive searching by default.*/
-        ignore_case: false,
+        ignoreCase: false,
         /*If set to true the widget will automatically use the first suggestion as its value.*/
         suggest: false,
         /*The minimum number of characters the user must type before a search is performed. Set to higher value than 1 if the search could match a lot of items.*/
-        min_length: 1,
+        minLength: 1,
         /*Specifies a static HTML content, which will be rendered as a header of the popup element.*/
-        header_template: false,
-        /*The template used to render the items. By default the widget displays only the text of the data item (configured via text_field).*/
+        headerTemplate: false,
+        /*The template used to render the items. By default the widget displays only the text of the data item (configured via textField).*/
         template: false,
         /*The text of the widget used when the auto_bind is set to false.*/
         text: "",

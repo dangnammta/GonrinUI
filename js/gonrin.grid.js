@@ -888,6 +888,7 @@
     $.fn.grid.defaults = {
     	refresh: false,
     	context: null,
+    	dataSource: null,
         primaryField: "",
         selectionMode: "single", // "multiple", "single", false
         selectedItems: [],

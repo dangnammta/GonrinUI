@@ -98,7 +98,9 @@
             }
             return dataOptions;
         },
-        
+        notifyEvent = function (e) {
+            element.triggerHandler(e);
+        },
         
         initialize = function(){
         	// initializing element and component attributes
@@ -111,8 +113,8 @@
             }
             
          // bind events
-            element.unbind("onChangePage").bind("onChangePage", options.context? $.proxy(options.onChangePage, options.context): options.onChangePage);
-            element.unbind("onLoad").bind("onLoad", options.context? $.proxy(options.onLoad, options.context): options.onLoad);
+            element.unbind("changePage").bind("changePage", options.context? $.proxy(options.onChangePage, options.context): options.onChangePage);
+            element.unbind("load").bind("load", options.context? $.proxy(options.onLoad, options.context): options.onLoad);
             
          // retrieve options
             var containerId = element.attr("id"),
@@ -335,9 +337,19 @@
 	
 	        // trigger event onChangePage (only after some link pressed, not on plugin load)
 	        if(triggerChangePage) {
-	            element.triggerHandler("onChangePage", {page: currentSelection, pageSize: options.pageSize});
+	        	notifyEvent({
+	                type:"changePage",
+	                page: currentSelection, 
+	                pageSize: options.pageSize
+	            });
+	            //element.triggerHandler("onChangePage", {page: currentSelection, pageSize: options.pageSize});
 	        } else {
-	            element.triggerHandler("onLoad", {page: currentSelection, pageSize: options.pageSize});
+	        	notifyEvent({
+	                type:"load",
+	                page: currentSelection, 
+	                pageSize: options.pageSize
+	            });
+	            //element.triggerHandler("onLoad", {page: currentSelection, pageSize: options.pageSize});
 	        }
         };
         

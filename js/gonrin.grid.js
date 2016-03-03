@@ -136,6 +136,9 @@
         	element.unbind("debug");
         	element.unbind("render");
         },
+        notifyEvent = function (e) {
+            element.triggerHandler(e);
+        },
         arrayMove = function(arr, fromIndex, toIndex) {
             var element = arr[fromIndex];
             arr.splice(fromIndex, 1);
@@ -332,9 +335,9 @@
                     	pageSize: options.pagination.pageSize,
                     	totalPages: options.pagination.totalPages,
                     	virtualTotalPages:null,
-                    	onChangePage: function(event, params){
+                    	onChangePage: function(event){
                     		//console.log("change page");
-                    		options.pagination.page = params.page;
+                    		options.pagination.page = event.page;
                     		renderData(pagingData());
                     	}
                     });
@@ -424,7 +427,14 @@
                     //console.log(settings.selectedItems);
                     // update selected rows counter
                     selectedRows("update_counter");
-                    element.triggerHandler("rowclick", {rowId: rowId, rowStatus: rowStatus, rowData:rowData, selectedItems: options.selectedItems});
+                    notifyEvent({
+                    	type:"rowclick",
+                    	rowId: rowId, 
+                    	rowStatus: rowStatus, 
+                    	rowData:rowData, 
+                    	selectedItems: options.selectedItems
+                    });
+                    //element.triggerHandler("rowclick", {rowId: rowId, rowStatus: rowStatus, rowData:rowData, selectedItems: options.selectedItems});
                 });
             	
             	
@@ -539,7 +549,10 @@
             	}
             });
          // trigger event onDisplay
-            element.triggerHandler("render.gonrin");
+            notifyEvent({
+            	type:"render.gonrin"
+            });
+            //element.triggerHandler("render.gonrin");
         },
         pagingData = function(){
         	//serverPage
@@ -649,10 +662,17 @@
                         },
                         error:function(){
                         	var filter_error;
-                            var err_msg = "ERROR: " + "Collection fetch error";
+                            var errMsg = "ERROR: " + "Collection fetch error";
                             element.html('<span style="color: red;">' + err_msg + '</span>');
-                            element.triggerHandler("griderror", {err_code: "server_error", err_description: err_msg});
-                            $.error(err_msg);
+                            
+                            notifyEvent({
+                            	type:"griderror",
+                            	errorCode: "SERVER_ERROR", 
+                            	errorDescription: errMsg
+                            });
+                            
+                            //element.triggerHandler("griderror", {err_code: "server_error", err_description: err_msg});
+                            //$.error(errMsg);
 
                             /*if(s.useFilters) {
                                 var elem_filter_rules = $("#" + filter_rules_id);

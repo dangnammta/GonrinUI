@@ -18,7 +18,13 @@
                 $("#grid").grid({
                 	showSortingIndicator: true,
                 	fields: [
-                	     {field: "command", label:" ",width:"50px", template: '<a href="javascript:alert(\'delete {{age}}\')">Delete</a>', sortable:false},
+                	     {
+                	    	 field: "command", 
+                	    	 label:"Command",
+                	    	 width:"50px", 
+                	    	 command: "delete",
+                	    	 commandButtonClass: "btn-sm"
+                	   	 },
                          {field: "id", label: "Code", visible: true, width:"250px", sortable: {order:"asc"}},
                          {
                         	 field: "name", 

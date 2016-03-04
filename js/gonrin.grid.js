@@ -52,7 +52,11 @@
 		    deselect_all: "Deselect all",
 
 		    row_index_header: "#",
-		    no_records_found: "No records found"
+		    no_records_found: "No records found",
+		    
+		    command_delete_label: "Delete",
+		    command_edit_label: "Edit",
+		    command_cancel_label: "Cancel",
 		},
 		selectedItems = [],
 		data = [], //datalist
@@ -127,7 +131,7 @@
             element.unbind("griderror").bind("griderror", options.context? $.proxy(options.onGridError, options.context): options.onGridError);
             element.unbind("debug").bind("debug", options.context? $.proxy(options.onDebug, options.context): options.onDebug);
             element.unbind("render").bind("render", options.context? $.proxy(options.onRender, options.context): options.onRender);
-            
+            element.unbind("rowdeleted").bind("rowdeleted", options.context? $.proxy(options.onRowDeleted, options.context): options.onRowDeleted);
         },
         detachElementEvents = function () {
         	element.unbind("cellclick");
@@ -170,6 +174,32 @@
             }
             return sortable
         }, 
+        commandDeleteRow = function(e){
+        	e.stopPropagation();
+        	var $this = $(this);
+        	var parent = $this.closest("tr");
+        	if(parent){
+        		var rowData = parent.data("row_data");
+        		for(var i= 0 ; i< data.length; i++)
+        		{
+        		    if(data[i]["_$row_id"] === rowData["_$row_id"]){
+        		    	data.splice(i, 1);
+        		    	break;
+        		    }
+        		}
+        		//console.log(rowData);
+        		filterData();
+    			sortData();
+    			renderData(pagingData());
+    			
+    			notifyEvent({
+                	type:"rowdeleted",
+                	//rowId: rowId, 
+                	//rowStatus: rowStatus, 
+                	rowData:removeDataUUID(rowData)
+                });
+        	}
+        },
         renderData = function(dataToRender){
         	
         	var containerId = element.attr("id"),
@@ -276,8 +306,12 @@
 	        
             for(row in dataToRender) {
             	rowIdHtml = (primaryField ? tableId + '_tr_' + dataToRender[row][primaryField] : '');
-            	var trow = $("<tr>").attr("id",rowIdHtml);
-            	trow.data("row_data",dataToRender[row]);
+            	var trow = $("<tr>").attr("id",rowIdHtml).data("row_data", dataToRender[row] );
+            	
+            	if(!!dataToRender[row]["_$row_id"]){
+            		trow.attr("data-uuid", dataToRender[row]["_$row_id"] );
+            	}
+            	
                 for(i in options.fields) {
                     if(columnIsVisible(options.fields[i])) {
                     	var tcol = $("<td>");
@@ -285,6 +319,26 @@
                     	if((!!options.fields[i].template) && (!!gonrin.template)){
 							var tpl = gonrin.template(options.fields[i].template);
 							tcol.html(tpl(dataToRender[row]));
+						}else if(!!options.fields[i].command){
+							var command = options.fields[i].command;
+							if(typeof command === "string"){
+								var button = null;
+								switch(command) {
+								    case "delete":
+								        button = $("<button/>").addClass("btn btn-danger").html(language.command_delete_label);
+								        if(!!options.fields[i].commandButtonClass){
+								        	button.addClass(options.fields[i].commandButtonClass);
+								        }
+								        button.bind("click", commandDeleteRow);
+								        break;
+								    case "edit":
+								        break;
+								    default:
+								}
+								if(button != null){
+									tcol.append(button);
+								}
+							}
 						}else{
 							var value = dataToRender[row][options.fields[i].field];
 							if (options.fields[i].hasOwnProperty("foreign") && options.fields[i].foreign !== false){
@@ -424,15 +478,14 @@
                         selectedRows("mark_selected", rowData);
                         rowStatus = "selected";
                     }
-                    //console.log(settings.selectedItems);
-                    // update selected rows counter
                     selectedRows("update_counter");
+                    
                     notifyEvent({
                     	type:"rowclick",
                     	rowId: rowId, 
                     	rowStatus: rowStatus, 
-                    	rowData:rowData, 
-                    	selectedItems: options.selectedItems
+                    	rowData:removeDataUUID(rowData), 
+                    	selectedItems: removeDataUUID(options.selectedItems)
                     });
                     //element.triggerHandler("rowclick", {rowId: rowId, rowStatus: rowStatus, rowData:rowData, selectedItems: options.selectedItems});
                 });
@@ -641,6 +694,35 @@
         		
         	}
         },
+        genDataUUID = function(){
+        	if((gonrin) && (!!gonrin.uuid)){
+        		for(var i = 0; i < data.length; i ++){
+        			data[i]["_$row_id"] = gonrin.uuid();
+        		}
+        	}
+        },
+        removeDataUUID = function(dataToRemove){
+        	var dataReturn = null;
+        	if($.isArray(dataToRemove)){
+        		dataReturn = [];
+        		$.each(dataToRemove, function(index, obj){
+        			if(obj.hasOwnProperty("_$row_id")){
+        				delete obj["_$row_id"];
+        			}
+        			dataReturn.push(obj);
+        			
+        			
+        		});
+        		return dataReturn;
+        	}else if(typeof dataToRemove === "object"){
+        		dataReturn = $.extend({}, dataToRemove);
+        		if(dataReturn.hasOwnProperty("_$row_id")){
+    				delete dataReturn["_$row_id"];
+    			}
+    			return dataReturn;
+        	}
+        	return null;
+        },
         initDataSource = function(refresh){
         	dataSource = options["dataSource"];
         	if(typeof dataSource === "object"){
@@ -687,6 +769,7 @@
                     });
         		}else{
         			data = dataSource;
+        			genDataUUID();
         			filterData();
         			sortData();
         			renderData(pagingData());
@@ -955,16 +1038,12 @@
         showRowNumbers: false,
         
         // events
-        onCellClick: function() {
-        },
-        onRowClick: function() {
-        },
-        onGridError: function() {
-        },
-        onDebug: function() {
-        },
-        onRender: function() {
-        },
+        onCellClick: function() {},
+        onRowClick: function() {},
+        onGridError: function() {},
+        onDebug: function() {},
+        onRender: function() {},
+        onRowDeleted: function(){},
         //serverOrdering: false,
         //serverFiltering: false,
         sortable: {

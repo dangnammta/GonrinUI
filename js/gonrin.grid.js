@@ -57,6 +57,9 @@
 		    command_delete_label: "Delete",
 		    command_edit_label: "Edit",
 		    command_cancel_label: "Cancel",
+		    
+		    validate_error_message: "Error",
+		    validate_success_message: "Successfull",
 		},
 		selectedItems = [],
 		data = [], //datalist
@@ -1044,6 +1047,10 @@
         onDebug: function() {},
         onRender: function() {},
         onRowDeleted: function(){},
+        
+        onValidateError: function(){},
+        onValidateSuccess: function(){},
+        
         //serverOrdering: false,
         //serverFiltering: false,
         sortable: {

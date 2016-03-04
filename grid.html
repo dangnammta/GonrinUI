@@ -17,6 +17,9 @@
             $(function () {
                 $("#grid").grid({
                 	showSortingIndicator: true,
+                	onValidateError: function(){
+                		alert("eror");
+                	},
                 	fields: [
                 	     {
                 	    	 field: "command", 

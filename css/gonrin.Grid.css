@@ -1,6 +1,9 @@
 /*
  * Table styles
  */
+ .tools{
+ 	margin-bottom:8px;
+ }
  .bg
  {
 	 border:solid Orange;

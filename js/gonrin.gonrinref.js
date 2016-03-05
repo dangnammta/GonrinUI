@@ -121,13 +121,11 @@
             				if(widget.selectionMode === "single"){
             					textElement.text(seleted[0][options.textField]);
                 				input.val(seleted[0][options.valueField]);
-                				//console.log(seleted[0]);
+                				
                 				notifyEvent({
                 					type:"change.gonrin",
                 					value : seleted[0]
                 				});
-                				// trigger here
-                				//input.trigger('change.gonrin', seleted[0]);
             				}
             				if(widget.selectionMode === "multiple"){
             					//textElement.html(JSON.stringify(seleted));
@@ -270,13 +268,7 @@
         };
         
         attachElementEvents();
-        /*if (input.prop('disabled')) {
-        	gonrin.disable();
-        }
-        if (input.prop('readonly')) {
-        	gonrin.readonly();
-        }*/
-		
+       
 		return gonrin;
 	};
 	
@@ -290,8 +282,6 @@
             if (!$this.data('gonrin')) {
                 // create a private copy of the defaults object
                 options = $.extend(true, {}, $.fn.gonrinref.defaults, options);
-               
-                console.log(options);
                 $this.data('gonrin', GonrinRef($this, options));
             }
         });

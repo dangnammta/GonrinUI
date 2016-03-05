@@ -135,6 +135,7 @@
             element.unbind("debug").bind("debug", options.context? $.proxy(options.onDebug, options.context): options.onDebug);
             element.unbind("render").bind("render", options.context? $.proxy(options.onRender, options.context): options.onRender);
             element.unbind("rowdeleted").bind("rowdeleted", options.context? $.proxy(options.onRowDeleted, options.context): options.onRowDeleted);
+            element.unbind("rowedited").bind("rowedited", options.context? $.proxy(options.onRowEdited, options.context): options.onRowEdited);
         },
         detachElementEvents = function () {
         	element.unbind("cellclick");
@@ -190,15 +191,28 @@
         		    	break;
         		    }
         		}
-        		//console.log(rowData);
+        		
         		filterData();
     			sortData();
     			renderData(pagingData());
     			
     			notifyEvent({
                 	type:"rowdeleted",
-                	//rowId: rowId, 
-                	//rowStatus: rowStatus, 
+                	//rowId: rowId,
+                	rowData:removeDataUUID(rowData)
+                });
+        	}
+        },
+        commandEditRow = function(e){
+        	e.stopPropagation();
+        	var $this = $(this);
+        	var parent = $this.closest("tr");
+        	if(parent){
+        		var rowData = parent.data("row_data");
+        		var rowUuid = rowData['_$row_id']
+    			notifyEvent({
+                	type:"rowedited",
+                	rowUuid: rowUuid,
                 	rowData:removeDataUUID(rowData)
                 });
         	}
@@ -323,24 +337,34 @@
 							var tpl = gonrin.template(options.fields[i].template);
 							tcol.html(tpl(dataToRender[row]));
 						}else if(!!options.fields[i].command){
-							var command = options.fields[i].command;
-							if(typeof command === "string"){
-								var button = null;
-								switch(command) {
-								    case "delete":
-								        button = $("<button/>").addClass("btn btn-danger").html(language.command_delete_label);
-								        if(!!options.fields[i].commandButtonClass){
-								        	button.addClass(options.fields[i].commandButtonClass);
-								        }
-								        button.bind("click", commandDeleteRow);
-								        break;
-								    case "edit":
-								        break;
-								    default:
-								}
-								if(button != null){
-									tcol.append(button);
-								}
+							var commands = options.fields[i].command;
+							if($.isArray(commands)){
+								
+								$.each(commands, function(iter, command){
+									var button = null;
+									switch(command) {
+									    case "delete":
+									        button = $("<button/>").addClass("btn btn-danger").html(language.command_delete_label);
+									        if(($.isArray(options.fields[i].commandButtonClass)) && (options.fields[i].commandButtonClass.length > iter)){
+									        	button.addClass(options.fields[i].commandButtonClass[iter]);
+									        }
+									        button.bind("click", commandDeleteRow);
+									        break;
+									    case "edit":
+									    	button = $("<button/>").addClass("btn btn-warning").html(language.command_edit_label);
+									        if(($.isArray(options.fields[i].commandButtonClass)) && (options.fields[i].commandButtonClass.length > iter)){
+									        	button.addClass(options.fields[i].commandButtonClass[iter]);
+									        }
+									        button.bind("click", commandEditRow);
+									        break;
+									    default:
+									}
+									if(button != null){
+										tcol.append(button);
+									}
+								});
+								
+								
 							}
 						}else{
 							var value = dataToRender[row][options.fields[i].field];
@@ -1047,6 +1071,7 @@
         onDebug: function() {},
         onRender: function() {},
         onRowDeleted: function(){},
+        onRowEdited : function(){},
         
         onValidateError: function(){},
         onValidateSuccess: function(){},

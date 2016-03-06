@@ -54,6 +54,8 @@
 		    row_index_header: "#",
 		    no_records_found: "No records found",
 		    
+		    error_load_data: "Error loading data",
+		    
 		    command_delete_label: "Delete",
 		    command_edit_label: "Edit",
 		    command_cancel_label: "Cancel",
@@ -163,20 +165,8 @@
             return (column.hasOwnProperty("sortable") && column["sortable"] !== false);
         },
         getSortableMode = function(){
-        	//return false, "server", "client"
-        	/*sortable: {
-            	serverOrdering: false,
-            },*/
-        	var sortable = false;
-            if(!!options.sortable){
-            	
-            	if(typeof options.sortable == "object"){
-            		sortable = (options.sortable.hasOwnProperty("serverOrdering") && options.sortable["serverOrdering"] === true) ? "server" : "client";
-            	}else if(options.sortable === true){
-            		sortable = "client";
-            	}
-            }
-            return sortable
+        	
+        	return options.sortableMode;
         }, 
         commandDeleteRow = function(e){
         	e.stopPropagation();
@@ -419,7 +409,13 @@
                     	onChangePage: function(event){
                     		//console.log("change page");
                     		options.pagination.page = event.page;
-                    		renderData(pagingData());
+                    		
+                    		if(options.paginationMode === "server"){
+                    			boundData();
+                    		}else{
+                    			renderData(pagingData());
+                    		}
+                    		
                     	}
                     });
             	}
@@ -636,7 +632,8 @@
         },
         pagingData = function(){
         	//serverPage
-        	if(options.pagination.serverPaging !== true){
+        	
+        	if(options.paginationMode  !== "server"){
         		if(filteredData.length == 0){
         			options.pagination.totalPages = 0;
         			options.pagination.page = 0;
@@ -750,29 +747,62 @@
         	}
         	return null;
         },
-        initDataSource = function(refresh){
+        isBackBoneDataSource = function(source){
+        	var key, _i, _len, _ref;
+            _ref = ["fetch"];
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              key = _ref[_i];
+              if (!source[key]) {
+            	  return false;
+              }
+            }
+            return true;
+        },
+        boundData = function(refresh){
         	dataSource = options["dataSource"];
         	if(typeof dataSource === "object"){
-        		if((!!dataSource['_is_gonrin_view']) && (!!dataSource.collection)){
+        		if(isBackBoneDataSource(dataSource)){
         			console.log('instance of collection view');
-        			var view = dataSource;
-        			view.collection.fetch({
+        			options.paginationMode = "server";
+        			options.filterMode = "server";
+        			options.sortableMode = "server";
+        			
+        			
+        			var collection = dataSource;
+        			var pageSize = options.pagination.pageSize;
+        			var page = options.pagination.page > 0 ? options.pagination.page : 1;
+        			//or filter
+        			
+        			
+        			var query = {
+        					//"filters":[{"name":"id","op":"ge","val":2}],
+        			}
+        			//order_by
+        			//query["order_by"] = {"field": "name", "direction": "asc"}
+        			
+        			//end filter
+        			collection.fetch({
+        				//url: collection.url + "?q=" + JSON.stringify(query),
+        				url: collection.url + "?page=" + page + "&results_per_page=" + pageSize,
                         success: function (objs) {
-                        	var page = view.collection.page,
-                        		num_rows = view.collection.num_rows,
-                        		total_pages = view.collection.total_pages;
+                        	//update paging;
+                        	options.pagination.page = collection.page;
+                        	//options.pagination.pageSize = collection.num_rows;
+                        	options.pagination.totalPages = collection.totalPages;
                         	
-                        	view.collection.each(function(model) {
+                        	data.splice(0,data.length);
+                        	collection.each(function(model) {
                         		data.push(model.attributes);
 							});
+                        	genDataUUID();
                         	filterData();
-                			sortData();
+                			//sortData();
                     		renderData(filteredData);
                         },
                         error:function(){
                         	var filter_error;
-                            var errMsg = "ERROR: " + "Collection fetch error";
-                            element.html('<span style="color: red;">' + err_msg + '</span>');
+                            var errMsg = "ERROR: " + language.error_load_data;
+                            element.html('<span style="color: red;">' + errMsg + '</span>');
                             
                             notifyEvent({
                             	type:"griderror",
@@ -780,21 +810,9 @@
                             	errorDescription: errMsg
                             });
                             
-                            //element.triggerHandler("griderror", {err_code: "server_error", err_description: err_msg});
-                            //$.error(errMsg);
-
-                            /*if(s.useFilters) {
-                                var elem_filter_rules = $("#" + filter_rules_id);
-                                filter_error = data["filter_error"];
-                                if(filter_error["error_message"] != null) {
-                                    elem_filter_rules.jui_filter_rules("markRuleAsError", filter_error["element_rule_id"], true);
-                                    elem_filter_rules.triggerHandler("onValidationError", {err_code: "filter_validation_server_error", err_description: filter_error["error_message"]});
-                                    $.error(filter_error["error_message"]);
-                                }
-                            }*/
                         },
                     });
-        		}else{
+        		}else if($.isArray(dataSource)){
         			data = dataSource;
         			genDataUUID();
         			filterData();
@@ -910,7 +928,7 @@
             elemTable = element.find("#" + table_id),
             elem_pagination = element.find("#" + pagination_id);*/
             
-            initDataSource(true);
+            boundData(true);
         },
         selectedRows = function(action, row_data) {
             var containerId = element.attr("id"),
@@ -967,13 +985,14 @@
 
         },
         filterData = function(){
+        	//check Server Filter
         	var query = options.filters;
-        	if((query !== null) && (!! gonrin) && (!! gonrin.query)){
+        	
+        	if((options.filterMode !== "server") && (query !== null) && (!! gonrin) && (!! gonrin.query)){
         		filteredData = gonrin.query( data, query);
         	}else{
         		filteredData = data
         	}
-        	
         };
         
         /********************************************************************************
@@ -1076,12 +1095,14 @@
         onValidateError: function(){},
         onValidateSuccess: function(){},
         
-        //serverOrdering: false,
-        //serverFiltering: false,
+        orderMode: false,
+        filterMode: false,
+        paginationMode: false,
+        
         sortable: {
         	serverOrdering: false,
         },
-        useSortableLists: true,
+        //useSortableLists: true,
         
         // bs 3
         containerClass: "grid_container",

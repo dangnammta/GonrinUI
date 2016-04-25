@@ -28,11 +28,13 @@
             viewDate,
             unset = true,
             input,
+            textElement,
             component = false,
             widget = false,
             use24Hours,
             minViewModeNumber = 0,
             actualFormat,
+            textFormat,
             parseFormats,
             currentViewMode,
             datePickerModes = [
@@ -815,6 +817,7 @@
                 if (!targetMoment) {
                     unset = true;
                     input.val('');
+                    textElement.val('');
                     element.data('date', '');
                     notifyEvent({
                         type: 'change.gonrin',
@@ -836,6 +839,9 @@
                     viewDate = date.clone();
                     input.val(date.format(actualFormat));
                     
+                    //textElement here
+                    textElement.val(date.format(textFormat));
+                    
                     element.data('date', date.format(actualFormat));
                     unset = false;
                     update();
@@ -847,6 +853,7 @@
                 } else {
                     if (!options.keepInvalid) {
                         input.val(unset ? '' : date.format(actualFormat));
+                        textElement.val(unset ? '' : date.format(textFormat));
                     }
                     notifyEvent({
                         type: 'error.gonrin',
@@ -1187,8 +1194,8 @@
                 widget.show();
                 place();
 
-                if (options.focusOnShow && !input.is(':focus')) {
-                    input.focus();
+                if (options.focusOnShow && !textElement.is(':focus')) {
+                    textElement.focus();
                 }
 
                 notifyEvent({
@@ -1279,7 +1286,15 @@
             },
 
             attachDatePickerElementEvents = function () {
-                input.on({
+                /*input.on({
+                    'change': change,
+                    'blur': options.debug ? '' : hide,
+                    'keydown': keydown,
+                    'keyup': keyup,
+                    'focus': options.allowInputToggle ? show : ''
+                });*/
+                
+                textElement.on({
                     'change': change,
                     'blur': options.debug ? '' : hide,
                     'keydown': keydown,
@@ -1300,19 +1315,27 @@
             },
 
             detachDatePickerElementEvents = function () {
-                input.off({
+                /*input.off({
                     'change': change,
                     'blur': blur,
                     'keydown': keydown,
                     'keyup': keyup,
                     'focus': options.allowInputToggle ? hide : ''
+                });*/
+                
+                textElement.off({
+                    'change': change,
+                    'blur': options.debug ? '' : hide,
+                    'keydown': keydown,
+                    'keyup': keyup,
+                    'focus': options.allowInputToggle ? show : ''
                 });
 
-                if (element.is('input')) {
+                /*if (element.is('input')) {
                     input.off({
                         'focus': show
                     });
-                }
+                }*/
                 
                 if (component) {
                     component.off('click', toggle);
@@ -1360,6 +1383,8 @@
                 if (parseFormats.indexOf(format) < 0 && parseFormats.indexOf(actualFormat) < 0) {
                     parseFormats.push(actualFormat);
                 }
+                
+                textFormat = options.textFormat || actualFormat;
 
                 use24Hours = (actualFormat.toLowerCase().indexOf('a') < 1 && actualFormat.replace(/\[.*?\]/g, '').indexOf('h') < 1);
 
@@ -1495,6 +1520,16 @@
             if (actualFormat) {
                 initFormatting(); // reinit formatting
             }
+            return picker;
+        };
+        
+        picker.textFormat = function (newTextFormat) {
+            if (arguments.length === 0) {
+                return options.textFormat;
+            }
+
+            options.textFormat = newTextFormat;
+
             return picker;
         };
 
@@ -2284,6 +2319,11 @@
             component = componentButton;
             element.addClass("form-control");
             
+            textElement = $('<input class="form-control" type="text">');
+            element.before(textElement);
+            element.css("display", "none");
+            
+            
         } else {
             input = element.find(options.datepickerInput);
             if (input.size() === 0) {
@@ -2322,8 +2362,8 @@
             picker.disable();
         }
         if (input.is('input') && input.val().trim().length !== 0) {
-         // setValue(parseInputDate(input.val().trim()));
-			parseInputDate(input.val().trim());          
+        	setValue(parseInputDate(input.val().trim()));
+			//parseInputDate(input.val().trim());          
         }
         else if (options.defaultDate && input.attr('placeholder') === undefined) {
             setValue(options.defaultDate);
@@ -2352,6 +2392,7 @@
         format: false,
         dayViewHeaderFormat: 'MMMM YYYY',
         extraFormats: false,
+        textFormat:false,
         stepping: 1,
         minDate: false,
         maxDate: false,

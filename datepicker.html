@@ -15,7 +15,10 @@
 	
 	<script type="text/javascript">
             $(function () {
-                $('#datetime').datetimepicker();
+                $('#datetime').datetimepicker({
+                	textFormat:'DD-MM-YYYY',
+                	extraFormats:['DDMMYYYY']
+                });
             	$('#datetime').on('change.gonrin', function (e) {
 				  	console.log(e.date);
 				})
@@ -29,7 +32,7 @@
 			<br/>
 			<div style="width:100%">
 	    		<div style="width:50%;">
-					<input type='text' id='datetime'/>
+					<input type='text' id='datetime' value='22012016'/>
 				</div>
 			</div>
 	    </div>

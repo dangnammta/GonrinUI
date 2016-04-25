@@ -21,14 +21,14 @@
 		text,
 		data, //datalist
 		index = -1,
-		text_element = false,
+		textElement = false,
 		unset = true,
         input,
-        menu_template = '<ul class="dropdown-menu" style="overflow-y:scroll"></ul>',
-        item_template =  '<li><a href="javascript:void(0)"></a></li>',
+        menuTemplate = '<ul class="dropdown-menu" style="overflow-y:scroll"></ul>',
+        itemTemplate =  '<li><a href="javascript:void(0)"></a></li>',
         component = false,
         widget = false,
-        dataSource_type,
+        dataSourceType,
 		keyMap = {
                 'up': 38,
                 38: 'up',
@@ -72,15 +72,15 @@
 			if($.isArray(data) && data.length > 0){
 				$.each(data, function (idx, item) {
 					if (typeof item === 'object') {
-						dataSource_type = 'object';
+						dataSourceType = 'object';
 						if((options.valueField != null) && (options.textField != null)){
-							var $item = $(item_template);
+							var $item = $(itemTemplate);
 							if((!!options.template)&& (!!gonrin.template)){
 								var tpl = gonrin.template(options.template);
 								$item.find('a').html(tpl(item));
 								//console.log($item);
 							}else{
-								var $item = $(item_template);
+								var $item = $(itemTemplate);
 								$item.find('a').text(item[options.textField]);
 								if(value == item[options.valueField]){
 									setValue(item[options.valueField]);
@@ -94,8 +94,8 @@
 						}
 						
 					}else {
-						dataSource_type = 'common';
-						var $item = $(item_template);//.text(item);
+						dataSourceType = 'common';
+						var $item = $(itemTemplate);//.text(item);
 						$item.find('a').text(item);
 						widget.append($item);
 						$item.bind("click", function(){
@@ -109,8 +109,8 @@
 		},
         setupWidget = function () {
 			if (!!options.dataSource) {
-				//var menu = $(menu_template);
-				widget = $(menu_template);
+				//var menu = $(menuTemplate);
+				widget = $(menuTemplate);
 				if(!!options.headerTemplate){
 					widget.prepend($("<li>").addClass("dropdown-header").html(options.headerTemplate))
 				}
@@ -157,16 +157,16 @@
         	var oldvalue = value;
         	value = val;
         	function setText(txt){
-        		if(text_element){
+        		if(textElement){
         			text = txt;
-            		text_element.val(txt);
+            		textElement.val(txt);
             	}
         	};
         	if(data && (data.length > 0)){
         		var txt = null;
         		for(var i = 0; i < data.length; i++){
         			var item = data[i];
-        			if(dataSource_type === 'object'){
+        			if(dataSourceType === 'object'){
         				if((options.valueField != null) && (options.textField != null)){
             				if(value == item[options.valueField]){
             					txt = item[options.textField];
@@ -185,9 +185,9 @@
             				}
             			}
         			}
-        			else if(dataSource_type === 'common'){
+        			else if(dataSourceType === 'common'){
         				if(value == item){
-        					console.log(value);
+        					//console.log(value);
         					index = i;
         					setText(value);
         					input.val(value);
@@ -212,7 +212,7 @@
         		var item = data[idx];
         		var oldvalue = value;
         		var txt,val;
-        		if(dataSource_type === 'object'){
+        		if(dataSourceType === 'object'){
         			if((options.valueField != null) && (options.textField != null)){
             			txt = item[options.textField];
             			val = item[options.valueField];
@@ -220,13 +220,13 @@
             		}else{
             			return;
             		}
-        		}else if(dataSource_type === 'common'){
+        		}else if(dataSourceType === 'common'){
         			txt = item;
         			val = item;
         		}
-        		if(text_element){
+        		if(textElement){
         			text = txt;
-            		text_element.val(txt);
+            		textElement.val(txt);
             	};
 				index = idx;
 				input.val(val);
@@ -265,6 +265,11 @@
             //$(window).on('resize', place);
             widget.on('mousedown', false);
             widget.show();
+            
+            if (options.focusOnShow && !textElement.is(':focus')) {
+                textElement.focus();
+            }
+            
             notifyEvent({
                 type: 'show.gonrin'
             });
@@ -454,11 +459,22 @@
             	if(options.filter === false){
             		return false;
             	}
-                trigger_search();
+                triggerSearch();
              }
         },
+        
+        change = function (e) {
+            var val = $(e.target).val().trim();
+            /*var parsedDate = val ? parseInputDate(val) : null;
+            setValue(parsedDate);*/
+        	
+        	//TODO: trigger search
+            e.stopImmediatePropagation();
+            return false;
+        },
+        
         search = function(word) {
-            word = typeof word === "string" ? word : text_element.val();
+            word = typeof word === "string" ? word : textElement.val();
             var length = word.length;
             var ignoreCase = options.ignoreCase;
             var filter = options.filter;
@@ -482,10 +498,10 @@
                 }*/
             }
         },
-        trigger_search = function() {
-        	if(text_element){
+        triggerSearch = function() {
+        	if(textElement){
         		_typing_timeout = setTimeout(function() {
-                    var searchvalue = text_element.val();
+                    var searchvalue = textElement.val();
                     if (_prev !== searchvalue) {
                         _prev = searchvalue;
                         search(searchvalue);
@@ -495,10 +511,10 @@
         	}
         },
         attachElementEvents = function () {
-        	if (text_element) {
-        		text_element.on({
-                    //'change': change,
-                    //'blur': options.debug ? '' : hide,
+        	if (textElement) {
+        		textElement.on({
+                    'change': change,
+                    'blur': options.debug ? '' : hide,
                     'keydown': keydown,
                     'focus':  show,
                 });
@@ -510,16 +526,16 @@
             if(widget){
             	
             }
-            $(document)
+            /*$(document)
             .on('click.gr.combobox.data-api', '.input-group', function (e) { e.stopPropagation() })
-            .on('click.gr.combobox.data-api', hide);
+            .on('click.gr.combobox.data-api', hide);*/
           
         },
         detach_element_events = function () {
-        	if (text_element) {
-        		text_element.off({
-                    //'change': change,
-                    //'blur': blur,
+        	if (textElement) {
+        		textElement.off({
+                    'change': change,
+                    'blur': options.debug ? '' : hide,
                     'keydown': keydown,
                     'focus': show
                 });
@@ -572,8 +588,8 @@
             if (component && component.hasClass('btn')) {
                 component.addClass('disabled');
             }
-            if (text_element){
-            	text_element.prop('disabled', true);
+            if (textElement){
+            	textElement.prop('disabled', true);
             }
             input.prop('disabled', true);
             return grobject;
@@ -584,8 +600,8 @@
             if (component && component.hasClass('btn')) {
                 component.removeClass('disabled');
             }
-            if (text_element){
-            	text_element.prop('disabled', false);
+            if (textElement){
+            	textElement.prop('disabled', false);
             }
             input.prop('disabled', false);
             return grobject;
@@ -598,8 +614,8 @@
             if (component && component.hasClass('btn')) {
                 component.addClass('disabled');
             }
-            if (text_element){
-            	text_element.prop('readonly', true);
+            if (textElement){
+            	textElement.prop('readonly', true);
             }
             return grobject;
         };
@@ -629,8 +645,8 @@
             var componentButton = $('<span class="input-group-addon dropdown-toggle" data-dropdown="dropdown">').html('<span class="caret"></span><span class="glyphicon glyphicon-remove" style="display:none;"></span>');
             inputGroupSpan.append(componentButton);
             component = componentButton;
-            text_element = $('<input class="form-control" type="text">');
-            element.before(text_element);
+            textElement = $('<input class="form-control" type="text">');
+            element.before(textElement);
             element.css("display", "none");
         } else {
             throw new Error('Cannot apply to non input, select element');
@@ -651,8 +667,8 @@
 				options.textField = options.valueField;
 			}
     	}
-    	if(text_element && options.placeholder){
-    		text_element.attr("placeholder", options.placeholder);
+    	if(textElement && options.placeholder){
+    		textElement.attr("placeholder", options.placeholder);
     	}
     	if((options.index) && (options.index > -1)){
     		grobject.setIndex(options.index);
@@ -721,6 +737,6 @@
         text: "",
         /*The value of the widget.*/
         value: null,
-        
+        focusOnShow: true
     };
 }));

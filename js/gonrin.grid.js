@@ -636,7 +636,7 @@
         	if(options.paginationMode  !== "server"){
         		if(filteredData.length == 0){
         			options.pagination.totalPages = 0;
-        			options.pagination.page = 0;
+        			options.pagination.page = 1;
         			return filteredData;
         		}
         		options.pagination.totalPages = (filteredData.length % options.pagination.pageSize) == 0 ? filteredData.length / options.pagination.pageSize: parseInt(filteredData.length / options.pagination.pageSize) + 1;
@@ -1027,6 +1027,9 @@
         	options.filters = query;
         	filterData();
         	sortData();
+        	//console.log('dataToRender');
+	        //console.log(dataToRender);
+	        //console.log(dataToRender.length);
         	renderData(pagingData());
         };
         

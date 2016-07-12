@@ -140,8 +140,10 @@
                 
                 
                 $("#filter").bind("click", function(){
+                	var ftext = $('#filter_text').val();
                 	$('#grid').data('gonrin').filter({
-                        id: {$gt:25}
+                        //id: {$gt:25}
+                		address: {$like: ftext}
                     });
                 })
                 
@@ -159,7 +161,7 @@
                     //featured:true, 
                     id: {$gt:3}
                 });
-                console.log(ret);
+                //console.log(ret);
                 
             });
      </script>
@@ -170,6 +172,7 @@
 	    	<div id="grid"></div>
 	    </div> 
 	</div>
+	<input type="text" id="filter_text"/>
 	<button id="filter">Filter</button>
 </body>
 </html>

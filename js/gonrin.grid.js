@@ -909,6 +909,9 @@
             element.find("#" + noResultsId).hide();
             
             var elemTools = element.find("#" + toolsId);
+            if(elemTools){
+            	elemTools.addClass(options.toolsClass);
+            }
             
             var toolsHtml = $("<div>").addClass("btn-group");
             
@@ -1111,7 +1114,7 @@
         containerClass: "grid_container",
         noResultsClass: "alert alert-warning no-records-found",
 
-        toolsClass: "tools",
+        toolsClass: "tools tools_grid",
 
         columnsListLaunchButtonClass: "btn btn-default dropdown-toggle",
         columnsListLaunchButtonIconClass: "glyphicon glyphicon-th",

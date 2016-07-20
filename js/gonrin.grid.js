@@ -193,6 +193,7 @@
                 });
         	}
         },
+        
         commandEditRow = function(e){
         	e.stopPropagation();
         	var $this = $(this);
@@ -206,6 +207,26 @@
                 	rowData:removeDataUUID(rowData)
                 });
         	}
+        },
+        commandCreateRow = function(e){
+        	e.stopPropagation();
+        	var $this = $(this);
+        	/*var parent = $this.closest("tr");
+        	if(parent){
+        		var rowData = parent.data("row_data");
+        		var rowUuid = rowData['_$row_id']
+    			notifyEvent({
+                	type:"rowedited",
+                	rowUuid: rowUuid,
+                	rowData:removeDataUUID(rowData)
+                });
+        	}*/
+        	
+        	notifyEvent({
+            	type:"rowcreatted",
+            	rowUuid: null,
+            	rowData: null
+            });
         },
         renderData = function(dataToRender){
         	
@@ -762,7 +783,7 @@
         	dataSource = options["dataSource"];
         	if(typeof dataSource === "object"){
         		if(isBackBoneDataSource(dataSource)){
-        			console.log('instance of collection view');
+        			//console.log('instance of collection view');
         			options.paginationMode = "server";
         			options.filterMode = "server";
         			options.sortableMode = "server";
@@ -921,7 +942,13 @@
             		var button = $("<button>").addClass("btn btn-sm").attr({"type":"button","name": options.tools[i].name}).html(options.tools[i].label || options.tools[i].name);
             		button.addClass(options.tools[i].buttonClass || "btn-default");
             		if(options.tools[i].command){
-            			button.bind("click", $.proxy(options.tools[i].command, options.context));
+            			if($.isFunction(options.tools[i].command)){
+            				button.bind("click", options.context? $.proxy(options.tools[i].command, options.context): options.tools[i].command);
+            			}else if(typeof options.tools[i].command === "string"){
+            				console.log(options.tools[i].command);
+            			}
+            			
+            			
             		}
             		toolsHtml.append(button);
             	}
@@ -1030,9 +1057,6 @@
         	options.filters = query;
         	filterData();
         	sortData();
-        	//console.log('dataToRender');
-	        //console.log(dataToRender);
-	        //console.log(dataToRender.length);
         	renderData(pagingData());
         };
         

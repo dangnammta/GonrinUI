@@ -20,13 +20,21 @@
                 	onValidateError: function(){
                 		alert("eror");
                 	},
+                	tools:[
+      	                 {
+      	                	 name: "create",
+      	                	 buttonClass:"btn-success",
+      	                	 label: "Tạo mới",
+      	                	 command: "create"
+      	                 }
+	                 ],
                 	fields: [
                 	     {
                 	    	 field: "command", 
                 	    	 label:"Command",
                 	    	 width:"50px", 
-                	    	 command: ["delete"],
-                	    	 commandButtonClass: ["btn-sm"]
+                	    	 command: ["delete","edit"],
+                	    	 commandButtonClass: ["btn-sm", "btn-sm"]
                 	   	 },
                          {field: "id", label: "Code", visible: true, width:"250px", sortable: {order:"asc"}},
                          {

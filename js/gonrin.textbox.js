@@ -18,7 +18,10 @@
 		var gonrin = window.gonrin;
 		var grobject = {},
 		value,
-        input;
+        input,
+        getValue = function(){
+        	return input.val();
+        };;
 	
 		/********************************************************************************
         *
@@ -30,7 +33,7 @@
         * a clone when setting a private variable.
         *
         ********************************************************************************/
-       
+		grobject.getValue = getValue;
        
         grobject.options = function (newOptions) {
             if (arguments.length === 0) {

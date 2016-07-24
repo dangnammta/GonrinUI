@@ -36,7 +36,7 @@
             return retValue;
         },
 		getValue = function(){
-        	return tryParseValue(input.val());;
+        	return tryParseValue(input.val());
         };
 		/********************************************************************************
         *

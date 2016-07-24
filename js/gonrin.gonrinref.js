@@ -130,11 +130,20 @@
             				if(widget.selectionMode === "multiple"){
             					//textElement.html(JSON.stringify(seleted));
             					textElement.find("ul").empty();
+            					var valArray = [];
     			            	$.each(seleted, function(key, item){
     			            		var txt = item[options.textField];
     			            		$(itemTemplate).html(txt).appendTo(textElement.find("ul"));
+    			            		
+    			            		if(options.valueField){
+    			            			var val = item[options.valueField];
+    			            			valArray.push(val);
+    			            		}else{
+    			            			valArray.push(item);
+    			            		}
     			            	});
-    			            	input.val(JSON.stringify(seleted));
+    			            	//input.val(JSON.stringify(seleted));
+    			            	input.val(JSON.stringify(valArray));
     			            	
     			            	notifyEvent({
                 					type:"change.gonrin",

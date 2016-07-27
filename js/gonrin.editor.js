@@ -1147,7 +1147,7 @@
         // Update the iframe checksum
         if (options.updateTextArea)
             editor.frameChecksum = checksum(html);
-        console.log(html);
+        
         // Update the iframe and trigger the change event
         if (html !== $body.html()) {
             $body.html(html);

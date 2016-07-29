@@ -49,12 +49,12 @@
 
         // initializing element and component attributes
         
-        if (element.is('input') ) {
+        if ((element.is('input')) || (element.is('textarea'))) {
             input = element;
             value = input.val();
             element.addClass("form-control");
         } else {
-            throw new Error('Cannot apply to non input, select element');
+            throw new Error('Cannot apply to non input, textarea element');
         }
 
     	if(!options.placeholder){

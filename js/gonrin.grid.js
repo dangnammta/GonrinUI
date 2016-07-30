@@ -785,9 +785,8 @@
         		if(isBackBoneDataSource(dataSource)){
         			//console.log('instance of collection view');
         			options.paginationMode = "server";
-        			options.filterMode = "server";
+        			options.filterMode = options.filterMode || "server";
         			options.sortableMode = "server";
-        			
         			
         			var collection = dataSource;
         			var pageSize = options.pagination.pageSize;
@@ -1031,7 +1030,7 @@
         * =====================
         */
         grobject.getVersion = function() {
-            return "0.0.1";
+            return "0.1.0";
         };
         
         grobject.options = function (newOptions) {

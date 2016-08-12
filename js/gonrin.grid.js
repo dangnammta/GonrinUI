@@ -335,7 +335,16 @@
             for(row in dataToRender) {
             	rowIdHtml = (primaryField ? tableId + '_tr_' + dataToRender[row][primaryField] : '');
             	var trow = $("<tr>").attr("id",rowIdHtml).data("row_data", dataToRender[row] );
-            	
+            	//class
+            	if(!!options.rowClass){
+            		if (typeof options.rowClass === "string"){
+            			trow.addClass(options.rowClass);
+            		}
+            		if (typeof options.rowClass === "function"){
+            			var classTxt = options.rowClass(dataToRender[row]);
+            			trow.addClass(classTxt);
+            		}
+            	}
             	if(!!dataToRender[row]["_$row_id"]){
             		trow.attr("data-uuid", dataToRender[row]["_$row_id"] );
             	}
@@ -353,23 +362,48 @@
 								
 								$.each(commands, function(iter, command){
 									var button = null;
-									switch(command) {
-									    case "delete":
-									        button = $("<button/>").addClass("btn btn-danger").html(language.command_delete_label);
-									        if(($.isArray(options.fields[i].commandButtonClass)) && (options.fields[i].commandButtonClass.length > iter)){
-									        	button.addClass(options.fields[i].commandButtonClass[iter]);
-									        }
-									        button.bind("click", commandDeleteRow);
-									        break;
-									    case "edit":
-									    	button = $("<button/>").addClass("btn btn-warning").html(language.command_edit_label);
-									        if(($.isArray(options.fields[i].commandButtonClass)) && (options.fields[i].commandButtonClass.length > iter)){
-									        	button.addClass(options.fields[i].commandButtonClass[iter]);
-									        }
-									        button.bind("click", commandEditRow);
-									        break;
-									    default:
+									if (command === "delete"){
+								        button = $("<button/>").addClass("btn btn-danger").html(language.command_delete_label);
+								        button.bind("click", commandDeleteRow);
 									}
+									else if (command === "edit"){
+								    	button = $("<button/>").addClass("btn btn-warning").html(language.command_edit_label);
+								        button.bind("click", commandEditRow);
+									}
+									if ($.isPlainObject(command)){
+										if (!!command.action){
+											if (command.action === "delete"){
+												button = $("<button/>").addClass("btn btn-danger").html(command.label || language.command_delete_label);
+										        button.bind("click", commandDeleteRow);
+											}
+											
+											if (command.action === "edit"){
+												button = $("<button/>").addClass("btn btn-warning").html(command.label || language.command_edit_label);
+										        button.bind("click", commandEditRow);
+											}
+											if (typeof command.action === "function"){
+												button = $("<button/>").addClass("btn").html(command.label || " ");
+												button.bind("click", function(e){
+											        e.stopPropagation();
+											        var $this = $(this);
+										        	var parent = $this.closest("tr");
+										        	if(parent){
+										        		var rowData = parent.data("row_data");
+										        		rowData = removeDataUUID(rowData);
+										        		if(options.context){
+										        			command.action.call(options.context, {rowData:rowData, el: parent}, command.args||{});
+										        		}else{
+										        			command.action({rowData:rowData, el: parent},command.args||{});
+										        		}
+										        	}
+												});
+											}
+											if(!!command.class){
+												button.addClass(command.class);
+											}
+										}
+									}
+									
 									if(button != null){
 										tcol.append(button);
 									}
@@ -1186,6 +1220,7 @@
 
         //custom_html1_id_prefix: "custom1_",
         //custom_html2_id_prefix: "custom2_",
+        rowClass : "grid_row",
 
         paginationIdPrefix: "pag_",
         filterContainerIdPrefix: "flt_container_",

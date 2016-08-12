@@ -33,8 +33,21 @@
                 	    	 field: "command", 
                 	    	 label:"Command",
                 	    	 width:"50px", 
-                	    	 command: ["delete","edit"],
-                	    	 commandButtonClass: ["btn-sm", "btn-sm"]
+                	    	 command: [
+                	    	     {"label":"Delete",
+                	    	        	"action": "delete",
+                	    	        	"class": "btn-sm",
+                	    	     },
+                	    	     {
+                	    	       "label":"Custom function",
+                   	    	        "action": function(params, args){
+                   	    	        	console.log(params);
+                   	    	        	console.log(args);
+                   	    	        },
+                   	    	        "args": {"anme": "Nam abc"},
+                   	    	        "class": "btn-primary btn-sm"
+                   	    	     },   
+                	    	 ],
                 	   	 },
                          {field: "id", label: "Code", visible: true, width:"250px", sortable: {order:"asc"}},
                          {
@@ -134,6 +147,14 @@
                      ],
                      primaryField:"id",
                      selectionMode: "multiple",
+                     rowClass: function(data){
+                    	 if(data.name === "ABC"){
+                    		 return "Green";
+                    	 }
+                    	 if(data.name === "XYZ"){
+                    		 return "Blue";
+                    	 }
+                     },
                      /*filters: {
                          id: {$gt:3}
                      },*/

@@ -377,18 +377,18 @@
             },
 
             place = function () {
-                var position = (component || element).position(),
-                    offset = (component || element).offset(),
+                var position = (component || textElement).position(),
+                    offset = (component || textElement).offset(),
                     vertical = options.widgetPositioning.vertical,
                     horizontal = options.widgetPositioning.horizontal,
                     parent;
-
+            
                 if (options.widgetParent) {
                     parent = options.widgetParent.append(widget);
                 } else if (element.is('input')) {
                 	//gonrin inject
                     parent = element.after(widget).parent();
-                    position = element.position();
+                    position = textElement.position();
                 } else if (options.inline) {
                     parent = element.append(widget);
                     return;
@@ -430,6 +430,7 @@
                 }
 
                 // find the first parent element that has a relative css positioning
+                
                 if (parent.css('position') !== 'relative') {
                     parent = parent.parents().filter(function () {
                         return $(this).css('position') === 'relative';
@@ -438,7 +439,7 @@
                 if (parent.length === 0) {
                     throw new Error('datetimepicker component should be placed within a relative positioned container');
                 }
-
+             
                 widget.css({
                     top: vertical === 'top' ? 'auto' : position.top + element.outerHeight(),
                     bottom: vertical === 'top' ? position.top + element.outerHeight() : 'auto',
@@ -452,7 +453,6 @@
                     return;
                 }
                 element.trigger(e);
-                
             },
 
             viewUpdate = function (e) {
@@ -1286,13 +1286,6 @@
             },
 
             attachDatePickerElementEvents = function () {
-                /*input.on({
-                    'change': change,
-                    'blur': options.debug ? '' : hide,
-                    'keydown': keydown,
-                    'keyup': keyup,
-                    'focus': options.allowInputToggle ? show : ''
-                });*/
                 
                 textElement.on({
                     'change': change,

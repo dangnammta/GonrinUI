@@ -95,7 +95,7 @@
     $.fn.numeric.defaults = {
         text: "",
         /*The value of the widget.*/
-        format: 'i',
+        format: 'f',
         value: null,
         placeholder: null
     };

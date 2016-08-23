@@ -33,6 +33,19 @@
                 	    	 field: "command", 
                 	    	 label:"Command",
                 	    	 width:"50px", 
+                	    	 menu: {
+                	    		 	label: "context menu",
+                	    		 	"class": "btn-primary btn-xs",
+                	    		 	command: [
+                	      	    	     {
+                	      	    	    	 "label":"Sample Comand",
+                	      	    	    	 "action": function(params){
+                	      	    	    		 console.log(params);
+                	      	    	    	 }
+                	      	    	     }  
+                	      	    	 ]
+                	    	 	 }
+                	     /*,
                 	    	 command: [
                 	    	     {"label":"Delete",
                 	    	        	"action": "delete",
@@ -47,7 +60,7 @@
                    	    	        "args": {"anme": "Nam abc"},
                    	    	        "class": "btn-primary btn-sm"
                    	    	     },   
-                	    	 ],
+                	    	 ],*/
                 	   	 },
                          {field: "id", label: "Code", visible: true, width:"250px", sortable: {order:"asc"}},
                          {

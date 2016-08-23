@@ -356,10 +356,13 @@
                     	if((!!options.fields[i].template) && (!!gonrin.template)){
 							var tpl = gonrin.template(options.fields[i].template);
 							tcol.html(tpl(dataToRender[row]));
-						}else if(!!options.fields[i].command){
+						}
+                    	// Command or Menu Fields
+                    	else if((!!options.fields[i].command) || (!!options.fields[i].menu)){
 							var commands = options.fields[i].command;
+							var menu = options.fields[i].menu;
+						
 							if($.isArray(commands)){
-								
 								$.each(commands, function(iter, command){
 									var button = null;
 									if (command === "delete"){
@@ -408,8 +411,51 @@
 										tcol.append(button);
 									}
 								});
+							}else if((!!menu) && (!!menu.command) ){
+								var btndropdown = $("<button>").addClass("btn").attr({type:"button", "data-toggle":"dropdown", "aria-haspopup": "true", "aria-expanded":"false"});
+								btndropdown.html((menu.label || '...') + '<span class="caret"></span>');
+								if(!!menu.class){
+									btndropdown.addClass(menu.class);
+								}
+								btndropdown.dropdown();
+								var uldropdown = $('<ul>').addClass("dropdown-menu");
 								
+								var $menu = $("<div>").addClass("dropdown").append(btndropdown).append(uldropdown);
 								
+								var menucmds = menu.command;
+								if($.isArray(menucmds)){
+									$.each(menucmds, function(iter, command){
+										var button = null;
+										if (typeof command.action === "function"){
+											button = $("<li/>").html( '<a href="javascript:void(0)">' + command.label || " "+ '</a>');
+											button.bind("click", function(e){
+										        e.stopPropagation();
+										        var $this = $(this);
+									        	var parent = $this.closest("tr");
+									        	if(parent){
+									        		var rowData = parent.data("row_data");
+									        		rowData = removeDataUUID(rowData);
+									        		if(options.context){
+									        			command.action.call(options.context, {rowData:rowData, el: parent}, command.args||{});
+									        		}else{
+									        			command.action({rowData:rowData, el: parent},command.args||{});
+									        		}
+									        	}
+											});
+										}else if (command.action === "separator"){
+											button = $("<li/>").attr("role","separator").addClass("divider");
+										}
+										if(button){
+											uldropdown.append(button);
+										}
+									})
+								}
+								
+								tcol.append($menu);
+								
+								tcol.bind("click", function(e){
+									e.stopPropagation();
+								});
 							}
 						}else{
 							var value = dataToRender[row][options.fields[i].field];
@@ -1194,7 +1240,7 @@
         sortingIndicatorAscClass: "glyphicon glyphicon-chevron-up text-muted",
         sortingIndicatorDescClass: "glyphicon glyphicon-chevron-down text-muted",
 
-        datatableContainerClass: "table-responsive",
+        datatableContainerClass: "table", //"table-responsive"
         datatableClass: "table table-bordered table-hover",
         commonThClass: "th-common",
         selectedTrClass: "warning",

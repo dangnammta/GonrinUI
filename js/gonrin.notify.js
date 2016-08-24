@@ -32,7 +32,7 @@
 			from: "top",
 			align: "right"
 		},
-		offset: 20,
+		offset: 50,
 		spacing: 10,
 		z_index: 1031,
 		delay: 3000,

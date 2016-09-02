@@ -420,6 +420,10 @@
 								btndropdown.dropdown();
 								var uldropdown = $('<ul>').addClass("dropdown-menu");
 								
+								if(!!menu.dropdownClass){
+									uldropdown.addClass(menu.dropdownClass);
+								}
+								
 								var $menu = $("<div>").addClass("dropdown").append(btndropdown).append(uldropdown);
 								
 								var menucmds = menu.command;

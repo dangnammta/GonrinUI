@@ -20,6 +20,7 @@
                 	onValidateError: function(){
                 		alert("eror");
                 	},
+                	orderByMode: "client",
                 	tools:[
       	                 {
       	                	 name: "create",
@@ -99,6 +100,15 @@
                         	 foreignValueField: "value2",
                         	 foreignTextField: "text",
                        	 },
+                     ],
+                     orderBy:[
+                     	{
+                     		field: "age",
+                     		direction: "asc",
+                     		compare: function(a, b) {
+                            	return a - b;
+                        	}
+                     	},
                      ],
                      dataSource: [
                          {

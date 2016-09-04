@@ -161,12 +161,19 @@
             var visible = "visible";
             return !column.hasOwnProperty(visible) || (column.hasOwnProperty(visible) && column[visible] === true);
         },
-        columnIsSortable = function(column) {
-            return (column.hasOwnProperty("sortable") && column["sortable"] !== false);
+        findSortable = function(column) {
+        	if((!!options.orderByMode)&&(!!options.orderBy)){
+        		for (var i = 0; i < options.orderBy.length; i++){
+        			if ((column.field === options.orderBy[i]['field'])){
+        				return options.orderBy[i];
+        			}
+        		}
+        	}
+            return false;
         },
-        getSortableMode = function(){
+        getorderByMode = function(){
         	
-        	return options.sortableMode;
+        	return options.orderByMode;
         }, 
         commandDeleteRow = function(e){
         	e.stopPropagation();
@@ -181,16 +188,12 @@
         		    	break;
         		    }
         		}
-        		
-        		filterData();
-    			sortData();
-    			renderData(pagingData());
-    			
     			notifyEvent({
                 	type:"rowdeleted",
                 	//rowId: rowId,
                 	rowData:removeDataUUID(rowData)
                 });
+    			boundData();
         	}
         },
         
@@ -298,14 +301,11 @@
 	        for(i in options.fields) {
                 if(columnIsVisible(options.fields[i])) {
                     sortingIndicator = "";
-                    if((options.sortable) && columnIsSortable(options.fields[i]) && (!foundsort)) {
-                    	var sortable = options.fields[i].sortable;
-                    	var sortingType = false;
-                    	if(!!sortable){
-                    		sortingType = sortable.order || false;
-                    	}
+                    var sortableField = findSortable(options.fields[i]);
+                    if((!!options.orderByMode) && (sortableField !== false) && (foundsort === false)) {
+                    	
+                    	var sortingType = sortingType = sortableField.direction || false;
                     	if(sortingType !== false){
-                    		foundsort = true;
                     		switch(sortingType) {
 	                            case "asc":
 	                            	sortingIndicator = '&nbsp;<span class="' + options.sortingIndicatorAscClass + '"></span>';
@@ -316,6 +316,7 @@
 	                            default:
 	                            	sortingIndicator = '';
 	                        }
+                    		foundsort = true;
                     	}
                     }
                     
@@ -499,7 +500,7 @@
                 gridData.append(trow);
             }
          // refresh pagination (if needed)
-            if(options.pagination !== false) {
+            if((options.pagination !== false) && (options.paginationMode !== false)) {
             	if($.fn.pagination !== undefined){
             		elemPagination.pagination({
             			refresh : true,
@@ -510,7 +511,6 @@
                     	onChangePage: function(event){
                     		//console.log("change page");
                     		options.pagination.page = event.page;
-                    		
                     		if(options.paginationMode === "server"){
                     			boundData();
                     		}else{
@@ -690,39 +690,28 @@
             	var rowPrefixLen = (tableId + "_th_").length;
             	var fieldName = $(this).attr("id").substr(rowPrefixLen);
 
-            	if(options.sortable !== false){
-            		var sortable = false;
-            		for(var j = 0; j < options.fields.length; j ++){
-                		var field = options.fields[j];
-                		if(field.field !== fieldName){
-                			continue;
-                		}
-                		
-                		if(field.hasOwnProperty("sortable") && (field.sortable !== false)){
-                			sortable = true;
-                			//var order = field.sortable.order;
-                			if(field.sortable.order === "asc"){
-                				field.sortable.order = "desc";
-                			}else{
-                				field.sortable.order = "asc";
-                			}
-                		}
-                		break;
-                	}
-            		if(sortable){
-            			for(var j = 0; j < options.fields.length; j ++){
-            				var field = options.fields[j];
+            	if(options.orderByMode !== false){
+            		var sortField = findSortable({field:fieldName});
+            		
+            		if(sortField){
+            			if(sortField.direction === "asc"){
+                			sortField.direction = "desc";
+            			}else{
+            				sortField.direction = "asc";
+            			}
+            			//Update other sortField
+            			for(var j = 0; j < options.orderBy.length; j ++){
+            				var field = options.orderBy[j];
                     		if(field.field !== fieldName){
-                    			if(field.hasOwnProperty("sortable") && (field.sortable !== false)){
-                    				field.sortable.order = false;
-                    			}
+                    			field.direction = false;
                     		}
             			}
+            			
+            			//boundData
             			options.pagination.page = 1;
-                		filterData();
-                		sortData();
-                		renderData(pagingData());
+            			boundData();
             		}
+            		
             	}
             });
          // trigger event onDisplay
@@ -734,7 +723,7 @@
         pagingData = function(){
         	//serverPage
         	
-        	if(options.paginationMode  !== "server"){
+        	if(options.paginationMode  === "client"){
         		if(filteredData.length == 0){
         			options.pagination.totalPages = 0;
         			options.pagination.page = 1;
@@ -761,62 +750,50 @@
         	return filteredData;
         },
         sortData = function(){
-        	var sortableMode = getSortableMode(), i;
-        	
+        	var orderByMode = options.orderByMode, i;
         	var foundsort = false;
         	
-        	if(sortableMode === "client"){
+        	if(orderByMode === "client"){
+        		var sortField = false;
         		for(i in options.fields) {
-        			if(foundsort){
+        			var sortField = findSortable(options.fields[i]);
+        			if (sortField){
         				break;
         			}
-                    if(columnIsVisible(options.fields[i]) && columnIsSortable(options.fields[i])) {
-                    	
-                    	var sortable = options.fields[i].sortable;
-                    	var field = options.fields[i].field || false;
-                    	var compare = false;
-                    	var sortingType = false;
-                    	
-                    	if(!!sortable){
-                    		sortingType = sortable.order || false;
-                    		compare = sortable.compare || false;
-                    	}
-                    	if(sortingType !== false){
-                    		foundsort = true;
-                    	}else{
-                    		continue;
-                    	}
-                    	
-                    	if((filteredData != null) && (field !== false)){
-	                        switch(sortingType) {
-	                            case "asc":
-	                            	filteredData.sort(function(a,b){
-                            			if(compare !== false){
-                            				return compare(a[field], b[field]);
-                            			}else{
-                            				return a[field] > b[field];
-                            			}
-                            		});
-	                                break;
-	                            case "desc":
-	                            	filteredData.sort(function(a,b){
-                            			if(compare !== false){
-                            				return compare(b[field], a[field]);
-                            			}else{
-                            				return a[field] < b[field];
-                            			}
-                            		});
-	                                break;
-	                            default:
-	                            	break;
-	                        }
-                    	}
-                        
-                    }
-                }
+        		}
+        		//var sortField = findSortable(options.fields[i]);
+        		var compare = false;
+        		var sortingType = false;
+        		if(sortField){
+        			sortingType = sortField.direction || false;
+            		compare = sortField.compare || false;
+        		}
         		
-        	}else if(sortableMode === "server"){
-        		
+        		if((filteredData != null) && (sortField !== false)){
+        			var field = sortField.field;
+        			switch(sortingType) {
+	                    case "asc":
+	                    	filteredData.sort(function(a,b){
+	                			if(compare !== false){
+	                				return compare(a[field], b[field]);
+	                			}else{
+	                				return a[field] > b[field];
+	                			}
+	                		});
+	                        break;
+	                    case "desc":
+	                    	filteredData.sort(function(a,b){
+	                			if(compare !== false){
+	                				return compare(b[field], a[field]);
+	                			}else{
+	                				return a[field] < b[field];
+	                			}
+	                		});
+	                        break;
+	                    default:
+	                    	break;
+	                }
+        		}
         	}
         },
         genDataUUID = function(){
@@ -864,39 +841,50 @@
         	if(typeof dataSource === "object"){
         		if(isBackBoneDataSource(dataSource)){
         			//console.log('instance of collection view');
-        			options.paginationMode = "server";
+        			options.paginationMode = options.paginationMode;
         			options.filterMode = options.filterMode || "server";
-        			options.sortableMode = "server";
+        			options.orderByMode = options.orderByMode || "server";
         			
         			var collection = dataSource;
         			var pageSize = options.pagination.pageSize;
         			var page = options.pagination.page > 0 ? options.pagination.page : 1;
         			//or filter
-        			
-        			
-        			var query = {
-        					//"filters":[{"name":"id","op":"ge","val":2}],
+        			var query = null;
+        			if ((!!options.filters) && (options.filterMode === "server")){
+        				query = query || {};
+        				query['filters'] = options.filters;
         			}
+        			
+        			if ((!!options.orderBy) && (options.orderByMode === "server")){
+        				query = query || {};
+        				query['order_by'] = [];
+        				for(var k = 0; k < options.orderBy.length; k++){
+        					if(options.orderBy[k].direction){
+        						query['order_by'].push({field:options.orderBy[k].field, direction: options.orderBy[k].direction});
+        					}
+        					
+        				}
+        			}
+        			
         			//order_by
         			//query["order_by"] = {"field": "name", "direction": "asc"}
         			
         			//end filter
+        			var url = collection.url + "?page=" + page + "&results_per_page=" + pageSize + (query? "&q=" + JSON.stringify(query): "");
         			collection.fetch({
-        				//url: collection.url + "?q=" + JSON.stringify(query),
-        				url: collection.url + "?page=" + page + "&results_per_page=" + pageSize,
+        				url: url,
                         success: function (objs) {
                         	//update paging;
                         	options.pagination.page = collection.page;
                         	//options.pagination.pageSize = collection.num_rows;
                         	options.pagination.totalPages = collection.totalPages;
-                        	
                         	data.splice(0,data.length);
                         	collection.each(function(model) {
                         		data.push(model.attributes);
 							});
+                        	
                         	genDataUUID();
                         	filterData();
-                			//sortData();
                     		renderData(filteredData);
                         },
                         error:function(){
@@ -1097,7 +1085,7 @@
         	//check Server Filter
         	var query = options.filters;
         	
-        	if((options.filterMode !== "server") && (query !== null) && (!! gonrin) && (!! gonrin.query)){
+        	if((options.filterMode === "client") && (query !== null) && (!! gonrin) && (!! gonrin.query)){
         		filteredData = gonrin.query( data, query);
         	}else{
         		filteredData = data
@@ -1134,9 +1122,10 @@
         
         grobject.filter = function(query){
         	options.filters = query;
-        	filterData();
-        	sortData();
-        	renderData(pagingData());
+        	options.pagination.page = 1;
+        	boundData();
+        	//sortData();
+        	//renderData(pagingData());
         };
         
         
@@ -1189,6 +1178,7 @@
         pagination: null,
         
         filters: null,
+        orderBy: null,
         tools: null,
         showRowNumbers: false,
         
@@ -1204,13 +1194,13 @@
         onValidateError: function(){},
         onValidateSuccess: function(){},
         
-        orderMode: false,
-        filterMode: false,
-        paginationMode: false,
+        orderByMode: "client",
+        filterMode: "client",
+        paginationMode: "client",
         
-        sortable: {
-        	serverOrdering: false,
-        },
+        //sortable: {
+        //	serverOrdering: false,
+        //},
         //useSortableLists: true,
         
         // bs 3

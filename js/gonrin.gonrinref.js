@@ -74,9 +74,11 @@
 					options.valueField = options.valueField || widget.valueField;
 					
 					if(!!input.val()){
+						
 						if(widget.selectionMode === "single"){
 							var value = input.val();
 			            	var model = widget.model || null;
+			            	
 			            	if(model){
 			            		model.set(options.valueField, value);
 								model.fetch({

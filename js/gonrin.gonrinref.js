@@ -72,11 +72,11 @@
 					widget = new RefView({selectionMode: options.selectionMode});
 					options.textField = options.textField || widget.textField;
 					options.valueField = options.valueField || widget.valueField;
-					
+					widget.filters = options.filters;
 					if(!!input.val()){
 						
 						if(widget.selectionMode === "single"){
-							var value = input.val();
+							value = input.val();
 			            	var model = widget.model || null;
 			            	
 			            	if(model){
@@ -90,7 +90,7 @@
 			            	}
 						}
 						if(widget.selectionMode === "multiple"){
-							var value = $.parseJSON(input.val());
+							value = $.parseJSON(input.val());
 			            	//var model = widget.model || null;
 			            	
 			            	if(value){
@@ -123,6 +123,7 @@
             				if(widget.selectionMode === "single"){
             					textElement.text(seleted[0][options.textField]);
                 				input.val(seleted[0][options.valueField]);
+                				value = seleted[0];
                 				
                 				notifyEvent({
                 					type:"change.gonrin",
@@ -146,7 +147,7 @@
     			            	});
     			            	//input.val(JSON.stringify(seleted));
     			            	input.val(JSON.stringify(valArray));
-    			            	
+    			            	value = valArray;
     			            	notifyEvent({
                 					type:"change.gonrin",
                 					value : seleted
@@ -224,6 +225,45 @@
             if(widget){
             	
             }
+        },
+        getValue = function(){
+        	return value;
+        },
+        clearFilters = function(){
+        	options.filters = null;
+        	if(widget){
+        		widget.filters = null;
+        	}
+        },
+		setFilters = function(filters){
+        	options.filters = filters;
+        	if(widget){
+        		widget.filters = options.filters;
+        	}
+        	//
+        },
+        getFilters = function(){
+        	return options.filters;
+        },
+        clearValue = function(){
+        	value = null;
+        	text = null;
+        	if(widget){
+        		if(widget.selectionMode === "single"){
+        			textElement.text("");
+        			input.val("");
+        		}
+        		if(widget.selectionMode === "multiple"){
+        			textElement.find("ul").empty();
+        			input.val("");
+        		}
+        	}
+        	
+        	notifyEvent({
+				type:"change.gonrin",
+				value : value
+			});
+        	return;
         };
 		
 		/********************************************************************************
@@ -244,10 +284,15 @@
             input.prop('disabled', true);
             return gonrin;
         };
+        gonrin.getValue = getValue;
+        gonrin.clearValue = clearValue;
+        gonrin.setFilters = setFilters;
+        gonrin.getFilters = getFilters;
+        gonrin.clearFilters = clearFilters;
 		// initializing element and component attributes
         if (element.is('input') ) {
             input = element;
-            value = input.val();
+            //value = input.val().length > 0 ? ;
           
             element.wrap( '<span class="input-group"></span>');
             var inputGroupSpan = element.parent();
@@ -272,7 +317,7 @@
         	if(!options.placeholder){
         		options.placeholder = input.attr("placeholder");
         	}
-        	if(textElement && options.placeholder){
+        	if(textElement && !!options.placeholder){
         		textElement.attr("placeholder", options.placeholder);
         	}
         	
@@ -304,8 +349,10 @@
     	//height: null,
     	/*placeholder: null,
     	ignore_readonly: false,*/
+    	placeholder: null,
     	selectionMode: "single",
     	debug: false,
+    	filters: false,
     	//hasMany: false,
     	textField: null,
         valueField: null,

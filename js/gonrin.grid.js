@@ -355,8 +355,14 @@
                     	var tcol = $("<td>");
                     	//apply cell template here:
                     	if((!!options.fields[i].template) && (!!gonrin.template)){
-							var tpl = gonrin.template(options.fields[i].template);
-							tcol.html(tpl(dataToRender[row]));
+                    		if ($.isFunction( options.fields[i].template )){
+                    			var tpl = gonrin.template(options.fields[i].template(dataToRender[row]));
+    							tcol.html(tpl(dataToRender[row]));
+                    		}else{
+                    			var tpl = gonrin.template(options.fields[i].template);
+    							tcol.html(tpl(dataToRender[row]));
+                    		}
+							
 						}
                     	// Command or Menu Fields
                     	else if((!!options.fields[i].command) || (!!options.fields[i].menu)){

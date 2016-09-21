@@ -123,11 +123,14 @@
             				if(widget.selectionMode === "single"){
             					textElement.text(seleted[0][options.textField]);
                 				input.val(seleted[0][options.valueField]);
-                				value = seleted[0];
+                				if(options.valueField){
+                					value = seleted[0][options.valueField];
+                				}
+                				//value = seleted[0];
                 				
                 				notifyEvent({
                 					type:"change.gonrin",
-                					value : seleted[0]
+                					value : value
                 				});
             				}
             				if(widget.selectionMode === "multiple"){
@@ -150,7 +153,7 @@
     			            	value = valArray;
     			            	notifyEvent({
                 					type:"change.gonrin",
-                					value : seleted
+                					value : value
                 				});
     			            	//input.trigger('change.gonrin');
             				}

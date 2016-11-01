@@ -13,7 +13,9 @@
     module.exports = factory(require("jquery"));
   } else {
     // Browser globals (root is window)
-    root.bootbox = factory(root.jQuery);
+    if (root.gonrin) {
+    	root.gonrin.dialog = factory(root.jQuery);
+    }
   }
 
 }(this, function init($, undefined) {
@@ -564,15 +566,21 @@
 
   exports.dialog = function(options) {
     options = sanitize(options);
-
+	
     var dialog = $(templates.dialog);
     var innerDialog = dialog.find(".modal-dialog");
     var body = dialog.find(".modal-body");
     var buttons = options.buttons;
     var buttonStr = "";
-    var callbacks = {
+    
+    /*var callbacks = {
       onEscape: options.onEscape
-    };
+    };*/
+    
+    var callbacks = {
+			escape: options.escape,
+			success: options.success
+	};
 
     if ($.fn.modal === undefined) {
       throw new Error(

@@ -69,17 +69,16 @@
 			if ((!!options.dataSource) && (typeof options.dataSource === "string")) {
 
 				require([ options.dataSource ], function ( RefView ) {
-					widget = new RefView({selectionMode: options.selectionMode});
+					widget = new RefView();
 					options.textField = options.textField || widget.textField;
 					options.valueField = options.valueField || widget.valueField;
-					widget.filters = options.filters;
 					widget.selectedItems = options.selectedItems || [];
+					
 					if(!!input.val()){
-						
-						if(widget.selectionMode === "single"){
+						if(options.selectionMode === "single"){
 							value = input.val();
+							//TODO: lam cach nao bo doan ket noi de server lan nua de lay du lieu foreign???
 			            	var model = widget.model || null;
-			            	
 			            	if(model){
 			            		model.set(options.valueField, value);
 								model.fetch({
@@ -90,26 +89,18 @@
 								});
 			            	}
 						}
-						if(widget.selectionMode === "multiple"){
+						if(options.selectionMode === "multiple"){
 							value = $.parseJSON(input.val());
-			            	//var model = widget.model || null;
-			            	
 			            	if(value){
 			            		$.each(value, function(key, item){
 			            			var txt = item[options.textField];
 			            			$(itemTemplate).html(txt).appendTo(textElement.find("ul"));
-			            		})
-			            		
+			            		});
 			            	}
 						}
-		            	
 		            }
-					
 		    	});
 			};
-			
-			//show dialog
-            
 			return grexport;
 		},
 		show = function () {
@@ -119,23 +110,20 @@
             if(widget){
             	widget.dialog();
             	widget.on("onSelected", function(){
-            		console.log(widget);
             		if((!!widget)&&(!!widget.selectedItems)&&(widget.selectedItems.length > 0)){
         				var seleted = widget.selectedItems;
-        				if(widget.uiControl.selectionMode === "single"){
+        				if(options.selectionMode === "single"){
         					textElement.text(seleted[0][options.textField]);
             				input.val(seleted[0][options.valueField]);
             				if(options.valueField){
             					value = seleted[0][options.valueField];
             				}
-            				//value = seleted[0];
-            				
             				notifyEvent({
             					type:"change.gonrin",
             					value : value
             				});
         				}
-        				if(widget.uiControl.selectionMode === "multiple"){
+        				if(options.selectionMode === "multiple"){
         					//textElement.html(JSON.stringify(seleted));
         					textElement.find("ul").empty();
         					var valArray = [];
@@ -235,15 +223,21 @@
         clearFilters = function(){
         	options.filters = null;
         	if(widget){
-        		widget.filters = null;
+        		var colEl = widget.getCollectionElement();
+        		if(colEl){
+        			colEl.filter(null);
+        		}
+        		//widget.filters = null;
         	}
         },
 		setFilters = function(filters){
         	options.filters = filters;
         	if(widget){
-        		widget.filters = options.filters;
+        		var colEl = widget.getCollectionElement();
+        		if(colEl){
+        			colEl.filter(options.filters);
+        		}
         	}
-        	//
         },
         getFilters = function(){
         	return options.filters;
@@ -358,7 +352,6 @@
     	selectionMode: "single",
     	debug: false,
     	filters: false,
-    	//hasMany: false,
     	textField: null,
         valueField: null,
         dataSource: null,

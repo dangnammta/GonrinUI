@@ -24,7 +24,7 @@
 		textElement = false,
 		unset = true,
         input,
-        menuTemplate = '<ul class="dropdown-menu" style="overflow-y:scroll"></ul>',
+        menuTemplate = '<ul class="dropdown-menu" style="overflow-y:scroll; width: 100%"></ul>',
         itemTemplate =  '<li><a href="javascript:void(0)"></a></li>',
         component = false,
         widget = false,
@@ -132,11 +132,12 @@
 				}
 				
 				//setup width and height
-				if(element.parent().length === 0){
+				/*if(element.parent().length === 0){
 					widget.css("width", element.outerWidth());
 				}else{
 					widget.css("width", element.parent().outerWidth());
-				}
+				}*/
+				widget.css("width","100%");
 				if(!!options.height){
 					widget.css("height",options.height);
 				}

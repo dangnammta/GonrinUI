@@ -2333,25 +2333,7 @@
             }
             textElement = prevEl;
             element.css("display", "none");
-        } else {
-            input = element.find(options.datepickerInput);
-            if (input.size() === 0) {
-                input = element.find('input');
-            } else if (!input.is('input')) {
-                throw new Error('CSS class "' + options.datepickerInput + '" cannot be applied to non input element');
-            }
-        }
-
-        if (element.hasClass('input-group')) {
-            // in case there is more then one 'input-group-addon' Issue #48
-            if (element.find('.datepickerbutton').size() === 0) {
-                component = element.find('.input-group-addon');
-            } else {
-                component = element.find('.datepickerbutton');
-            }
-        }
-
-        if (!options.inline && !input.is('input')) {
+        }else{
             throw new Error('Could not initialize DateTimePicker without an input element');
         }
 

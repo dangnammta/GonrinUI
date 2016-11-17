@@ -640,14 +640,47 @@
             input = element;
             value = input.val();
           
-            element.wrap( '<span class="input-group"></span>');
-            var inputGroupSpan = element.parent();
-            //inputGroupSpan.css("width", element.outerWidth());
-            var componentButton = $('<span class="input-group-addon dropdown-toggle" data-dropdown="dropdown">').html('<span class="caret"></span><span class="glyphicon glyphicon-remove" style="display:none;"></span>');
-            inputGroupSpan.append(componentButton);
+            //element.wrap( '<span class="input-group"></span>');
+            //var inputGroupSpan = element.parent();
+            
+            var inputGroupSpan;
+            var parentEl = element.parent();
+            
+            if(parentEl.is('span') && parentEl.hasClass('input-group')){
+            	inputGroupSpan = parentEl;
+            }else{
+            	element.wrap( '<span class="input-group date"></span>' );
+                inputGroupSpan = element.parent();
+            }
+            
+            //component
+            var componentButton = element.nextAll('span:first');
+            
+            if((componentButton.length == 0 ) || !($(componentButton[0]).hasClass('input-group-addon'))){
+            	componentButton = $('<span class="input-group-addon dropdown-toggle" data-dropdown="dropdown">').html('<span class="caret"></span><span class="glyphicon glyphicon-remove" style="display:none;"></span>');
+                inputGroupSpan.append(componentButton);
+            }
+            
             component = componentButton;
-            textElement = $('<input class="form-control" type="text">');
-            element.before(textElement);
+            
+            //var componentButton = $('<span class="input-group-addon dropdown-toggle" data-dropdown="dropdown">').html('<span class="caret"></span><span class="glyphicon glyphicon-remove" style="display:none;"></span>');
+            //inputGroupSpan.append(componentButton);
+            //component = componentButton;
+            
+            var widgetEl = element.nextAll('ul:first');
+            if(widgetEl.length > 0 ){
+            	widgetEl.remove();
+            }
+            
+            var prevEl = element.prev('input');
+            if((prevEl.length == 0 ) || !($(prevEl[0]).hasClass('form-control'))){
+            	prevEl = $('<input class="form-control" type="text">');
+                element.before(prevEl);
+            }
+            textElement = prevEl;
+            
+            //textElement = $('<input class="form-control" type="text">');
+            //element.before(textElement);
             element.css("display", "none");
         } else {
             throw new Error('Cannot apply to non input, select element');

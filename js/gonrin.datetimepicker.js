@@ -1467,7 +1467,7 @@
                     picker[key](value);
                 } else {
                     //throw new TypeError('option ' + key + ' is not recognized!');
-                	console.log('gonrin.datetimepicker: option ' + key + ' is not recognized!');
+                	//console.log('gonrin.datetimepicker: option ' + key + ' is not recognized!');
                 }
             });
             return picker;
@@ -2304,19 +2304,35 @@
         if (element.is('input')) {
             input = element;
             //gonrin inject input element
+            var inputGroupSpan;
             
-            element.wrap( '<span class="input-group date"></span>' );
-            var inputGroupSpan = element.parent();
-            var componentButton = $('<span class="input-group-addon">').html('<span class="glyphicon glyphicon-calendar"></span>');
-            inputGroupSpan.append(componentButton);
+            var parentEl = element.parent();
+            
+            if(parentEl.is('span') && parentEl.hasClass('date')){
+            	inputGroupSpan = parentEl;
+            }else{
+            	element.wrap( '<span class="input-group date"></span>' );
+                inputGroupSpan = element.parent();
+            }
+            
+            //component
+            var componentButton = element.nextAll('span:first');
+            
+            if((componentButton.length == 0 ) || !($(componentButton[0]).hasClass('input-group-addon'))){
+            	componentButton = $('<span class="input-group-addon">').html('<span class="glyphicon glyphicon-calendar"></span>');
+                inputGroupSpan.append(componentButton);
+            }
+            
             component = componentButton;
             element.addClass("form-control");
             
-            textElement = $('<input class="form-control" type="text">');
-            element.before(textElement);
+            var prevEl = element.prev('input');
+            if((prevEl.length == 0 ) || !($(prevEl[0]).hasClass('form-control'))){
+            	prevEl = $('<input class="form-control" type="text">');
+                element.before(prevEl);
+            }
+            textElement = prevEl;
             element.css("display", "none");
-            
-            
         } else {
             input = element.find(options.datepickerInput);
             if (input.size() === 0) {

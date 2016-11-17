@@ -639,10 +639,7 @@
         if ((element.is('input')) || (element.is('select')) ) {
             input = element;
             value = input.val();
-          
-            //element.wrap( '<span class="input-group"></span>');
-            //var inputGroupSpan = element.parent();
-            
+        
             var inputGroupSpan;
             var parentEl = element.parent();
             
@@ -663,10 +660,6 @@
             
             component = componentButton;
             
-            //var componentButton = $('<span class="input-group-addon dropdown-toggle" data-dropdown="dropdown">').html('<span class="caret"></span><span class="glyphicon glyphicon-remove" style="display:none;"></span>');
-            //inputGroupSpan.append(componentButton);
-            //component = componentButton;
-            
             var widgetEl = element.nextAll('ul:first');
             if(widgetEl.length > 0 ){
             	widgetEl.remove();
@@ -679,8 +672,6 @@
             }
             textElement = prevEl;
             
-            //textElement = $('<input class="form-control" type="text">');
-            //element.before(textElement);
             element.css("display", "none");
         } else {
             throw new Error('Cannot apply to non input, select element');

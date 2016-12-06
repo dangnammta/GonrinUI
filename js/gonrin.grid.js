@@ -175,10 +175,9 @@
         	
         	return options.orderByMode;
         }, 
-        commandDeleteRow = function(e){
-        	e.stopPropagation();
-        	var $this = $(this);
-        	var parent = $this.closest("tr");
+        deleteRow = function(el){
+        	var $el = $(el);
+        	var parent = $el.closest("tr");
         	if(parent){
         		var rowData = parent.data("row_data");
         		for(var i= 0 ; i< data.length; i++)
@@ -195,6 +194,12 @@
                 });
     			boundData();
         	}
+        	
+        },
+        commandDeleteRow = function(e){
+        	e.stopPropagation();
+        	var $this = $(this);
+        	deleteRow(this);
         },
         
         commandEditRow = function(e){
@@ -1159,8 +1164,8 @@
         	//renderData(pagingData());
         };
         
+        grobject.deleteRow = deleteRow;
         
-
         $.extend(true, options, dataToOptions());
         
         options.pagination = $.extend({}, paginationOptions, options.pagination || {});

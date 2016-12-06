@@ -1165,6 +1165,7 @@
         };
         
         grobject.deleteRow = deleteRow;
+        grobject.boundData = boundData;
         
         $.extend(true, options, dataToOptions());
         

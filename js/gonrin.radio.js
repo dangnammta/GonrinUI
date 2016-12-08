@@ -32,9 +32,7 @@
          ********************************************************************************/
         renderData = function(){
 			if($.isArray(data) && data.length > 0){
-				
 				var name = gonrin.uniqueId("radio_");
-				
 				$.each(data, function (idx, item) {
 					if (typeof item === 'object') {
 						dataSourceType = 'object';
@@ -58,7 +56,6 @@
 							if((options.cssClassField != null) && (item.hasOwnProperty(options.cssClassField)) && (!!item[options.cssClassField])){
 								$item.addClass(item[options.cssClassField]);
 							}
-							
 							widget.append($item);
 							//radio onChange setValue
 							$radio.bind("change", function(){
@@ -271,7 +268,7 @@
         // initializing element and component attributes
         if (element.is('input')) {
             input = element;
-            value = element.val();
+            //value = element.val();
             var inputGroupSpan;
             var parentEl = element.parent();
             
@@ -296,6 +293,11 @@
         $.extend(true, options, dataToOptions());
         
         grobject.options(options);
+        if(options.value !== null){
+    		value = options.value
+    	}else{
+    		value = input.val();
+    	}
         
     	setupWidget();
     	

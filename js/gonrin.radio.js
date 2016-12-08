@@ -24,7 +24,7 @@
 		textElement = false,
         input,
         widgetTemplate = '<ul class="list-unstyled"></ul>',
-        itemTemplate =  '<li><input type="radio" name=""><label></label></li>',
+        itemTemplate =  '<li><input type="radio" name=""><span></span></li>',
         widget = false,
         dataSourceType,
         /********************************************************************************
@@ -53,7 +53,7 @@
 								$item.find('label').text(item[options.textField]);
 							}*/
 							
-							$item.find('label').text(item[options.textField]);
+							$item.find('span').text(item[options.textField]);
 							
 							if(value == item[options.valueField]){
 								setValue(item[options.valueField]);

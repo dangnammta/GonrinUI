@@ -82,9 +82,9 @@
 							}else{
 								var $item = $(itemTemplate);
 								$item.find('a').text(item[options.textField]);
-								if(value == item[options.valueField]){
-									setValue(item[options.valueField]);
-								}
+							}
+							if(value == item[options.valueField]){
+								setValue(item[options.valueField]);
 							}
 							widget.append($item);
 							$item.bind("click", function(){

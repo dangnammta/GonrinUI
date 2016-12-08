@@ -8,17 +8,18 @@
     } else {
         // Neither AMD nor CommonJS used. Use global variables.
         if (typeof jQuery === 'undefined') {
-            throw 'gonrin numeric requires jQuery to be loaded first';
+            throw 'gonrin skeleton requires jQuery to be loaded first';
         }
         factory(jQuery);
     }
 }(function ($) {
 	'use strict';
-	var Numeric = function (element, options) {
+	var Skele = function (element, options) {
 		var gonrin = window.gonrin;
 		var grobject = {},
 		value,
         input,
+        text,
         tryParseValue = function(str,defaultValue, format) {
             var retValue = defaultValue;
             if(str !== null) {
@@ -38,6 +39,12 @@
 		getValue = function(){
         	return tryParseValue(input.val());
         };
+        getText = function(){
+        	return text;
+        };
+        setState = function(state){
+        	
+        };
 		/********************************************************************************
         *
         * Public API functions
@@ -51,6 +58,9 @@
        
        
 		grobject.getValue = getValue;
+		grobject.getText = getText;
+		grobject.setState = setState;
+		
 		
         grobject.options = function (newOptions) {
             if (arguments.length === 0) {
@@ -82,17 +92,32 @@
 	
 /*****************************************/
 	
-	$.fn.numeric = function (options) {
+	$.fn.skeleton = function (options) {
         return this.each(function () {
             var $this = $(this);
             if (!$this.data('gonrin')) {
                 // create a private copy of the defaults object
-                options = $.extend(true, {}, $.fn.numeric.defaults, options);
-                $this.data('gonrin', Numeric($this, options));
+                options = $.extend(true, {}, $.fn.skeleton.defaults, options);
+                $this.data('gonrin', Skeleton($this, options));
             }
         });
     };
-    $.fn.numeric.defaults = {
+    $.fn.skeleton.defaults = {
+    	icons:{
+    		valid: 'glyphicon glyphicon-ok',
+    		invalid: 'glyphicon glyphicon-remove',
+    		validating: 'glyphicon glyphicon-refresh'
+    	},
+    	validators:[
+    		{
+    			func: "notnull",
+    			message: "TRANSLATE:NOTNULL"
+    		},
+    		{
+    			func: "isEmailAddress",
+                message: 'TRANSLATE:NOT_VALID_EMAIL'
+            }
+    	],
         text: "",
         /*The value of the widget.*/
         format: 'f',

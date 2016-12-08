@@ -1,0 +1,109 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<script src="js/jquery.js"></script>
+	<script src="vendor/bootstrap/js/bootstrap.js"></script>
+	<link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css">
+		<!-- Optional theme -->
+	<link rel="stylesheet" href="vendor/bootstrap/css/bootstrap-theme.min.css">
+	
+	<style>
+		.yeallow{background-color: #FFF34F}
+	</style>
+	<script src="js/gonrin.core.js"></script>
+	<script src="js/gonrin.radio.js"></script>
+
+	<script type="text/javascript">
+            $(function () {
+            	var radio = $('#radio').radio({
+            		textField: "name",
+                    valueField: "id",
+                    cssClassField: "cssClass",
+                    dataSource: [
+                                 { name: "1.4 Petrol, 92kW", id: 1, cssClass: "yeallow" },
+                                 { name: "Parent2", id: 3 },
+                                 { name: "Parent3", id: 5 },
+                                 { name: "Parent4", id: 7 },
+                    ],
+                    index: 1,
+            	});
+            	
+            	$("button#setval").bind("click", function(){
+            		radio.data("gonrin").setValue(7);
+            	});
+            	
+            	$('#radio').on('change.gonrin', function(e){
+            		console.log("on change");
+                	console.log($('#radio').data('gonrin').getValue());
+                });
+            	
+            	$('#radio2').radio({
+            		textField: "name",
+                    valueField: "id",
+                    dataSource: [
+                                 { name: "1.4 Petrol, 92kW", id: 1 },
+                                 { name: "ABC", id: 3 },
+                                 { name: "DEC", id: 5 },
+                                 { name: "FFF", id: 7 },
+                    ],
+                    index: 3,
+            	});
+            	
+            	
+                
+            });
+     </script>
+</head>
+<body>
+	 <div class="container">
+	    <div class="row-fluid" id="content" style="margin-top:20px;">
+	    	<div style="width:100%">
+	    		<div style="width:50%;">
+					<input type='text' id='radio' />
+				</div>
+				<button id="setval">Set Value</button>
+				<hr>
+				<div style="width:50%;">
+					<input type='text' id='radio2' />
+				</div>
+				<hr/>
+				<div style="width:50%;">
+					<ul class="list-unstyled">
+			          <li>
+			              <input type="radio" name="engine" id="engine1" class="k-radio" checked="checked">
+			              <label class="k-radio-label" for="engine1">1.4 Petrol, 92kW</label>
+			          </li>
+			          <li>
+			              <input type="radio" name="engine" id="engine2" class="k-radio">
+			              <label class="k-radio-label" for="engine2">1.8 Petrol, 118kW</label>
+			          </li>
+			          <li>
+			              <input type="radio" name="engine" id="engine3" class="k-radio">
+			              <label class="k-radio-label" for="engine3">2.0 Petrol, 147kW</label>
+			          </li>
+			          <li>
+			              <input type="radio" name="engine" id="engine4" class="k-radio" disabled="disabled">
+			              <label class="k-radio-label" for="engine4">3.6 Petrol, 191kW</label>
+			          </li>
+			          <li>
+			              <input type="radio" name="engine" id="engine5" class="k-radio">
+			              <label class="k-radio-label" for="engine5">1.6 Diesel, 77kW</label>
+			          </li>
+			          <li>
+			              <input type="radio" name="engine" id="engine6" class="k-radio">
+			              <label class="k-radio-label" for="engine6">2.0 Diesel, 103kW</label>
+			          </li>
+			          <li>
+			              <input type="radio" name="engine" id="engine7" class="k-radio" disabled="disabled">
+			              <label class="k-radio-label" for="engine7">2.0 Diesel, 125kW</label>
+			          </li>
+			        </ul>
+				</div>
+			</div>
+			<br/>
+			
+	    </div> 
+	</div>
+</body>
+</html>

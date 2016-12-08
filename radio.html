@@ -21,16 +21,15 @@
                     valueField: "id",
                     cssClassField: "cssClass",
                     dataSource: [
-                                 { name: "1.4 Petrol, 92kW", id: 1, cssClass: "yeallow" },
-                                 { name: "Parent2", id: 3 },
-                                 { name: "Parent3", id: 5 },
-                                 { name: "Parent4", id: 7 },
+                                 { name: "1.4 Petrol, 92kW", id: "1", cssClass: "yeallow" },
+                                 { name: "Parent2", id: "2" },
+                                 { name: "Parent3", id: "5" },
+                                 { name: "Parent4", id: "7" },
                     ],
-                    index: 1,
             	});
             	
             	$("button#setval").bind("click", function(){
-            		radio.data("gonrin").setValue(7);
+            		//radio.data("gonrin").setValue(7);
             	});
             	
             	$('#radio').on('change.gonrin', function(e){
@@ -60,7 +59,7 @@
 	    <div class="row-fluid" id="content" style="margin-top:20px;">
 	    	<div style="width:100%">
 	    		<div style="width:50%;">
-					<input type='text' id='radio' />
+					<input type='text' id='radio' value="5"/>
 				</div>
 				<button id="setval">Set Value</button>
 				<hr>

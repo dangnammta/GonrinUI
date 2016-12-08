@@ -18,10 +18,8 @@
 		var gonrin = window.gonrin;
 		var grobject = {},
 		value,
-		text,
 		data, //datalist
 		index = -1,
-		textElement = false,
         input,
         widgetTemplate = '<ul class="list-unstyled"></ul>',
         itemTemplate =  '<li><input type="radio" name=""><span></span></li>',
@@ -42,7 +40,7 @@
 						dataSourceType = 'object';
 						if((options.valueField != null) && (options.textField != null)){
 							var $item = $(itemTemplate);
-							var $radio = $item.find('input');
+							var $radio = $item.find('input[type=radio]');
 							
 							$radio.attr("name", name);
 							
@@ -54,9 +52,8 @@
 							}*/
 							
 							$item.find('span').text(item[options.textField]);
-							
-							if(value == item[options.valueField]){
-								setValue(item[options.valueField]);
+							if(value === item[options.valueField]){
+								$radio.prop('checked', true);
 							}
 							if((options.cssClassField != null) && (item.hasOwnProperty(options.cssClassField)) && (!!item[options.cssClassField])){
 								$item.addClass(item[options.cssClassField]);
@@ -98,6 +95,9 @@
         	return index;
         },
         setValue = function (val) {
+        	if(val === value){
+        		return;
+        	}
         	var oldvalue = value;
         	value = val;
         	
@@ -106,7 +106,7 @@
         			var item = data[i];
         			if(dataSourceType === 'object'){
         				if((options.valueField != null) && (options.textField != null)){
-            				if(value == item[options.valueField]){
+            				if(value === item[options.valueField]){
             					index = i;
             					input.val(value);
             	        		$(widget.find('input[type=radio]')[i]).prop('checked', true);
@@ -271,8 +271,7 @@
         // initializing element and component attributes
         if (element.is('input')) {
             input = element;
-            value = input.val();
-        
+            value = element.val();
             var inputGroupSpan;
             var parentEl = element.parent();
             

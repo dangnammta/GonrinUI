@@ -293,12 +293,9 @@
         $.extend(true, options, dataToOptions());
         
         grobject.options(options);
-        if(options.value !== null){
-    		value = options.value
-    	}else{
-    		value = input.val();
-    	}
-        
+        value =  (options.value !== null) ? options.value : input.val();
+        inputGroupSpan.css("width", (options.width !== null) ? options.width : "100%"); 
+       
     	setupWidget();
     	
     	if(options.valueField != null){
@@ -353,6 +350,9 @@
         /*The text of the widget used when the auto_bind is set to false.*/
         text: "",
         /*The value of the widget.*/
-        value: null
+        value: null,
+        
+        width: null,
+        height: null,
     };
 }));

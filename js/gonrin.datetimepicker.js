@@ -825,6 +825,7 @@
                         oldDate: oldDate
                     });
                     update();
+                    hide();
                     return;
                 }
 
@@ -860,6 +861,7 @@
                         date: targetMoment
                     });
                 }
+                hide();
             },
 
             hide = function () {
@@ -2308,10 +2310,10 @@
             
             var parentEl = element.parent();
             
-            if(parentEl.is('span') && parentEl.hasClass('date')){
+            if(parentEl.is('div') && parentEl.hasClass('date-group')){
             	inputGroupSpan = parentEl;
             }else{
-            	element.wrap( '<span class="input-group date"></span>' );
+            	element.wrap( '<div class="input-group date-group"></div>' );
                 inputGroupSpan = element.parent();
             }
             

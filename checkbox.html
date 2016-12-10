@@ -8,48 +8,44 @@
 		<!-- Optional theme -->
 	<link rel="stylesheet" href="vendor/bootstrap/css/bootstrap-theme.min.css">
 	
-	<link rel="stylesheet" href="css/gonrin.radio.css">
+	<link rel="stylesheet" href="css/gonrin.checkbox.css">
 	
 	<style>
 		.yeallow{background-color: #FFF34F}
 	</style>
 	<script src="js/gonrin.core.js"></script>
-	<script src="js/gonrin.radio.js"></script>
+	<script src="js/gonrin.checkbox.js"></script>
 
 	<script type="text/javascript">
             $(function () {
-            	var radio = $('#radio').radio({
-            		textField: "name",
+            	var checkbox = $('#checkbox').checkbox({
+            		checkedField: "name",
                     valueField: "id",
                     cssClassField: "cssClass",
                     dataSource: [
-                                 { name: "< 1.4 Petrol, 92kW", id: 1, cssClass: "yeallow" },
-                                 { name: "Parent2", id: 2 },
-                                 { name: "Parent3", id: 5 },
-                                 { name: "Parent4", id: 7 },
+                                 { name: true, id: 1, cssClass: "yeallow" },
+                                 { name: false, id: 5 },
                     ],
-                    value: 2
+                    value: 1
             	});
             	
             	$("button#setval").bind("click", function(){
-            		radio.data("gonrin").setValue(7);
+            		checkbox.data("gonrin").setValue(5);
             	});
             	
-            	$('#radio').on('change.gonrin', function(e){
+            	$('#checkbox').on('change.gonrin', function(e){
             		console.log("on change");
-                	console.log($('#radio').data('gonrin').getValue());
+                	console.log($('#checkbox').data('gonrin').getValue());
                 });
             	
-            	$('#radio2').radio({
-            		textField: "name",
+            	$('#checkbox2').checkbox({
+            		checkedField: "name",
                     valueField: "id",
                     dataSource: [
-                                 { name: "1.4 Petrol, 92kW", id: 1 },
-                                 { name: "ABC", id: 3 },
-                                 { name: "DEC", id: 5 },
-                                 { name: "FFF", id: 7 },
+                                 { name: true, id: 1 },
+                                 { name: false, id: 3 },
                     ],
-                    index: 3,
+                    index: 1,
             	});
             	
             	
@@ -62,14 +58,13 @@
 	    <div class="row-fluid" id="content" style="margin-top:20px;">
 	    	<div style="width:100%">
 	    		<div style="width:50%;">
-					<input type='text' id='radio' value="5"/>
+					<input type='text' id='checkbox' value="5"/>
 				</div>
 				<button id="setval">Set Value</button>
 				<hr>
 				<div style="width:50%;">
-					<input type='text' id='radio2' />
+					<input type='text' id='checkbox2' />
 				</div>
-				
 			</div>
 			<br/>
 			

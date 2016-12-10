@@ -8,21 +8,21 @@
     } else {
         // Neither AMD nor CommonJS used. Use global variables.
         if (typeof jQuery === 'undefined') {
-            throw 'gonrin radio requires jQuery to be loaded first';
+            throw 'gonrin checkbox requires jQuery to be loaded first';
         }
         factory(jQuery);
     }
 }(function ($) {
 	'use strict';
-	var Radio = function (element, options) {
+	var Checkbox = function (element, options) {
 		var gonrin = window.gonrin;
 		var grobject = {},
 		value,
 		data, //datalist
 		index = -1,
         input,
-        widgetTemplate = '<ul class="list-unstyled"></ul>',
-        itemTemplate =  '<li class="radio-option"><input type="radio" name=""><span class="control-label"></span></li>',
+        widgetTemplate = '<div class="checkbox-option"><input type="checkbox" name=""><span class="control-label"></span></div>',
+        //itemTemplate =  '<li class="checkbox-option"><input type="radio" name=""><span class="control-label"></span></li>',
         widget = false,
         dataSourceType,
         /********************************************************************************
@@ -31,57 +31,40 @@
          *
          ********************************************************************************/
         renderData = function(){
-			if($.isArray(data) && data.length > 0){
-				var name = gonrin.uniqueId("radio_");
-				$.each(data, function (idx, item) {
-					if (typeof item === 'object') {
-						dataSourceType = 'object';
-						if((options.valueField != null) && (options.textField != null)){
-							var $item = $(itemTemplate);
-							var $radio = $item.find('input[type=radio]');
-							
-							$radio.attr("name", name);
-							
-							if((!!options.template)&& (!!gonrin.template)){
-								var tpl = gonrin.template(options.template);
-								$item.find('span').html(tpl(item));
-							}else{
-								$item.find('span').html(item[options.textField]);
-							}
-							
-							//$item.find('span').text(item[options.textField]);
-							if(value === item[options.valueField]){
-								$radio.prop('checked', true);
-							}
-							if((options.cssClassField != null) && (item.hasOwnProperty(options.cssClassField)) && (!!item[options.cssClassField])){
-								$item.addClass(item[options.cssClassField]);
-							}
-							widget.append($item);
-							//radio onChange setValue
-							
-							$item.bind("click", function(){
-								setIndex(idx);
-							});
+			var name = gonrin.uniqueId("checkbox_");
+			var $check = widget.find("input[type=checkbox]");
+			$check.attr("name", name);
+			$.each(data, function (idx, item) {
+				if (typeof item === 'object') {
+					dataSourceType = 'object';
+					if((options.valueField != null) && (options.checkedField != null)){
+						if(value === item[options.valueField]){
+							$check.prop('checked', item[options.checkedField]);
 						}
 					}
-				});
-			}
+				}
+			});
+			
+			$check.bind("change", function(){
+				var checked = $check.prop('checked');
+				for(var i = 0; i < data.length; i++){
+					var val = data[i][options.valueField];
+					if(checked === data[i][options.checkedField]){
+						setValue(val);
+					}
+				}
+				
+			});
+			
 			return grobject;
 		},
         setupWidget = function () {
 			if (!!options.dataSource) {
 				widget = $(widgetTemplate);
-				if(!!options.headerTemplate){
-					widget.prepend($("<li>").addClass("radio-header").html(options.headerTemplate))
-				}
-				
 				input.after(widget);
 				
-				if($.isArray(options.dataSource)){
-					data = options.dataSource;
-					renderData();
-				}
-				
+				data = options.dataSource;
+				renderData();
             }
 			return grobject;
         },
@@ -91,6 +74,7 @@
         getIndex = function(){
         	return index;
         },
+        
         setValue = function (val) {
         	if(val === value){
         		return;
@@ -102,11 +86,12 @@
         		for(var i = 0; i < data.length; i++){
         			var item = data[i];
         			if(dataSourceType === 'object'){
-        				if((options.valueField != null) && (options.textField != null)){
+        				if((options.valueField != null) && (options.checkedField != null)){
             				if(value === item[options.valueField]){
             					index = i;
             					input.val(value);
-            	        		$(widget.find('input[type=radio]')[i]).prop('checked', true);
+            					
+            	        		$(widget.find('input[type=checkbox]')).prop('checked', item[options.checkedField]);
             					
             	        		notifyEvent({
             	                    type: 'change.gonrin',
@@ -123,13 +108,14 @@
         	}
         },
         setIndex = function(idx){
-        	if(data && (data.length > 0) && (data.length > idx) && (idx > -1)){
+        	if(data && (data.length > 0) && (data.length > idx) && (idx > -1) && (idx < 2)){
         		var item = data[idx];
         		var oldvalue = value;
-        		var val;
+        		var val, checked;
         		if(dataSourceType === 'object'){
-        			if((options.valueField != null) && (options.textField != null)){
+        			if((options.valueField != null) && (options.checkedField != null)){
             			val = item[options.valueField];
+            			checked = item[options.checkedField];
             		}else{
             			return;
             		}
@@ -139,7 +125,7 @@
 				input.val(val);
 				value = val;
 				
-        		$(widget.find('input[type=radio]')[idx]).prop('checked', true);
+        		$(widget.find('input[type=checkbox]')).prop('checked', checked);
         		
         		notifyEvent({
                     type: 'change.gonrin',
@@ -241,13 +227,7 @@
         grobject.readonly = function (state) {
             ///<summary>Disables the input element, the component is attached to, by adding a disabled="true" attribute to it.
             ///If the widget was visible before that call it is hidden. Possibly emits dp.hide</summary>
-            /*hide();
-            if (component && component.hasClass('btn')) {
-                component.addClass('disabled');
-            }
-            if (textElement){
-            	textElement.prop('readonly', true);
-            }*/
+            
             return grobject;
         };
         
@@ -271,10 +251,10 @@
             var inputGroupSpan;
             var parentEl = element.parent();
             
-            if(parentEl.is('div') && parentEl.hasClass('input-group') && parentEl.hasClass('radio-group')){
+            if(parentEl.is('div') && parentEl.hasClass('input-group') && parentEl.hasClass('checkbox-group')){
             	inputGroupSpan = parentEl;
             }else{
-            	element.wrap( '<div class="input-group radio-group"></div>' );
+            	element.wrap( '<div class="input-group checkbox-group"></div>' );
                 inputGroupSpan = element.parent();
             }
             
@@ -293,15 +273,17 @@
         grobject.options(options);
         value =  (options.value !== null) ? options.value : input.val();
         inputGroupSpan.css("width", (options.width !== null) ? options.width : "100%"); 
-       
+        
+        if ((options.dataSource === null) || !($.isArray(options.dataSource))) {
+            throw new TypeError('dataSource options parameter should be an array list');
+        }
+        if ( options.dataSource.length !== 2) {
+            throw new TypeError('dataSource options parameter should have 2 elements');
+        }
+        
     	setupWidget();
     	
-    	if(options.valueField != null){
-			if (options.textField === null){
-				options.textField = options.valueField;
-			}
-    	}
-    	if((options.index) && (options.index > -1)){
+    	if((options.index) && (options.index > -1) && (options.index < 2)){
     		grobject.setIndex(options.index);
     	}
 
@@ -311,21 +293,21 @@
 	
 /*****************************************/
 	
-	$.fn.radio = function (options) {
+	$.fn.checkbox = function (options) {
 		
         return this.each(function () {
             var $this = $(this);
             if (!$this.data('gonrin')) {
                 // create a private copy of the defaults object
-                options = $.extend(true, {}, $.fn.radio.defaults, options);
-                $this.data('gonrin', Radio($this, options));
+                options = $.extend(true, {}, $.fn.checkbox.defaults, options);
+                $this.data('gonrin', Checkbox($this, options));
             }
         });
     };
 
-    $.fn.radio.defaults = {
+    $.fn.checkbox.defaults = {
     	readonly: false,
-    	textField: null,
+    	checkedField: null,
         valueField: null,
         cssClassField: null,
         /*dataSource: The data source of the widget which is used to display a list of values. 

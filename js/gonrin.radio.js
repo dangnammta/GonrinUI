@@ -22,7 +22,7 @@
 		index = -1,
         input,
         widgetTemplate = '<ul class="list-unstyled"></ul>',
-        itemTemplate =  '<li><input type="radio" name=""><span></span></li>',
+        itemTemplate =  '<li class="radio-option"><input type="radio" name=""><span class="control-label"></span></li>',
         widget = false,
         dataSourceType,
         /********************************************************************************
@@ -42,14 +42,14 @@
 							
 							$radio.attr("name", name);
 							
-							/*if((!!options.template)&& (!!gonrin.template)){
+							if((!!options.template)&& (!!gonrin.template)){
 								var tpl = gonrin.template(options.template);
-								$item.find('label').html(tpl(item));
+								$item.find('span').html(tpl(item));
 							}else{
-								$item.find('label').text(item[options.textField]);
-							}*/
+								$item.find('span').html(item[options.textField]);
+							}
 							
-							$item.find('span').text(item[options.textField]);
+							//$item.find('span').text(item[options.textField]);
 							if(value === item[options.valueField]){
 								$radio.prop('checked', true);
 							}
@@ -58,11 +58,11 @@
 							}
 							widget.append($item);
 							//radio onChange setValue
-							$radio.bind("change", function(){
-								setValue(item[options.valueField]);
+							
+							$item.bind("click", function(){
+								setIndex(idx);
 							});
 						}
-						
 					}
 				});
 			}
@@ -72,7 +72,7 @@
 			if (!!options.dataSource) {
 				widget = $(widgetTemplate);
 				if(!!options.headerTemplate){
-					widget.prepend($("<li>").addClass("dropdown-header").html(options.headerTemplate))
+					widget.prepend($("<li>").addClass("radio-header").html(options.headerTemplate))
 				}
 				
 				input.after(widget);
@@ -236,20 +236,20 @@
             }
             input.prop('disabled', false);
             return grobject;
-        };
+        };*/
         
-        grobject.readonly = function () {
+        grobject.readonly = function (state) {
             ///<summary>Disables the input element, the component is attached to, by adding a disabled="true" attribute to it.
             ///If the widget was visible before that call it is hidden. Possibly emits dp.hide</summary>
-            hide();
+            /*hide();
             if (component && component.hasClass('btn')) {
                 component.addClass('disabled');
             }
             if (textElement){
             	textElement.prop('readonly', true);
-            }
+            }*/
             return grobject;
-        };*/
+        };
         
         grobject.options = function (newOptions) {
             if (arguments.length === 0) {
@@ -268,14 +268,13 @@
         // initializing element and component attributes
         if (element.is('input')) {
             input = element;
-            //value = element.val();
             var inputGroupSpan;
             var parentEl = element.parent();
             
-            if(parentEl.is('span') && parentEl.hasClass('input-group')){
+            if(parentEl.is('div') && parentEl.hasClass('input-group') && parentEl.hasClass('radio-control-group')){
             	inputGroupSpan = parentEl;
             }else{
-            	element.wrap( '<span class="input-group"></span>' );
+            	element.wrap( '<div class="input-group radio-control-group"></div>' );
                 inputGroupSpan = element.parent();
             }
             
@@ -283,7 +282,6 @@
             if(widgetEl.length > 0 ){
             	widgetEl.remove();
             }
-            
             
             element.css("display", "none");
         } else {
@@ -307,13 +305,6 @@
     		grobject.setIndex(options.index);
     	}
 
-        /*attachElementEvents();
-        if (input.prop('disabled')) {
-            grobject.disable();
-        }
-        if (input.prop('readonly')) {
-            grobject.readonly();
-        }*/
         return grobject;
 		
 	};

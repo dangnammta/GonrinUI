@@ -721,7 +721,7 @@
         index: -1,
         /*filter: The filtering method used to determine the suggestions for the current value. Filtration is turned off by default. The supported filter values are startswith, endswith and contains.*/
         filter: false,
-        height: 200,
+        height: "auto",
         /*If set to false case-sensitive search will be performed to find suggestions. The widget performs case-insensitive searching by default.*/
         ignoreCase: false,
         /*If set to true the widget will automatically use the first suggestion as its value.*/

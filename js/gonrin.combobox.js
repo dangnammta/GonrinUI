@@ -78,18 +78,20 @@
 							if((!!options.template)&& (!!gonrin.template)){
 								var tpl = gonrin.template(options.template);
 								$item.find('a').html(tpl(item));
-								//console.log($item);
 							}else{
 								var $item = $(itemTemplate);
 								$item.find('a').text(item[options.textField]);
 							}
 							
-							if(value == item[options.valueField]){
-								setValue(item[options.valueField]);
+							if(value === item[options.valueField]){
+								//setValue(item[options.valueField]);
+								console.log("value " + value);
+								setIndex(idx);
 							}
 							widget.append($item);
 							$item.bind("click", function(){
-								setValue(item[options.valueField]);
+								//setValue(item[options.valueField]);
+								setIndex(idx);
 								hide();
 							});
 						}
@@ -100,7 +102,8 @@
 						$item.find('a').text(item);
 						widget.append($item);
 						$item.bind("click", function(){
-							setValue(item);
+							//setValue(item);
+							setIndex(idx);
 							hide();
 						});
 					}
@@ -133,12 +136,7 @@
 				}
 				
 				//setup width and height
-				/*if(element.parent().length === 0){
-					widget.css("width", element.outerWidth());
-				}else{
-					widget.css("width", element.parent().outerWidth());
-				}*/
-				//widget.css("width","100%");
+				
 				widget.css("width", (options.width !== null) ? options.width : "100%"); 
 				widget.css("height", (options.height !== null) ? options.height : "auto"); 
 				
@@ -238,7 +236,7 @@
                 return grobject;
             };
             
-            //$(window).on('resize', place);
+            
             widget.on('mousedown', false);
             widget.show();
             
@@ -610,7 +608,7 @@
         // initializing element and component attributes
         if ((element.is('input')) || (element.is('select')) ) {
             input = element;
-            value = input.val();
+            //value = input.val();
         
             var inputGroupSpan;
             var parentEl = element.parent();
@@ -644,14 +642,17 @@
             }
             textElement = prevEl;
             
+            
+            
             element.css("display", "none");
         } else {
             throw new Error('Cannot apply to non input, select element');
         }
 
         $.extend(true, options, dataToOptions());
-        
         grobject.options(options);
+        
+        value =  (options.value !== null) ? options.value : input.val();
         
     	setupWidget();
     	
@@ -667,10 +668,11 @@
     	if(textElement && options.placeholder){
     		textElement.attr("placeholder", options.placeholder);
     	}
+    	
     	if((options.index) && (options.index > -1)){
     		grobject.setIndex(options.index);
     	}
-
+    	
         attachElementEvents();
         if (input.prop('disabled')) {
             grobject.disable();

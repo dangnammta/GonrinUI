@@ -274,7 +274,7 @@
             if(parentEl.is('div') && parentEl.hasClass('input-group') && parentEl.hasClass('radio-control-group')){
             	inputGroupSpan = parentEl;
             }else{
-            	element.wrap( '<div class="input-group radio-control-group"></div>' );
+            	element.wrap( '<div class="input-group radio-group"></div>' );
                 inputGroupSpan = element.parent();
             }
             

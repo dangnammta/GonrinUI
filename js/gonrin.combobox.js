@@ -83,6 +83,7 @@
 								var $item = $(itemTemplate);
 								$item.find('a').text(item[options.textField]);
 							}
+							
 							if(value == item[options.valueField]){
 								setValue(item[options.valueField]);
 							}
@@ -137,10 +138,13 @@
 				}else{
 					widget.css("width", element.parent().outerWidth());
 				}*/
-				widget.css("width","100%");
-				if(!!options.height){
-					widget.css("height",options.height);
-				}
+				//widget.css("width","100%");
+				widget.css("width", (options.width !== null) ? options.width : "100%"); 
+				widget.css("height", (options.height !== null) ? options.height : "auto"); 
+				
+				//if(!!options.height){
+				//	widget.css("height",options.height);
+				//}
 				widget.hide();
             }
 			return grobject;
@@ -155,57 +159,28 @@
         	return index;
         },
         setValue = function (val) {
-        	var oldvalue = value;
-        	value = val;
-        	function setText(txt){
-        		if(textElement){
-        			text = txt;
-            		textElement.val(txt);
-            	}
-        	};
+        	if (value === val){
+        		return;
+        	}
         	if(data && (data.length > 0)){
         		var txt = null;
         		for(var i = 0; i < data.length; i++){
         			var item = data[i];
         			if(dataSourceType === 'object'){
         				if((options.valueField != null) && (options.textField != null)){
-            				if(value == item[options.valueField]){
-            					txt = item[options.textField];
-            					setText(txt);
-            					index = i;
-            					input.val(value);
-            					widget.find('li').not(".dropdown-header").removeClass("active");
-            	        		$(widget.find('li').not(".dropdown-header")[i]).addClass("active");
-            	        		notifyEvent({
-            	                    type: 'change.gonrin',
-            	                    value: value,
-            	                    oldValue: oldvalue
-            	                });
-            	        		
+            				if(val == item[options.valueField]){
+            					setIndex(i);
             					return;
             				}
             			}
         			}
         			else if(dataSourceType === 'common'){
-        				if(value == item){
-        					//console.log(value);
-        					index = i;
-        					setText(value);
-        					input.val(value);
-        					widget.find('li').not(".dropdown-header").removeClass("active");
-        	        		$(widget.find('li').not(".dropdown-header")[i]).addClass("active");
-        	        		notifyEvent({
-        	                    type: 'change.gonrin',
-        	                    value: value,
-        	                    oldValue: oldvalue
-        	                });
-        	        		
+        				if(val == item){
+        					setIndex(i);
         					return;
         				}
         			};
-        			
         		}
-        		
         	}
         },
         setIndex = function(idx){
@@ -217,7 +192,6 @@
         			if((options.valueField != null) && (options.textField != null)){
             			txt = item[options.textField];
             			val = item[options.valueField];
-            			
             		}else{
             			return;
             		}
@@ -258,6 +232,7 @@
             }
             return data_options;
         },
+        
         show = function () {
         	if (input.prop('disabled') || (!options.ignore_readonly && input.prop('readonly')) || widget.is(':visible')) {
                 return grobject;
@@ -527,9 +502,6 @@
             if(widget){
             	
             }
-            /*$(document)
-            .on('click.gr.combobox.data-api', '.input-group', function (e) { e.stopPropagation() })
-            .on('click.gr.combobox.data-api', hide);*/
           
         },
         detach_element_events = function () {
@@ -643,10 +615,10 @@
             var inputGroupSpan;
             var parentEl = element.parent();
             
-            if(parentEl.is('span') && parentEl.hasClass('input-group')){
+            if(parentEl.is('div') && parentEl.hasClass('input-group') && parentEl.hasClass('combobox-group')){
             	inputGroupSpan = parentEl;
             }else{
-            	element.wrap( '<span class="input-group date"></span>' );
+            	element.wrap( '<div class="input-group combobox-group"></div>' );
                 inputGroupSpan = element.parent();
             }
             

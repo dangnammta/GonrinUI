@@ -22,11 +22,13 @@
 		data, //datalist
 		index = -1,
 		textElement = false,
+		groupElement = false,
 		unset = true,
         input,
         menuTemplate = '<ul class="dropdown-menu" style="overflow-y:scroll; width: 100%"></ul>',
         itemTemplate =  '<li><a href="javascript:void(0)"></a></li>',
         component = false,
+        helpmsg = false,
         widget = false,
         dataSourceType,
 		keyMap = {
@@ -207,6 +209,8 @@
 				widget.find('li').not(".dropdown-header").removeClass("active");
         		$(widget.find('li').not(".dropdown-header")[idx]).addClass("active");
         		scrollToIndex(idx);
+        		
+        		setState(null);
         		
         		notifyEvent({
                     type: 'change.gonrin',
@@ -502,6 +506,52 @@
             }
           
         },
+        validate = function(){
+        	var ret, state, message;
+        	for(var i = 0; i < options.validators.length; i++){
+        		var validator = options.validators[i];
+        		var ret = true;
+        		
+        		if (typeof validator.func === "string"){
+        			if((!! gonrin) && (!! gonrin.validate)){
+        				ret = gonrin.validate[validator.func](value);
+        			}else{
+        				ret = false;
+        			}
+        		}
+        		if (typeof validator.func === "function"){
+        			ret = validator.func(value);
+        		}
+        		if (ret === false){
+        			state = !! validator.state ? validator.state : "error";
+        			message = !! validator.message ? validator.message : null;
+        			setState(state, message);
+        			console.log(state + " " + message);
+        			break;
+        		}
+        	}
+        	if (ret === true){
+        		setState(null);
+        	}
+        	
+        },
+        setState = function(state, message){
+        	if(state === null){
+        		groupElement.removeClass("has-warning has-error has-success");
+        		helpmsg.html("");
+        		helpmsg.hide();
+        	}else if((state === "warning") || (state === "error") || (state === "success")){
+    			groupElement.addClass("has-" + state);
+    			if(!!message){
+        			helpmsg.html(message);
+            		helpmsg.show();
+            	}else{
+            		helpmsg.html("");
+            		helpmsg.hide();
+            	}
+        	}
+        	
+        },
         detach_element_events = function () {
         	if (textElement) {
         		textElement.off({
@@ -552,6 +602,9 @@
         grobject.setIndex = setIndex;
         grobject.select = setIndex;
         grobject.getIndex = getIndex;
+        grobject.validate = validate;
+        grobject.setState = setState;
+        
         grobject.disable = function () {
             ///<summary>Disables the input element, the component is attached to, by adding a disabled="true" attribute to it.
             ///If the widget was visible before that call it is hidden. Possibly emits dp.hide</summary>
@@ -610,14 +663,23 @@
             input = element;
             //value = input.val();
         
-            var inputGroupSpan;
+            var inputGroupEl;
             var parentEl = element.parent();
             
-            if(parentEl.is('div') && parentEl.hasClass('input-group') && parentEl.hasClass('combobox-group')){
-            	inputGroupSpan = parentEl;
+            
+            if(parentEl.is('div') && parentEl.hasClass('input-group') && parentEl.hasClass('combobox-control')){
+            	inputGroupEl = parentEl;
             }else{
-            	element.wrap( '<div class="input-group combobox-group"></div>' );
-                inputGroupSpan = element.parent();
+            	element.wrap( '<div class="input-group combobox-control"></div>' );
+                inputGroupEl = element.parent();
+            }
+            
+            var parentInputGroupEl = inputGroupEl.parent();
+            if(parentInputGroupEl.is('div') && parentInputGroupEl.hasClass('combobox-group')){
+            	groupElement = parentInputGroupEl;
+            }else{
+            	inputGroupEl.wrap( '<div class="combobox-group"></div>' );
+            	groupElement = inputGroupEl.parent();
             }
             
             //component
@@ -625,7 +687,7 @@
             
             if((componentButton.length == 0 ) || !($(componentButton[0]).hasClass('input-group-addon'))){
             	componentButton = $('<span class="input-group-addon dropdown-toggle" data-dropdown="dropdown">').html('<span class="caret"></span><span class="glyphicon glyphicon-remove" style="display:none;"></span>');
-                inputGroupSpan.append(componentButton);
+                inputGroupEl.append(componentButton);
             }
             
             component = componentButton;
@@ -642,8 +704,13 @@
             }
             textElement = prevEl;
             
-            
-            
+            var helpEl = inputGroupEl.next('div');
+            if((helpEl.length == 0 ) || !($(helpEl[0]).hasClass('help-block'))){
+            	helpEl = $('<div class="help-block">');
+            	inputGroupEl.after(helpEl);
+            }
+            helpmsg = helpEl;
+            helpmsg.hide();
             element.css("display", "none");
         } else {
             throw new Error('Cannot apply to non input, select element');
@@ -652,7 +719,7 @@
         $.extend(true, options, dataToOptions());
         grobject.options(options);
         
-        value =  (options.value !== null) ? options.value : input.val();
+        value =  (options.value !== null) ? options.value : ((input.val().trim().length !== 0) ? input.val().trim(): null);
         
     	setupWidget();
     	
@@ -736,6 +803,7 @@
         text: "",
         /*The value of the widget.*/
         value: null,
-        focusOnShow: true
+        focusOnShow: true,
+        validators:[]
     };
 }));

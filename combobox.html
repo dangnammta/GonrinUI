@@ -30,10 +30,26 @@
                     headerTemplate: "<span>ABC CDE</span",
                     template: '<span class="k-state-default" style="background-color: \'#666\'"></span>' +
                     '<span class="k-state-default"><h3>{{ name }}</h3><p>{{ id }}</p></span>',
+                    
+                    validators:[
+                        {
+                        	func: function(value){
+                        		if (value == null){
+                        			return false;
+                        		}
+                        		return true;
+                        	},
+                        	message:"Not null"
+                        }
+                    ]
                 });
                 $('#combobox').on('change.gonrin', function(e){
                 	console.log($('#combobox').data('gonrin').getValue());
                 });
+                
+                $("button#validate").bind("click", function(){
+                	$('#combobox').data("gonrin").validate();
+            	});
                 
                 
                 $('#combobox2').combobox({
@@ -81,6 +97,9 @@
 					<input type='text' id='combobox' placeholder="select..."/>
 				</div>
 			</div>
+			
+			<button id="validate">Validate</button>
+			<br/>
 			<br/>
 			<div style="width:100%">
 	    		<div style="width:50%;">
@@ -91,6 +110,31 @@
 			<div style="width:100%">
 	    		<div style="width:50%;">
 					<input type='text' id='combobox3' placeholder="select3..."/>
+				</div>
+			</div>
+			
+			<br/>
+			<div style="width:100%">
+				<div style="width:50%">
+					<div class="combobox-group has-success">
+						<div class="input-group">
+							<input class="form-control" placeholder="select..." type="text">
+							<input id="combobox" placeholder="select..." style="display: none;" type="text">
+							
+							<ul class="dropdown-menu" style="overflow-y: scroll; width: 100%; height: auto; display: none;">
+								<li class="dropdown-header"><span>ABC CDE</span></li>
+								<li><a href="javascript:void(0)"><span class="k-state-default" style="background-color: '#666'"></span><span class="k-state-default"><h3>Parent1</h3><p>1</p></span></a></li>
+								<li><a href="javascript:void(0)"><span class="k-state-default" style="background-color: '#666'"></span><span class="k-state-default"><h3>Parent2</h3><p>2</p></span></a></li>
+								<li><a href="javascript:void(0)"><span class="k-state-default" style="background-color: '#666'"></span><span class="k-state-default"><h3>Parent3</h3><p>3</p></span></a></li>
+								<li><a href="javascript:void(0)"><span class="k-state-default" style="background-color: '#666'"></span><span class="k-state-default"><h3>Parent4</h3><p>4</p></span></a></li>
+							</ul>
+							<span class="input-group-addon dropdown-toggle" data-dropdown="dropdown">
+								<span class="glyphicon glyphicon-remove" style="border-right: 1px dashed #333; padding-right:5px" ></span>
+								<span class="caret"></span>
+							</span>
+						</div>
+						<div class="help-block">A block of help text that breaks onto a new line and may extend beyond one line.</div>
+					</div>
 				</div>
 			</div>
 			<br/>

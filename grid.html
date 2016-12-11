@@ -102,7 +102,7 @@
                         	 foreignTextField: "text",
                        	 },
                      ],
-                     orderBy:[
+                     /*orderBy:[
                      	{
                      		field: "age",
                      		direction: "asc",
@@ -110,7 +110,7 @@
                             	return a - b;
                         	}
                      	},
-                     ],
+                     ],*/
                      dataSource: [
                          {
                         	 id:1,name:"ABC", 
@@ -186,6 +186,10 @@
                      	page: 1,
                      	pageSize: 3
                      },
+                     selectedItems:[
+						{id:4,name:"ABC1", address: "223 Huynh thuc khang", age: 40},
+						{id:21,name:"ABC", address: "22 Huynh thuc khang", age: 30},
+                     ],
                      onRowClick: function(e){
                     	 console.log(e);
                      }

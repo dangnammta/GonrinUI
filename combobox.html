@@ -45,11 +45,11 @@
                     showStateOnValidateSuccess : true
                 });
                 $('#combobox').on('change.gonrin', function(e){
-                	console.log($('#combobox').data('gonrin').getValue());
+                	console.log($('#combobox').getValue());
                 });
                 
                 $("button#validate").bind("click", function(){
-                	var ret = $('#combobox').data("gonrin").validate();
+                	var ret = $('#combobox').validate();
                 	console.log(ret);
             	});
                 

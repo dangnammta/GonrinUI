@@ -86,13 +86,10 @@
 							}
 							
 							if(value === item[options.valueField]){
-								//setValue(item[options.valueField]);
-								console.log("value " + value);
 								setIndex(idx);
 							}
 							widget.append($item);
 							$item.bind("click", function(){
-								//setValue(item[options.valueField]);
 								setIndex(idx);
 								hide();
 							});
@@ -104,7 +101,6 @@
 						$item.find('a').text(item);
 						widget.append($item);
 						$item.bind("click", function(){
-							//setValue(item);
 							setIndex(idx);
 							hide();
 						});
@@ -142,9 +138,6 @@
 				widget.css("width", (options.width !== null) ? options.width : "100%"); 
 				widget.css("height", (options.height !== null) ? options.height : "auto"); 
 				
-				//if(!!options.height){
-				//	widget.css("height",options.height);
-				//}
 				widget.hide();
             }
 			return grobject;
@@ -175,7 +168,7 @@
             			}
         			}
         			else if(dataSourceType === 'common'){
-        				if(val == item){
+        				if(val === item){
         					setIndex(i);
         					return;
         				}
@@ -303,7 +296,6 @@
                 content.scrollTop = contentScrollTop;
         },
         scrollToIndex = function(index) {
-            //var item = this.element[0].children[index];
             var item = $(widget.find('li').not(".dropdown-header")[index])
             if (item) {
                 scroll(item);
@@ -594,6 +586,9 @@
             hide();
             detach_element_events();
             widget.remove();
+            component.remove();
+            helpmsg.remove();
+            textElement.remove();
             element.removeData('gonrin');
         };
         
@@ -604,10 +599,11 @@
         grobject.getValue = getValue;
         grobject.getText = getText;
         grobject.setIndex = setIndex;
-        grobject.select = setIndex;
+        //grobject.select = setIndex;
         grobject.getIndex = getIndex;
         grobject.validate = validate;
         grobject.setState = setState;
+        
         
         grobject.disable = function () {
             ///<summary>Disables the input element, the component is attached to, by adding a disabled="true" attribute to it.
@@ -730,14 +726,14 @@
     	if(!options.placeholder){
     		options.placeholder = input.attr("placeholder");
     	}
+    	if(textElement && options.placeholder){
+    		textElement.attr("placeholder", options.placeholder);
+    	}
     	
     	if(options.valueField != null){
 			if (options.textField === null){
 				options.textField = options.valueField;
 			}
-    	}
-    	if(textElement && options.placeholder){
-    		textElement.attr("placeholder", options.placeholder);
     	}
     	
     	if((options.index) && (options.index > -1)){
@@ -751,6 +747,7 @@
         if (input.prop('readonly')) {
             grobject.readonly();
         }
+        
         return grobject;
 		
 	};

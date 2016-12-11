@@ -14,6 +14,32 @@
     }
 }(function ($) {
 	'use strict';
+	
+	function isObjectEqual(a, b) {
+	    // Create arrays of property names
+	    var aProps = Object.getOwnPropertyNames(a);
+	    var bProps = Object.getOwnPropertyNames(b);
+
+	    // If number of properties is different,
+	    // objects are not equivalent
+	    if (aProps.length != bProps.length) {
+	        return false;
+	    }
+
+	    for (var i = 0; i < aProps.length; i++) {
+	        var propName = aProps[i];
+
+	        // If values of same property are not equal,
+	        // objects are not equivalent
+	        if (a[propName] !== b[propName]) {
+	            return false;
+	        }
+	    }
+
+	    // If we made it this far, objects
+	    // are considered equivalent
+	    return true;
+	}
 	var Grid = function (element, options) {
 		var gonrin = window.gonrin;
 		var grobject = {},
@@ -338,6 +364,7 @@
             }
 	        
 	        
+	        
             for(row in dataToRender) {
             	rowIdHtml = (primaryField ? tableId + '_tr_' + dataToRender[row][primaryField] : '');
             	var trow = $("<tr>").attr("id",rowIdHtml).data("row_data", dataToRender[row] );
@@ -533,6 +560,10 @@
                     	trow.append(tcol);
                     }
                 }
+                //check row is selected
+                
+                
+                //end check row is selected
                 gridData.append(trow);
             }
          // refresh pagination (if needed)
@@ -587,15 +618,19 @@
             
          // apply row selections ----------------------------------------
             if(options.primaryField && options.selectedItems.length > 0) {
-
+            	
                 if(options.selectionMode == "single" || options.selectionMode == "multiple") {
                     var rowPrefixLen = (tableId + "_tr_").length,
                         rowId, idx;
+                    
+                    var curRowData;
                     element.find("#" + tableId + " tbody tr").each(function() {
-                        rowId = parseInt($(this).attr("id").substr(rowPrefixLen));
-                        idx = selectedRows("selected_index", rowId);
+                    	curRowData = removeDataUUID($(this).data("row_data"));
+                        //rowId = parseInt($(this).attr("id").substr(rowPrefixLen));
+                        
+                        idx = selectedRows("selected_index", curRowData);
                         if(idx > -1) {
-                            selectedRows("mark_selected", rowId);
+                            selectedRows("mark_selected", curRowData);
                         }
                     });
                 }
@@ -622,7 +657,7 @@
                     var rowId = parseInt($(this).attr("id").substr(rowPrefixLen)),
                         rowStatus,
                         rowData = $(this).data("row_data"),
-                        idx = selectedRows("selected_index", rowData);
+                        idx = selectedRows("selected_index", removeDataUUID(rowData));
 
                     
                     if(idx > -1) {
@@ -1091,7 +1126,13 @@
                     element.find("#" + selectedRowsId).text(options.selectedItems.length);
                     break;
                 case "selected_index":
-                	return $.inArray(row_data, options.selectedItems);
+                	for (var idx = 0 ; idx < options.selectedItems.length; idx ++){
+                		if (isObjectEqual(row_data, options.selectedItems[idx])){
+                			return idx;
+                		}
+                	}
+                	return -1;
+                	//return $.inArray(row_data, options.selectedItems);
                     break;
                 case "add_id":
                 	options.selectedItems.push(row_data);

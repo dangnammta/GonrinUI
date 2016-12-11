@@ -526,13 +526,17 @@
         			state = !! validator.state ? validator.state : "error";
         			message = !! validator.message ? validator.message : null;
         			setState(state, message);
-        			console.log(state + " " + message);
         			break;
         		}
         	}
         	if (ret === true){
-        		setState(null);
+        		if(options.showStateOnValidateSuccess === true){
+        			setState("success");
+        		}else{
+        			setState(null);
+        		}
         	}
+        	return ret;
         	
         },
         setState = function(state, message){
@@ -804,6 +808,7 @@
         /*The value of the widget.*/
         value: null,
         focusOnShow: true,
-        validators:[]
+        validators:[],
+        showStateOnValidateSuccess: false
     };
 }));

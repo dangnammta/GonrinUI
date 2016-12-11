@@ -41,14 +41,16 @@
                         	},
                         	message:"Not null"
                         }
-                    ]
+                    ],
+                    showStateOnValidateSuccess : true
                 });
                 $('#combobox').on('change.gonrin', function(e){
                 	console.log($('#combobox').data('gonrin').getValue());
                 });
                 
                 $("button#validate").bind("click", function(){
-                	$('#combobox').data("gonrin").validate();
+                	var ret = $('#combobox').data("gonrin").validate();
+                	console.log(ret);
             	});
                 
                 

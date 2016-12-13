@@ -95,8 +95,8 @@
 		dataSource,
 		filterExp, 
 		unset = true,
-        menu_template = '<ul class="dropdown-menu" style="overflow-y:scroll"></ul>',
-        item_template =  '<li><a href="javascript:void(0)"></a></li>',
+        //menu_template = '<ul class="dropdown-menu" style="overflow-y:scroll"></ul>',
+        //item_template =  '<li><a href="javascript:void(0)"></a></li>',
         
 		keyMap = {
                 'up': 38,
@@ -617,27 +617,7 @@
             
             
          // apply row selections ----------------------------------------
-            if(options.primaryField && options.selectedItems.length > 0) {
-            	
-                if(options.selectionMode == "single" || options.selectionMode == "multiple") {
-                    var rowPrefixLen = (tableId + "_tr_").length,
-                        rowId, idx;
-                    
-                    var curRowData;
-                    element.find("#" + tableId + " tbody tr").each(function() {
-                    	curRowData = removeDataUUID($(this).data("row_data"));
-                        //rowId = parseInt($(this).attr("id").substr(rowPrefixLen));
-                        
-                        idx = selectedRows("selected_index", curRowData);
-                        if(idx > -1) {
-                            selectedRows("mark_selected", curRowData);
-                        }
-                    });
-                }
-            }
-
-            // update selected rows counter
-            selectedRows("update_counter");
+            applyRowSelections();
             
             /**
              * EVENTS ******************************************************
@@ -790,6 +770,31 @@
             	type:"render.gonrin"
             });
             //element.triggerHandler("render.gonrin");
+        },
+        applyRowSelections = function(){
+        	var containerId = element.attr("id"),
+            	tableId = createId(options.tableIdPrefix, containerId);
+			if(options.primaryField && options.selectedItems.length > 0) {
+            	
+                if(options.selectionMode == "single" || options.selectionMode == "multiple") {
+                    var rowPrefixLen = (tableId + "_tr_").length,
+                        rowId, idx;
+                    
+                    var curRowData;
+                    element.find("#" + tableId + " tbody tr").each(function() {
+                    	curRowData = removeDataUUID($(this).data("row_data"));
+                        //rowId = parseInt($(this).attr("id").substr(rowPrefixLen));
+                        
+                        idx = selectedRows("selected_index", curRowData);
+                        if(idx > -1) {
+                            selectedRows("mark_selected", curRowData);
+                        }
+                    });
+                }
+            }
+
+            // update selected rows counter
+            selectedRows("update_counter");
         },
         pagingData = function(){
         	//serverPage
@@ -1126,9 +1131,16 @@
                     element.find("#" + selectedRowsId).text(options.selectedItems.length);
                     break;
                 case "selected_index":
+                	//console.log(options.selectedItems);
                 	for (var idx = 0 ; idx < options.selectedItems.length; idx ++){
-                		if (isObjectEqual(row_data, options.selectedItems[idx])){
-                			return idx;
+                		if ((!!options.primaryField) && (options.primaryField.length > 0)){
+                			if(row_data[options.primaryField] === options.selectedItems[idx][options.primaryField])
+                				return idx;
+                		}
+                		else {
+                			if (isObjectEqual(row_data, options.selectedItems[idx])){
+                				return idx;
+                			}
                 		}
                 	}
                 	return -1;
@@ -1208,6 +1220,11 @@
         grobject.deleteRow = deleteRow;
         grobject.boundData = boundData;
         
+        grobject.applyRowSelections = function(){
+        	console.log("gonrin applyRowSelections");
+        	applyRowSelections();
+        }
+        
         $.extend(true, options, dataToOptions());
         
         options.pagination = $.extend({}, paginationOptions, options.pagination || {});
@@ -1229,6 +1246,7 @@
             if ($this.data('gonrin') && options.refresh){
             	$this.data('gonrin', null);
             }
+            
             if (!$this.data('gonrin')) {
                 // create a private copy of the defaults object
                 options = $.extend(true, {}, $.fn.grid.defaults, options);

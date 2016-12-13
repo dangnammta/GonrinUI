@@ -76,7 +76,6 @@
 					widget.uiControl.selectedItems = options.selectedItems || [];
 					widget.uiControl.selectionMode = options.selectionMode || "single";
 					
-					
 					if(!!input.val()){
 						if(options.selectionMode === "single"){
 							value = input.val();
@@ -111,15 +110,22 @@
                 return grexport;
             };
             if(widget){
+            	widget.uiControl.selectedItems = options.selectedItems || [];
             	widget.dialog();
+            	
             	widget.on("onSelected", function(){
-            		if((!!widget)&&(!!widget.selectedItems)&&(widget.selectedItems.length > 0)){
+            		
+            		if((!!widget)&&(!!widget.selectedItems)){
+            			options.selectedItems = widget.selectedItems;
+            			
         				var seleted = widget.selectedItems;
         				if(options.selectionMode === "single"){
-        					textElement.text(seleted[0][options.textField]);
-            				input.val(seleted[0][options.valueField]);
+        					var txt = seleted.length > 0 ? seleted[0][options.textField]: "";
+        					var inputtxt = seleted.length > 0 ? seleted[0][options.valueField]: "";
+        					textElement.text(txt);
+            				input.val(inputtxt);
             				if(options.valueField){
-            					value = seleted[0][options.valueField];
+            					value = seleted.length > 0 ? seleted[0][options.valueField]: null;
             				}
             				notifyEvent({
             					type:"change.gonrin",
@@ -149,7 +155,7 @@
             					value : value
             				});
         				}
-        			}
+            		}
             	});
             }
             /*notifyEvent({
@@ -353,6 +359,7 @@
     	ignore_readonly: false,*/
     	placeholder: null,
     	selectionMode: "single",
+    	selectedItems:[],
     	debug: false,
     	filters: false,
     	textField: null,

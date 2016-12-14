@@ -59,9 +59,21 @@
 							widget.append($item);
 							//radio onChange setValue
 							
-							$item.bind("click", function(){
-								setIndex(idx);
-							});
+							if(options.readonly !== true){
+								$item.bind("click", function(event){
+									if (options.readonly === true){
+										event.stopPropagation();
+										return;
+									}
+									setIndex(idx);
+								});
+							}else{
+								$radio.click(function(){
+								    return false;
+								});
+							}
+							
+							
 						}
 					}
 				});

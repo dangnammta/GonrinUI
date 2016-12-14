@@ -110,15 +110,13 @@
                 return grexport;
             };
             if(widget){
-            	widget.uiControl.selectedItems = options.selectedItems || [];
+            	//widget.uiControl.selectedItems = options.selectedItems || [];
             	widget.dialog();
-            	
             	widget.on("onSelected", function(){
-            		
-            		if((!!widget)&&(!!widget.selectedItems)){
-            			options.selectedItems = widget.selectedItems;
+            		if((!!widget) && (!!widget.uiControl) && (!!widget.uiControl.selectedItems)){
+            			options.selectedItems = widget.uiControl.selectedItems;
             			
-        				var seleted = widget.selectedItems;
+        				var seleted = widget.uiControl.selectedItems;
         				if(options.selectionMode === "single"){
         					var txt = seleted.length > 0 ? seleted[0][options.textField]: "";
         					var inputtxt = seleted.length > 0 ? seleted[0][options.valueField]: "";
@@ -357,6 +355,7 @@
     	//height: null,
     	/*placeholder: null,
     	ignore_readonly: false,*/
+    	readonly : false,
     	placeholder: null,
     	selectionMode: "single",
     	selectedItems:[],
@@ -365,7 +364,6 @@
     	textField: null,
         valueField: null,
         dataSource: null,
-        selectedItems: [],
         onChange : function(){}
     };
 }));

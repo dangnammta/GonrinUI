@@ -61,13 +61,12 @@
 							
 							if(options.readonly !== true){
 								$item.bind("click", function(event){
-									if (options.readonly === true){
-										event.stopPropagation();
-										return;
-									}
 									setIndex(idx);
 								});
 							}else{
+								$item.bind("click", function(event){
+									event.stopPropagation();
+								});
 								$radio.click(function(){
 								    return false;
 								});

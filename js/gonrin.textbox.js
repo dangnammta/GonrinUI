@@ -52,7 +52,12 @@
         if ((element.is('input')) || (element.is('textarea'))) {
             input = element;
             value = input.val();
-            element.addClass("form-control");
+            //css
+            if( !options.hasOwnProperty("cssClass") ){
+            	element.addClass("form-control");
+            }else if (options.hasOwnProperty("cssClass") && (options["cssClass"] !== false)){
+            	element.addClass(options.cssClass);
+            }
         } else {
             throw new Error('Cannot apply to non input, textarea element');
         }

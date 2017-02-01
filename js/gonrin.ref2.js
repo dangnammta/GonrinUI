@@ -28,7 +28,6 @@
         itemTemplate =  '<li class="ref-selection-choice"></li>',
         component = false,
         widget = false,  //dialogView
-        refView,
         keyMap = {
                 'up': 38,
                 38: 'up',
@@ -67,11 +66,9 @@
         *
         ********************************************************************************/
         setupWidget = function () {
-			var RefView = options.dataSource
-			//check is gonrin dialog
-			if ((!!RefView) ) {
+			if ((!!options.dataSource) && (typeof options.dataSource === "string")) {
 
-				//require([ options.dataSource ], function ( RefView ) {
+				require([ options.dataSource ], function ( RefView ) {
 					widget = new RefView();
 					
 					options.textField = options.textField || widget.textField;
@@ -81,34 +78,30 @@
 					
 					if(!!input.val()){
 						if(options.selectionMode === "single"){
-							try{
-								value = $.parseJSON(input.val());
-								if(value){
-									textElement.text(value[options.textField]);
-								}
-							} catch (error) {
-								//console.log(error);
-							}
-							
+							value = input.val();
+							//TODO: lam cach nao bo doan ket noi de server lan nua de lay du lieu foreign???
+			            	var model = widget.model || null;
+			            	if(model){
+			            		model.set(options.valueField, value);
+								model.fetch({
+				                    success: function (data) {
+				                    	textElement.text(model.get(options.textField));
+				                    },
+				                    error:function(){},
+								});
+			            	}
 						}
 						if(options.selectionMode === "multiple"){
-							try{
-								value = $.parseJSON(input.val());
-				            	if(value){
-				            		$.each(value, function(key, item){
-				            			var txt = item[options.textField];
-				            			$(itemTemplate).html(txt).appendTo(textElement.find("ul"));
-				            		});
-				            	}
-								if(value){
-									textElement.text(value[options.textField]);
-								}
-							} catch (error) {
-								//console.log(error);
-							}
+							value = $.parseJSON(input.val());
+			            	if(value){
+			            		$.each(value, function(key, item){
+			            			var txt = item[options.textField];
+			            			$(itemTemplate).html(txt).appendTo(textElement.find("ul"));
+			            		});
+			            	}
 						}
 		            }
-		    	//});
+		    	});
 			};
 			return grexport;
 		},
@@ -126,16 +119,11 @@
         				var seleted = widget.uiControl.selectedItems;
         				if(options.selectionMode === "single"){
         					var txt = seleted.length > 0 ? seleted[0][options.textField]: "";
+        					var inputtxt = seleted.length > 0 ? seleted[0][options.valueField]: "";
         					textElement.text(txt);
-            				
+            				input.val(inputtxt);
             				if(options.valueField){
             					value = seleted.length > 0 ? seleted[0][options.valueField]: null;
-            					var inputtxt = seleted.length > 0 ? seleted[0][options.valueField]: "";
-            					input.val(inputtxt);
-            				}else{
-            					//console.log(seleted[0]);
-            					value = seleted.length > 0 ? seleted[0]: null;
-            					input.val(JSON.stringify(value));
             				}
             				notifyEvent({
             					type:"change.gonrin",

@@ -774,6 +774,7 @@
         applyRowSelections = function(){
         	var containerId = element.attr("id"),
             	tableId = createId(options.tableIdPrefix, containerId);
+
 			if(options.primaryField && options.selectedItems.length > 0) {
             	
                 if(options.selectionMode == "single" || options.selectionMode == "multiple") {
@@ -1221,7 +1222,6 @@
         grobject.boundData = boundData;
         
         grobject.applyRowSelections = function(){
-        	console.log("gonrin applyRowSelections");
         	applyRowSelections();
         }
         

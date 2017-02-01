@@ -66,13 +66,25 @@
         * Private functions
         *
         ********************************************************************************/
+        isBackBoneDataSource = function(source){
+        	var key, _i, _len, _ref;
+            _ref = ["dialog"];
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              key = _ref[_i];
+              if (!source[key]) {
+            	  return false;
+              }
+            }
+            return true;
+        },
         setupWidget = function () {
-			var RefView = options.dataSource
+			//var RefView = options.dataSource
+			widget = options.dataSource || null;
 			//check is gonrin dialog
-			if ((!!RefView) ) {
+			if ((!!widget) && isBackBoneDataSource(widget)) {
 
 				//require([ options.dataSource ], function ( RefView ) {
-					widget = new RefView();
+					//widget = new RefView();
 					
 					options.textField = options.textField || widget.textField;
 					options.valueField = options.valueField || widget.valueField;
@@ -89,7 +101,6 @@
 							} catch (error) {
 								//console.log(error);
 							}
-							
 						}
 						if(options.selectionMode === "multiple"){
 							try{
@@ -107,6 +118,9 @@
 								//console.log(error);
 							}
 						}
+		            }else{
+		            	console.log(input.val() + " val");
+		            	//widget.uiControl.applyRowSelections();
 		            }
 		    	//});
 			};

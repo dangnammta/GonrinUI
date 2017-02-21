@@ -87,7 +87,7 @@
 					//widget = new RefView();
 					
 					options.textField = options.textField || widget.textField;
-					options.valueField = options.valueField || widget.valueField;
+					//options.valueField = options.valueField || widget.valueField;
 					widget.uiControl.selectedItems = options.selectedItems || [];
 					widget.uiControl.selectionMode = options.selectionMode || "single";
 					

@@ -2375,7 +2375,7 @@
             if (!$this.data('gonrin')) {
                 // create a private copy of the defaults object
                 options = $.extend(true, {}, $.fn.datetimepicker.defaults, options);
-                $this.data('gorin', dateTimePicker($this, options));
+                $this.data('gonrin', dateTimePicker($this, options));
             }
         });
     };

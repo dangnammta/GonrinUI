@@ -98,7 +98,7 @@
             if (!$this.data('gonrin')) {
                 // create a private copy of the defaults object
                 options = $.extend(true, {}, $.fn.skeleton.defaults, options);
-                $this.data('gonrin', Skeleton($this, options));
+                $this.data('gonrin', Skele($this, options));
             }
         });
     };

@@ -2301,6 +2301,19 @@
             viewUpdate();
             return picker;
         };
+        picker.getDate = function () {
+        	if(!!date){
+        		return date.clone().toDate();
+        	}
+            return null;
+        };
+        picker.getValue = function () {
+        	/*if(!!date){
+        		return date.clone().toDate();
+        	}
+            return null;*/
+        	return this.getDate();
+        };
 
         // initializing element and component attributes
         if (element.is('input')) {
@@ -2329,8 +2342,12 @@
             element.addClass("form-control");
             
             var prevEl = element.prev('input');
-            if((prevEl.length == 0 ) || !($(prevEl[0]).hasClass('form-control'))){
-            	prevEl = $('<input class="form-control" type="text">');
+            if((prevEl.length == 0 ) || !($(prevEl[0]).hasClass('datetimepicker-input'))){
+            	prevEl = $('<input class="form-control datetimepicker-input" type="text">');
+            	var classList = element.attr("class").split(' ');
+            	$.each(classList, function(idx, clz){
+            		prevEl.addClass(clz);
+            	});
                 element.before(prevEl);
             }
             textElement = prevEl;

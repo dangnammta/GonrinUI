@@ -379,6 +379,7 @@
             place = function () {
                 var position = (component || textElement).position(),
                     offset = (component || textElement).offset(),
+                    textoffset = textElement.offset(),
                     vertical = options.widgetPositioning.vertical,
                     horizontal = options.widgetPositioning.horizontal,
                     parent;
@@ -408,8 +409,14 @@
                 }
 
                 // Left and right logic
+                
                 if (horizontal === 'auto') {
-                    if (parent.width() < offset.left + widget.outerWidth() / 2 &&
+                	if (parent.width() < offset.left + widget.outerWidth() / 2 &&
+                        widget.outerWidth() > offset.left + (!!component ? component.outerWidth(): 0) &&
+                        textoffset.left + widget.outerWidth() < $(window).width()) {
+                        horizontal = 'left';
+                    }
+                	else if (parent.width() < offset.left + widget.outerWidth() / 2 &&
                         offset.left + widget.outerWidth() > $(window).width()) {
                         horizontal = 'right';
                     } else {

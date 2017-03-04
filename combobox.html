@@ -88,6 +88,16 @@
                 	console.log($('#combobox3').data('gonrin').getValue());
                 });
                 
+                $("#refresh").click(function(){
+                	$('#combobox3').combobox({
+                		dataSource: [
+                                     13,15
+                                 ],
+                        value:15,
+                        refresh:true
+                	});
+                });
+                
             });
      </script>
 </head>
@@ -114,6 +124,8 @@
 					<input type='text' id='combobox3' placeholder="select3..."/>
 				</div>
 			</div>
+			
+			<button id="refresh">refresh</button>
 			
 			<br/>
 			<div style="width:100%">

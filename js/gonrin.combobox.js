@@ -100,6 +100,9 @@
 						var $item = $(itemTemplate);//.text(item);
 						$item.find('a').text(item);
 						widget.append($item);
+						if(value === item){
+							setIndex(idx);
+						};
 						$item.bind("click", function(){
 							setIndex(idx);
 							hide();
@@ -656,8 +659,6 @@
             return grobject;
         };
         
-        
-        
         // initializing element and component attributes
         if ((element.is('input')) || (element.is('select')) ) {
             input = element;
@@ -758,6 +759,10 @@
 		
         return this.each(function () {
             var $this = $(this);
+            options.refresh = options.refresh || false;
+            if ($this.data('gonrin') && options.refresh){
+            	$this.data('gonrin', null);
+            }
             if (!$this.data('gonrin')) {
                 // create a private copy of the defaults object
                 options = $.extend(true, {}, $.fn.combobox.defaults, options);

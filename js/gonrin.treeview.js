@@ -465,6 +465,16 @@
     			element.on('searchCleared', options.onSearchCleared);
     		}
         },
+        getParent = function (identifier) {
+    		var node = identifyNode(identifier);
+    		return nodes[node.parentId];
+    	},
+        checkNode = function (identifiers) {
+    		forEachIdentifier(identifiers, function (node, options) {
+    			setCheckedState(node, true);
+    		});
+    		render();
+    	},
         destroy = function (){
         	if (!initialized) return;
 
@@ -492,6 +502,9 @@
     	},
     	getSelected = function () {
     		return findNodes('true', 'g', 'state.selected');
+    	},
+    	getChecked = function () {
+    		return findNodes('true', 'g', 'state.checked');
     	}
 		;
 	
@@ -506,7 +519,9 @@
         *
         ********************************************************************************/
 		grobject.getSelected = getSelected;
-       
+		grobject.getChecked = getChecked;
+		grobject.checkNode = checkNode;
+		grobject.getParent = getParent;
         grobject.options = function (newOptions) {
             if (arguments.length === 0) {
                 return $.extend(true, {}, options);
@@ -581,6 +596,7 @@
 		
 		nodesField: "nodes",
 		textField: "text",
+		silent: false,
 
 		// Event handlers
 		onNodeChecked: undefined,

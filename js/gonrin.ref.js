@@ -79,7 +79,13 @@
         },
         setupWidget = function () {
 			//var RefView = options.dataSource
-			widget = options.dataSource || null;
+        	if(typeof options.dataSource == "function"){
+        		var View = options.dataSource;
+        		widget = new View();
+        	}else{
+        		widget = options.dataSource || null;
+        	}
+			
 			//check is gonrin dialog
 			if ((!!widget) && isBackBoneDataSource(widget)) {
 
@@ -390,6 +396,7 @@
     	textField: null,
         valueField: null,
         dataSource: null,
+        //value: null,
         onChange : function(){}
     };
 }));

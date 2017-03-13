@@ -188,6 +188,32 @@
     			}
     		}
     	},
+    	setCheckedState = function (node, state) {
+
+    		if (state === node.state.checked) return;
+
+    		if (state) {
+
+    			// Check node
+    			node.state.checked = true;
+
+    			if (!options.silent) {
+    				element.trigger('nodeChecked', $.extend(true, {}, node));
+    			}
+    		}
+    		else {
+
+    			// Uncheck node
+    			node.state.checked = false;
+    			if (!options.silent) {
+    				element.trigger('nodeUnchecked', $.extend(true, {}, node));
+    			}
+    		}
+    	},
+    	toggleCheckedState = function (node) {
+    		if (!node) return;
+    		setCheckedState(node, !node.state.checked);
+    	},
     	toggleSelectedState = function (node) {
     		if (!node) return;
     		setSelectedState(node, !node.state.selected);

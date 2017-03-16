@@ -26,6 +26,7 @@
 			link: '<a href="#" style="color:inherit;"></a>',
 			badge: '<span class="badge"></span>'
 		},
+		css = '.treeview .list-group-item{cursor:pointer}.treeview span.indent{margin-left:10px;margin-right:10px}.treeview span.icon{width:12px;margin-right:5px}.treeview .node-disabled{color:silver;cursor:not-allowed}',
 		_default = {
 			options : {
 				silent: false,
@@ -39,6 +40,7 @@
 		},
 		initialized = false,
 		elementId = element.attr("id"),
+		styleId = null,
 		tree = [],
 		nodes = [],
 		wrapper = null,
@@ -100,124 +102,7 @@
 				}
 			});
         },
-        setExpandedState = function (node, state) {
 
-    		if (state === node.state.expanded) return;
-
-    		if (state && node[options.nodesField]) {
-
-    			// Expand a node
-    			node.state.expanded = true;
-    			if (!options.silent) {
-    				element.trigger('nodeExpanded', $.extend(true, {}, node));
-    			}
-    		}
-    		else if (!state) {
-
-    			// Collapse a node
-    			node.state.expanded = false;
-    			if (!options.silent) {
-    				element.trigger('nodeCollapsed', $.extend(true, {}, node));
-    			}
-
-    			// Collapse child nodes
-    			/*TODO: check ky proxy*/
-    			if (node[options.nodesField] && !options.ignoreChildren) {
-    				$.each(node[options.nodesField], $.proxy(function (index, node) {
-    					setExpandedState(node, false);
-    				}, this));
-    			}
-    		}
-    	},
-    	getNodeValue = function (obj, attr) {
-    		var index = attr.indexOf('.');
-    		if (index > 0) {
-    			var _obj = obj[attr.substring(0, index)];
-    			var _attr = attr.substring(index + 1, attr.length);
-    			return getNodeValue(_obj, _attr);
-    		}
-    		else {
-    			if (obj.hasOwnProperty(attr)) {
-    				return obj[attr].toString();
-    			}
-    			else {
-    				return undefined;
-    			}
-    		}
-    	},
-    	findNodes = function (pattern, modifier, attribute) {
-    		modifier = modifier || 'g';
-    		attribute = attribute || 'text';
-    		return $.grep(nodes, function (node) {
-    			var val = getNodeValue(node, attribute);
-    			
-    			if (typeof val === 'string') {
-    				return val.match(new RegExp(pattern, modifier));
-    			}
-    		});
-    	},
-        toggleExpandedState = function (node) {
-    		if (!node) return;
-    		setExpandedState(node, !node.state.expanded);
-    	},
-    	setSelectedState = function (node, state) {
-
-    		if (state === node.state.selected) return;
-
-    		if (state) {
-
-    			// If multiSelect false, unselect previously selected
-    			if (!options.multiSelect) {
-    				$.each(findNodes('true', 'g', 'state.selected'), $.proxy(function (index, node) {
-    					setSelectedState(node, false);
-    				}, this));
-    			}
-
-    			// Continue selecting node
-    			node.state.selected = true;
-    			if (!options.silent) {
-    				element.trigger('nodeSelected', $.extend(true, {}, node));
-    			}
-    		}
-    		else {
-
-    			// Unselect node
-    			node.state.selected = false;
-    			if (!options.silent) {
-    				element.trigger('nodeUnselected', $.extend(true, {}, node));
-    			}
-    		}
-    	},
-    	setCheckedState = function (node, state) {
-
-    		if (state === node.state.checked) return;
-
-    		if (state) {
-
-    			// Check node
-    			node.state.checked = true;
-
-    			if (!options.silent) {
-    				element.trigger('nodeChecked', $.extend(true, {}, node));
-    			}
-    		}
-    		else {
-
-    			// Uncheck node
-    			node.state.checked = false;
-    			if (!options.silent) {
-    				element.trigger('nodeUnchecked', $.extend(true, {}, node));
-    			}
-    		}
-    	},
-    	toggleCheckedState = function (node) {
-    		if (!node) return;
-    		setCheckedState(node, !node.state.checked);
-    	},
-    	toggleSelectedState = function (node) {
-    		if (!node) return;
-    		setSelectedState(node, !node.state.selected);
-    	},
         clickHandler = function (event) {
         	
         	if (!options.enableLinks) event.preventDefault();
@@ -229,92 +114,165 @@
     		var classList = target.attr('class') ? target.attr('class').split(' ') : [];
     		if ((classList.indexOf('expand-icon') !== -1)) {
 
-    			toggleExpandedState(node);
+    			toggleExpandedState(node,_default.options);
     			render();
     		}
     		else if ((classList.indexOf('check-icon') !== -1)) {
     			
-    			toggleCheckedState(node);
+    			toggleCheckedState(node,_default.options);
     			render();
     		}
     		else {
     			
     			if (node.selectable) {
-    				toggleSelectedState(node);
+    				toggleSelectedState(node,_default.options);
     			} else {
-    				toggleExpandedState(node);
+    				toggleExpandedState(node,_default.options);
     			}
 
     			render();
     		}
         },
-        forEachIdentifier = function (identifiers, callback) {
-
-    		//options = $.extend({}, _default.options, options);
-
-    		if (!(identifiers instanceof Array)) {
-    			identifiers = [identifiers];
-    		}
-
-    		$.each(identifiers, $.proxy(function (index, identifier) {
-    			callback(identifyNode(identifier), options);
-    		}, this));	
-    	},
-        identifyNode = function (identifier) {
-    		return ((typeof identifier) === 'number') ?
-    						nodes[identifier] :
-    						identifier;
-    	},
-        clearSearch = function (options) {
-
-    		//options = $.extend({}, { render: true }, options);
-
-    		var results = $.each(findNodes('true', 'g', 'searchResult'), function (index, node) {
-    			node.searchResult = false;
-    		});
-
-    		if (options.render) {
-    			render();	
-    		}
-    		
-    		element.trigger('searchCleared', $.extend(true, {}, results));
-    	},
-        injectStyle = function () {
-        	return;
-        },
         findNode = function (target) {
     		var nodeId = target.closest('li.list-group-item').attr('data-nodeid');
     		var node = nodes[nodeId];
     		if (!node) {
-    			console.log('Error: node does not exist');
+    			logError('Error: node does not exist');
     		}
     		return node;
     	},
-    	buildStyleOverride = function(node){
-    		if (node.state.disabled) return '';
-    		var color = node.color;
-    		var backColor = node.backColor;
+    	
+        toggleExpandedState = function (node, opts) {
+    		if (!node) return;
+    		setExpandedState(node, !node.state.expanded, opts);
+    	},
+        setExpandedState = function (node, state, opts) {
 
-    		if (options.highlightSelected && node.state.selected) {
-    			if (options.selectedColor) {
-    				color = options.selectedColor;
-    			}
-    			if (options.selectedBackColor) {
-    				backColor = options.selectedBackColor;
+    		if (state === node.state.expanded) return;
+
+    		if (state && node[options.nodesField]) {
+
+    			// Expand a node
+    			node.state.expanded = true;
+    			if (!opts.silent) {
+    				element.trigger('nodeExpanded', $.extend(true, {}, node));
     			}
     		}
+    		else if (!state) {
 
-    		if (options.highlightSearchResults && node.searchResult && !node.state.disabled) {
-    			if (options.searchResultColor) {
-    				color = this.options.searchResultColor;
+    			// Collapse a node
+    			node.state.expanded = false;
+    			if (!opts.silent) {
+    				element.trigger('nodeCollapsed', $.extend(true, {}, node));
     			}
-    			if (options.searchResultBackColor) {
-    				backColor = options.searchResultBackColor;
+
+    			// Collapse child nodes
+    			/*TODO: check ky proxy*/
+    			if (node[options.nodesField] && !options.ignoreChildren) {
+    				$.each(node[options.nodesField], function (index, node) {
+    					setExpandedState(node, false, opts);
+    				});
     			}
     		}
-    		
-    		return 'color:' + color +
-    			';background-color:' + backColor + ';';
+    	},
+
+    	toggleSelectedState = function (node, opts) {
+    		if (!node) return;
+    		setSelectedState(node, !node.state.selected, opts);
+    	},
+    	setSelectedState = function (node, state, opts) {
+
+    		if (state === node.state.selected) return;
+
+    		if (state) {
+
+    			// If multiSelect false, unselect previously selected
+    			if (!options.multiSelect) {
+    				$.each(findNodes('true', 'g', 'state.selected'), $.proxy(function (index, node) {
+    					setSelectedState(node, false, opts);
+    				}, this));
+    			}
+
+    			// Continue selecting node
+    			node.state.selected = true;
+    			if (!opts.silent) {
+    				element.trigger('nodeSelected', $.extend(true, {}, node));
+    			}
+    		}
+    		else {
+
+    			// Unselect node
+    			node.state.selected = false;
+    			if (!opts.silent) {
+    				element.trigger('nodeUnselected', $.extend(true, {}, node));
+    			}
+    		}
+    	},
+    	toggleCheckedState = function (node, opts) {
+    		if (!node) return;
+    		setCheckedState(node, !node.state.checked, opts);
+    	},
+    	setCheckedState = function (node, state, opts) {
+
+    		if (state === node.state.checked) return;
+
+    		if (state) {
+
+    			// Check node
+    			node.state.checked = true;
+
+    			if (!opts.silent) {
+    				element.trigger('nodeChecked', $.extend(true, {}, node));
+    			}
+    		}
+    		else {
+
+    			// Uncheck node
+    			node.state.checked = false;
+    			if (!opts.silent) {
+    				element.trigger('nodeUnchecked', $.extend(true, {}, node));
+    			}
+    		}
+    	},
+    	setDisabledState = function (node, state, opts) {
+
+    		if (state === node.state.disabled) return;
+
+    		if (state) {
+
+    			// Disable node
+    			node.state.disabled = true;
+
+    			// Disable all other states
+    			setExpandedState(node, false, opts);
+    			setSelectedState(node, false, opts);
+    			setCheckedState(node, false, opts);
+
+    			if (!opts.silent) {
+    				element.trigger('nodeDisabled', $.extend(true, {}, node));
+    			}
+    		}
+    		else {
+
+    			// Enabled node
+    			node.state.disabled = false;
+    			if (!opts.silent) {
+    				element.trigger('nodeEnabled', $.extend(true, {}, node));
+    			}
+    		}
+    	},
+    	render = function () {
+    		if (!initialized) {
+    			// Setup first time only components
+    			element.addClass(pluginName);
+    			wrapper = $(template.list);
+
+    			injectStyle();
+    			initialized = true;
+    		}
+    		element.empty().append(wrapper.empty());
+    		// Build tree
+    		buildTree(tree, 0);
     	},
     	buildTree = function (nodes, level) {
     		if (!nodes) return;
@@ -407,7 +365,366 @@
     		});
         	return;
         },
-        
+    	buildStyleOverride = function(node){
+    		if (node.state.disabled) return '';
+    		var color = node.color;
+    		var backColor = node.backColor;
+
+    		if (options.highlightSelected && node.state.selected) {
+    			if (options.selectedColor) {
+    				color = options.selectedColor;
+    			}
+    			if (options.selectedBackColor) {
+    				backColor = options.selectedBackColor;
+    			}
+    		}
+
+    		if (options.highlightSearchResults && node.searchResult && !node.state.disabled) {
+    			if (options.searchResultColor) {
+    				color = this.options.searchResultColor;
+    			}
+    			if (options.searchResultBackColor) {
+    				backColor = options.searchResultBackColor;
+    			}
+    		}
+    		
+    		return 'color:' + color +
+    			';background-color:' + backColor + ';';
+    	},
+        injectStyle = function () {
+    		if (options.injectStyle && !document.getElementById(styleId)) {
+    			$('<style type="text/css" id="' + styleId + '"> ' + buildStyle() + ' </style>').appendTo('head');
+    		};
+        },
+        buildStyle = function () {
+
+    		var style = '.node-' + elementId + '{';
+
+    		if (options.color) {
+    			style += 'color:' + options.color + ';';
+    		}
+
+    		if (options.backColor) {
+    			style += 'background-color:' + options.backColor + ';';
+    		}
+
+    		if (!options.showBorder) {
+    			style += 'border:none;';
+    		}
+    		else if (options.borderColor) {
+    			style += 'border:1px solid ' + options.borderColor + ';';
+    		}
+    		style += '}';
+
+    		if (options.onhoverColor) {
+    			style += '.node-' + elementId + ':not(.node-disabled):hover{' +
+    				'background-color:' + options.onhoverColor + ';' +
+    			'}';
+    		}
+
+    		return css + style;
+    	},
+    	getNode = function (nodeId) {
+    		return nodes[nodeId];
+    	},
+    	getParent = function (identifier) {
+    		var node = identifyNode(identifier);
+    		return nodes[node.parentId];
+    	},
+    	getSiblings = function (identifier) {
+    		var node = identifyNode(identifier);
+    		var parent = getParent(node);
+    		var nodes = parent ? parent.nodes : tree;
+    		return nodes.filter(function (obj) {
+    				return obj.nodeId !== node.nodeId;
+    			});
+    	},
+    	getSelected = function () {
+    		return findNodes('true', 'g', 'state.selected');
+    	},
+    	getUnselected = function () {
+    		return findNodes('false', 'g', 'state.selected');
+    	},
+    	getExpanded = function () {
+    		return findNodes('true', 'g', 'state.expanded');
+    	},
+    	getCollapsed = function () {
+    		return findNodes('false', 'g', 'state.expanded');
+    	},
+    	getChecked = function () {
+    		return findNodes('true', 'g', 'state.checked');
+    	},
+    	getUnchecked = function () {
+    		return findNodes('false', 'g', 'state.checked');
+    	},
+    	getDisabled = function () {
+    		return findNodes('true', 'g', 'state.disabled');
+    	},
+    	getEnabled = function () {
+    		return findNodes('false', 'g', 'state.disabled');
+    	},
+    	selectNode = function (identifiers, opts) {
+    		forEachIdentifier(identifiers, opts, function (node, opts) {
+    			setSelectedState(node, true, opts);
+    		});
+			render();
+    	},
+    	unselectNode = function (identifiers, opts) {
+    		forEachIdentifier(identifiers, opts, function (node, opts) {
+    			setSelectedState(node, false, opts);
+    		});
+
+    		render();
+    	},
+    	toggleNodeSelected = function (identifiers, opts) {
+    		forEachIdentifier(identifiers, opts, function (node, opts) {
+    			toggleSelectedState(node, opts);
+    		});
+
+    		render();
+    	},
+    	collapseAll = function (opts) {
+    		var identifiers = findNodes('true', 'g', 'state.expanded');
+    		forEachIdentifier(identifiers, opts, function (node, opts) {
+    			setExpandedState(node, false, opts);
+    		});
+
+    		render();
+    	},
+    	collapseNode = function (identifiers, opts) {
+    		forEachIdentifier(identifiers, opts, function (node, opts) {
+    			setExpandedState(node, false, opts);
+    		});
+
+    		render();
+    	},
+    	expandAll = function (opts) {
+    		opts = $.extend({}, _default.options, opts);
+
+    		if (opts && opts.levels) {
+    			expandLevels(tree, opts.levels, opts);
+    		}
+    		else {
+    			var identifiers = findNodes('false', 'g', 'state.expanded');
+    			forEachIdentifier(identifiers, opts, function (node, opts) {
+    				setExpandedState(node, true, opts);
+    			});
+    		}
+
+    		render();
+    	},
+    	expandNode = function (identifiers, opts) {
+    		forEachIdentifier(identifiers, opts, function (node, opts) {
+    			setExpandedState(node, true, opts);
+    			if (node.nodes && (opts && opts.levels)) {
+    				expandLevels(node.nodes, opts.levels-1, opts);
+    			}
+    		});
+
+    		render();
+    	},
+    	expandLevels = function (nodes, level, opts) {
+    		opts = $.extend({}, _default.options, opts);
+
+    		$.each(nodes, function (index, node) {
+    			setExpandedState(node, (level > 0) ? true : false, opts);
+    			if (node.nodes) {
+    				expandLevels(node.nodes, level-1, opts);
+    			}
+    		});
+    	},
+    	revealNode = function (identifiers, opts) {
+    		forEachIdentifier(identifiers, opts, function (node, opts) {
+    			var parentNode = getParent(node);
+    			while (parentNode) {
+    				setExpandedState(parentNode, true, opts);
+    				parentNode = getParent(parentNode);
+    			};
+    		});
+
+    		render();
+    	},
+    	toggleNodeExpanded = function (identifiers, opts) {
+    		forEachIdentifier(identifiers, opts, function (node, opts) {
+    			toggleExpandedState(node, opts);
+    		});
+    		
+    		render();
+    	},
+    	checkAll = function (opts) {
+    		var identifiers = findNodes('false', 'g', 'state.checked');
+    		forEachIdentifier(identifiers, opts, function (node, opts) {
+    			setCheckedState(node, true, opts);
+    		});
+
+    		render();
+    	},
+    	checkNode = function (identifiers, opts) {
+    		forEachIdentifier(identifiers, opts, function (node, opts) {
+    			setCheckedState(node, true, opts);
+    		});
+    		render();
+    	},
+    	uncheckAll = function (opts) {
+    		var identifiers = findNodes('true', 'g', 'state.checked');
+    		forEachIdentifier(identifiers, opts, function (node, opts) {
+    			setCheckedState(node, false, opts);
+    		});
+
+    		render();
+    	},
+    	uncheckNode = function (identifiers, opts) {
+    		forEachIdentifier(identifiers, opts, function (node, opts) {
+    			setCheckedState(node, false, opts);
+    		});
+
+    		render();
+    	},
+    	toggleNodeChecked = function (identifiers, opts) {
+    		forEachIdentifier(identifiers, opts, function (node, opts) {
+    			toggleCheckedState(node, opts);
+    		});
+
+    		render();
+    	},
+    	disableAll = function (opts) {
+    		var identifiers = findNodes('false', 'g', 'state.disabled');
+    		forEachIdentifier(identifiers, opts, function (node, opts) {
+    			setDisabledState(node, true, opts);
+    		});
+
+    		render();
+    	},
+    	disableNode = function (identifiers, opts) {
+    		forEachIdentifier(identifiers, opts, function (node, opts) {
+    			setDisabledState(node, true, opts);
+    		});
+
+    		render();
+    	},
+    	enableAll = function (opts) {
+    		var identifiers = findNodes('true', 'g', 'state.disabled');
+    		forEachIdentifier(identifiers, opts, function (node, opts) {
+    			setDisabledState(node, false, opts);
+    		});
+
+    		render();
+    	},
+    	enableNode = function (identifiers, opts) {
+    		forEachIdentifier(identifiers, opts, function (node, opts) {
+    			setDisabledState(node, false, opts);
+    		});
+
+    		render();
+    	},
+    	toggleNodeDisabled = function (identifiers, opts) {
+    		forEachIdentifier(identifiers, opts, function (node, opts) {
+    			setDisabledState(node, !node.state.disabled, opts);
+    		});
+
+    		render();
+    	},
+    	forEachIdentifier = function (identifiers, opts, callback) {
+    		opts = $.extend({}, _default.options, opts);
+
+    		if (!(identifiers instanceof Array)) {
+    			identifiers = [identifiers];
+    		}
+
+    		$.each(identifiers, function (index, identifier) {
+    			callback(identifyNode(identifier), opts);
+    		});
+    	},
+        identifyNode = function (identifier) {
+    		return ((typeof identifier) === 'number') ?
+    						nodes[identifier] :
+    						identifier;
+    	},
+    	search = function (pattern, opts) {
+    		opts = $.extend({}, _default.searchOptions, opts);
+
+    		clearSearch({ render: false });
+
+    		var results = [];
+    		if (pattern && pattern.length > 0) {
+
+    			if (opts.exactMatch) {
+    				pattern = '^' + pattern + '$';
+    			}
+
+    			var modifier = 'g';
+    			if (opts.ignoreCase) {
+    				modifier += 'i';
+    			}
+
+    			results = findNodes(pattern, modifier);
+
+    			// Add searchResult property to all matching nodes
+    			// This will be used to apply custom styles
+    			// and when identifying result to be cleared
+    			$.each(results, function (index, node) {
+    				node.searchResult = true;
+    			})
+    		}
+
+    		// If revealResults, then render is triggered from revealNode
+    		// otherwise we just call render.
+    		if (opts.revealResults) {
+    			revealNode(results);
+    		}
+    		else {
+    			render();
+    		}
+
+    		element.trigger('searchComplete', $.extend(true, {}, results));
+
+    		return results;
+    	},
+
+    	/**
+    		Clears previous search results
+    	*/
+    	clearSearch = function (opts) {
+
+    		opts = $.extend({}, { render: true }, opts);
+
+    		var results = $.each(findNodes('true', 'g', 'searchResult'), function (index, node) {
+    			node.searchResult = false;
+    		});
+
+    		if (opts.render) {
+    			render();	
+    		}
+    		
+    		element.trigger('searchCleared', $.extend(true, {}, results));
+    	},
+    	findNodes = function (pattern, modifier, attribute) {
+    		modifier = modifier || 'g';
+    		attribute = attribute || 'text';
+    		return $.grep(nodes, function (node) {
+    			var val = getNodeValue(node, attribute);
+    			
+    			if (typeof val === 'string') {
+    				return val.match(new RegExp(pattern, modifier));
+    			}
+    		});
+    	},
+    	getNodeValue = function (obj, attr) {
+    		var index = attr.indexOf('.');
+    		if (index > 0) {
+    			var _obj = obj[attr.substring(0, index)];
+    			var _attr = attr.substring(index + 1, attr.length);
+    			return getNodeValue(_obj, _attr);
+    		}
+    		else {
+    			if (obj.hasOwnProperty(attr)) {
+    				return obj[attr].toString();
+    			}
+    			else {
+    				return undefined;
+    			}
+    		}
+    	},
         unsubscribeEvents = function (){
         	element.off('click');
     		element.off('nodeChecked');
@@ -465,15 +782,10 @@
     			element.on('searchCleared', options.onSearchCleared);
     		}
         },
-        getParent = function (identifier) {
-    		var node = identifyNode(identifier);
-    		return nodes[node.parentId];
-    	},
-        checkNode = function (identifiers) {
-    		forEachIdentifier(identifiers, function (node, options) {
-    			setCheckedState(node, true);
-    		});
-    		render();
+        remove = function () {
+    		destroy();
+    		//$.removeData(this, pluginName);
+    		$('#' + styleId).remove();
     	},
         destroy = function (){
         	if (!initialized) return;
@@ -487,24 +799,10 @@
     		// Reset this.initialized flag
     		initialized = false;
         },
-    	render = function () {
-    		if (!initialized) {
-    			// Setup first time only components
-    			element.addClass(pluginName);
-    			wrapper = $(template.list);
-
-    			injectStyle();
-    			initialized = true;
+        logError = function (message) {
+    		if (window.console) {
+    			window.console.error(message);
     		}
-    		element.empty().append(wrapper.empty());
-    		// Build tree
-    		buildTree(tree, 0);
-    	},
-    	getSelected = function () {
-    		return findNodes('true', 'g', 'state.selected');
-    	},
-    	getChecked = function () {
-    		return findNodes('true', 'g', 'state.checked');
     	}
 		;
 	
@@ -518,10 +816,51 @@
         * a clone when setting a private variable.
         *
         ********************************************************************************/
-		grobject.getSelected = getSelected;
-		grobject.getChecked = getChecked;
-		grobject.checkNode = checkNode;
+		grobject.findNode = findNode;
+		grobject.toggleExpandedState = toggleExpandedState;
+		grobject.setExpandedState = setExpandedState;
+		grobject.toggleSelectedState = toggleSelectedState;
+		grobject.setSelectedState = setSelectedState;
+		grobject.toggleCheckedState = toggleCheckedState;
+		grobject.setCheckedState = setCheckedState;
+		grobject.setDisabledState = setDisabledState;
+		grobject.getNode = getNode;
 		grobject.getParent = getParent;
+		grobject.getSiblings = getSiblings;
+		grobject.getSelected = getSelected;
+		grobject.getUnselected = getUnselected;
+		grobject.getExpanded = getExpanded;
+		grobject.getCollapsed = getCollapsed;
+		grobject.getChecked = getChecked;
+		grobject.getUnchecked = getUnchecked;
+		grobject.getDisabled = getDisabled;
+		grobject.getEnabled = getEnabled;
+		grobject.selectNode = selectNode;
+		grobject.unselectNode = unselectNode;
+		grobject.toggleNodeSelected= toggleNodeSelected;
+		grobject.collapseAll = collapseAll;
+		grobject.collapseNode = collapseNode;
+		grobject.expandAll = expandAll;
+		grobject.expandNode = expandNode;
+		grobject.expandLevels = expandLevels;
+		grobject.revealNode = revealNode;
+		grobject.toggleNodeExpanded = toggleNodeExpanded;
+		grobject.checkAll = checkAll;
+		grobject.uncheckAll = uncheckAll;
+		grobject.checkNode = checkNode;
+		grobject.uncheckNode = uncheckNode;
+		grobject.toggleNodeChecked = toggleNodeChecked;
+		grobject.disableAll = disableAll;
+		grobject.disableNode = disableNode;
+		grobject.enableAll = enableAll;
+		grobject.enableNode = enableNode;
+		grobject.toggleNodeDisabled = toggleNodeDisabled;
+		grobject.identifyNode = identifyNode;
+		grobject.search = search;
+		grobject.clearSearch = clearSearch;
+		grobject.findNodes = findNodes;
+		grobject.getNodeValue = getNodeValue;
+		
         grobject.options = function (newOptions) {
             if (arguments.length === 0) {
                 return $.extend(true, {}, options);
@@ -542,6 +881,7 @@
 			tree = $.extend(true, [], options.data);
 		}
         elementId = element.id;
+        styleId = elementId + '-style';
         destroy();
 		subscribeEvents();
 		var treeWrap = {};

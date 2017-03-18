@@ -73,39 +73,45 @@
         renderData = function(){
 			if($.isArray(data) && data.length > 0){
 				$.each(data, function (idx, item) {
+					var $item = $(itemTemplate);
+					var val, txt;
 					if (typeof item === 'object') {
 						dataSourceType = 'object';
 						if((options.valueField != null) && (options.textField != null)){
-							var $item = $(itemTemplate);
+							val = item[options.valueField];
+							
 							if((!!options.template)&& (!!gonrin.template)){
 								var tpl = gonrin.template(options.template);
-								$item.find('a').html(tpl(item));
+								txt = tpl(item);
 							}else{
 								var $item = $(itemTemplate);
-								$item.find('a').text(item[options.textField]);
+								txt = item[options.textField];
 							}
-							
-							if(value === item[options.valueField]){
-								setIndex(idx);
-							}
-							widget.append($item);
-							$item.bind("click", function(){
-								setIndex(idx);
-								hide();
-							});
 						}
-						
 					}else {
 						dataSourceType = 'common';
-						var $item = $(itemTemplate);//.text(item);
-						$item.find('a').text(item);
-						widget.append($item);
-						if(value === item){
-							setIndex(idx);
-						};
+						val = item;
+						txt = item;
+					}
+						
+					$item.find('a').html(txt);
+					widget.append($item);
+					//
+					if(options.selectionMode === "single"){
+						if(value === val){
+							setSingleIndex(idx);
+						}
+						//
 						$item.bind("click", function(){
-							setIndex(idx);
+							setSingleIndex(idx);
 							hide();
+						});
+					}else if(options.selectionMode === "multiple"){
+						if (($.isArray(value))&&($.inArray(val, value) > -1)){
+							setMultiIndex(idx);
+						}
+						$item.bind("click", function(){
+							setMultiIndex(idx);
 						});
 					}
 				});
@@ -154,32 +160,73 @@
         getIndex = function(){
         	return index;
         },
+        clearValue = function(){
+        	value = null;
+        	if(options.selectionMode === "single"){
+        		value = null;
+			}else if (options.selectionMode === "multiple"){
+				value = [];
+			}
+        	widget.find('li').not(".dropdown-header").removeClass("active");
+        	text = "";
+        	if(textElement){
+        		textElement.val(text);
+        	};
+        },
         setValue = function (val) {
         	if (value === val){
         		return;
         	}
+        	if ((options.selectionMode === "multiple") && !$.isArray(val)){
+        		return;
+        	}
+        	var oldval = value;
+        	//clear select
+        	clearValue();
+        	//return;
         	if(data && (data.length > 0)){
         		var txt = null;
         		for(var i = 0; i < data.length; i++){
         			var item = data[i];
+        			var itemval;
         			if(dataSourceType === 'object'){
         				if((options.valueField != null) && (options.textField != null)){
-            				if(val == item[options.valueField]){
-            					setIndex(i);
-            					return;
-            				}
+        					itemval = item[options.valueField];
+            				//if(val == item[options.valueField]){
+            				//	setSingleIndex(i);
+            				//	return;
+            				//}
             			}
         			}
         			else if(dataSourceType === 'common'){
-        				if(val === item){
-        					setIndex(i);
-        					return;
-        				}
+        				itemval = item;
+        				//if(val === item){
+        				//	setSingleIndex(i);
+        				//	return;
+        				//}
         			};
+        			
+        			if(options.selectionMode === "single"){
+        				if(val === itemval){
+        					setSingleIndex(i);
+            				return;
+        				}
+        			}else if (options.selectionMode === "multiple"){
+        				if (($.isArray(val))&&($.inArray(itemval, val) > -1)){
+							setMultiIndex(i, oldval);
+						}
+        			}
         		}
         	}
         },
         setIndex = function(idx){
+        	if(options.selectionMode === "single"){
+        		setSingleIndex(idx);
+        	}else if(options.selectionMode === "multiple"){
+        		setMultiIndex(idx);
+        	}
+        },
+        setSingleIndex = function(idx){
         	if(data && (data.length > 0) && (data.length > idx) && (idx > -1)){
         		var item = data[idx];
         		var oldvalue = value;
@@ -216,7 +263,79 @@
 				return;
         	}
         },
-        
+        setMultiIndex = function(idx, oldval){
+        	
+        	if(data && (data.length > 0) && (data.length > idx) && (idx > -1)){
+        		var item = data[idx];
+        		var oldvalue = value;
+        		if(!!oldval){
+        			oldvalue = oldval;
+        		}
+        		var txt,val;
+        		if(dataSourceType === 'object'){
+        			if((options.valueField != null) && (options.textField != null)){
+            			txt = item[options.textField];
+            			val = item[options.valueField];
+            		}else{
+            			return;
+            		}
+        		}else if(dataSourceType === 'common'){
+        			txt = item;
+        			val = item;
+        		}
+        		var itemidx = $(widget.find('li').not(".dropdown-header")[idx]);
+        		
+        		if(itemidx.hasClass("active")){
+        			itemidx.removeClass("active");
+        			// value remove
+        			if($.isArray(value)){
+        				var found = -1;
+        				for(var k = 0; k < value.length; k++){
+        					if(value[k] == val){
+        						found = k;
+        						break;
+        					}
+        				}
+        				if(found > -1){
+        					value.splice(found, 1); 
+        				}
+        			}
+        			
+        			//text remove
+        			if(text === txt){
+        				text = "";
+        				textElement.val(text);
+        			}
+        			else if(text.startsWith(txt + ",")){
+        				text = text.replace(txt + ",",'');
+        				textElement.val(text);
+        			}else{
+        				text = text.replace("," + txt,'');
+        				textElement.val(text);
+        			}
+        		}else{
+        			itemidx.addClass("active");
+        			//text add
+        			if($.isArray(value)){
+        				value.push(val);
+        			}
+        			//value add
+        			
+        			if(textElement){
+            			text = (!!text) && (text.length > 0)? text + "," + txt : txt;
+                		textElement.val(text);
+                	};
+        		}
+        		setState(null);
+        		
+        		notifyEvent({
+                    type: 'change.gonrin',
+                    value: value,
+                    oldValue: oldvalue
+                });
+				return;
+        	}
+        },
         dataToOptions = function () {
             var eData,
                 data_options = {};
@@ -306,6 +425,11 @@
         },
         
         move = function(e) {
+        	if(options.selectionMode === "multiple"){
+        		/*TODO: move with multiple select*/
+        		e.preventDefault();
+        		return;
+        	}
             var key = e.keyCode;
             var down = key === keyMap.down;
             var pressed;
@@ -319,11 +443,11 @@
                 	if (!current > -1) {
                 		if(down){
                 			if(current < data.length - 1){
-                				setIndex(current + 1);
+                				setSingleIndex(current + 1);
                 			}
                 		} else {
                 			if(current > 0){
-                				setIndex(current - 1);
+                				setSingleIndex(current - 1);
                 			}
                 		}
                 	}
@@ -602,8 +726,8 @@
         grobject.getValue = getValue;
         grobject.getText = getText;
         grobject.setIndex = setIndex;
-        //grobject.select = setIndex;
-        grobject.getIndex = getIndex;
+        //grobject.select = setSingleIndex;
+        //grobject.getIndex = getIndex;
         grobject.validate = validate;
         grobject.setState = setState;
         
@@ -720,7 +844,16 @@
         $.extend(true, options, dataToOptions());
         grobject.options(options);
         
-        value =  (options.value !== null) ? options.value : ((input.val().trim().length !== 0) ? input.val().trim(): null);
+        if(options.selectionMode === "single"){
+        	value =  (options.value !== null) ? options.value : ((input.val().trim().length !== 0) ? input.val().trim(): null);
+        }else if(options.selectionMode === "multiple"){
+        	try {
+        		value = (options.value !== null) ? options.value : ((input.val().trim().length !== 0) ? $.parseJSON(input.val().trim()): []);
+			} catch (error) {
+				value = [];
+			}
+        }
+        
         
     	setupWidget();
     	
@@ -737,9 +870,9 @@
 			}
     	}
     	
-    	if((options.index) && (options.index > -1)){
-    		grobject.setIndex(options.index);
-    	}
+    	//if((options.index) && (options.index > -1)){
+    	//	grobject.setSingleIndex(options.index);
+    	//}
     	
         attachElementEvents();
         if (input.prop('disabled')) {
@@ -791,7 +924,7 @@
          * or an existing kendo.data.DataSource instance.*/
         dataSource: null,
         enable:true,
-        index: -1,
+        //index: -1,
         /*filter: The filtering method used to determine the suggestions for the current value. Filtration is turned off by default. The supported filter values are startswith, endswith and contains.*/
         filter: false,
         height: "auto",
@@ -811,6 +944,7 @@
         value: null,
         focusOnShow: true,
         validators:[],
+        selectionMode: "single",
         showStateOnValidateSuccess: false
     };
 }));

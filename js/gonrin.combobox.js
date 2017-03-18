@@ -104,7 +104,7 @@
 						//
 						$item.bind("click", function(){
 							setSingleIndex(idx);
-							hide();
+							hideWidget();
 						});
 					}else if(options.selectionMode === "multiple"){
 						if (($.isArray(value))&&($.inArray(val, value) > -1)){
@@ -350,7 +350,7 @@
             return data_options;
         },
         
-        show = function () {
+        showWidget = function () {
         	if (input.prop('disabled') || (!options.ignore_readonly && input.prop('readonly')) || widget.is(':visible')) {
                 return grobject;
             };
@@ -368,7 +368,7 @@
             });
             return grobject;
         },
-        hide = function(){
+        hideWidget = function(){
         	if (widget.is(':hidden')) {
                 return grobject;
             }
@@ -385,7 +385,7 @@
         
         toggle = function () {
             /// <summary>Shows or hides the widget</summary>
-            return (widget.is(':hidden') ? show() : hide());
+            return (widget.is(':hidden') ? showWidget() : hideWidget());
         },
         notifyEvent = function (e) {
             if ((e.type === 'change.gonrin')  && ((e.value && (e.value === e.oldValue)) || (!e.value && !e.oldValue))) {
@@ -438,7 +438,7 @@
                 if (e.altKey) {
                     toggle();
                 } else {
-                	show();
+                	showWidget();
                 	current = getIndex();
                 	if (!current > -1) {
                 		if(down){
@@ -539,7 +539,7 @@
                 toggle();
                 pressed = true;
             } else if (key === keyMap.escape) {
-                hide();
+            	hideWidget();
                 pressed = true;
             }
             return pressed;
@@ -607,13 +607,14 @@
                 }, options.delay);
         	}
         },
-        attachElementEvents = function () {
+        subscribeEvents = function () {
+        	unsubscribeEvents();
         	if (textElement) {
         		textElement.on({
                     'change': change,
-                    'blur': options.debug ? '' : hide,
+                    'blur': options.debug ? '' : hideWidget,
                     'keydown': keydown,
-                    'focus':  show,
+                    'focus':  showWidget,
                 });
         	}
             if (component) {
@@ -675,13 +676,13 @@
         	}
         	
         },
-        detach_element_events = function () {
+        unsubscribeEvents = function () {
         	if (textElement) {
         		textElement.off({
                     'change': change,
-                    'blur': options.debug ? '' : hide,
+                    'blur': options.debug ? '' : hideWidget,
                     'keydown': keydown,
-                    'focus': show
+                    'focus': showWidget
                 });
         	}
             
@@ -692,10 +693,23 @@
             if(widget){
             	
             }
-            $(document)
-            .off('click.gr.combobox.data-api', '.input-group', function (e) { e.stopPropagation() })
-            .off('click.gr.combobox.data-api', hide);
-        };
+            //$(document)
+            //.off('click.gr.combobox.data-api', '.input-group', function (e) { e.stopPropagation() })
+            //.off('click.gr.combobox.data-api', hide);
+        },
+        hide = function(){
+        	hideWidget();
+        	if(groupElement){
+        		groupElement.hide();
+        	}
+        },
+        show = function(){
+        	hideWidget();
+        	if(groupElement){
+        		groupElement.show();
+        	}
+        }
+        ;
 
 		/********************************************************************************
         *
@@ -710,18 +724,19 @@
        
 		grobject.destroy = function () {
             ///<summary>Destroys the widget and removes all attached event listeners</summary>
-            hide();
-            detach_element_events();
+			hideWidget();
+            unsubscribeEvents();
             widget.remove();
             component.remove();
             helpmsg.remove();
             textElement.remove();
             element.removeData('gonrin');
         };
-        
-        grobject.toggle = toggle;
         grobject.show = show;
         grobject.hide = hide;
+        grobject.toggle = toggle;
+        grobject.showWidget = showWidget;
+        grobject.hideWidget = hideWidget;
         grobject.setValue = setValue;
         grobject.getValue = getValue;
         grobject.getText = getText;
@@ -735,7 +750,7 @@
         grobject.disable = function () {
             ///<summary>Disables the input element, the component is attached to, by adding a disabled="true" attribute to it.
             ///If the widget was visible before that call it is hidden. Possibly emits dp.hide</summary>
-            hide();
+        	hideWidget();
             if (component && component.hasClass('btn')) {
                 component.addClass('disabled');
             }
@@ -761,7 +776,7 @@
         grobject.readonly = function () {
             ///<summary>Disables the input element, the component is attached to, by adding a disabled="true" attribute to it.
             ///If the widget was visible before that call it is hidden. Possibly emits dp.hide</summary>
-            hide();
+        	hideWidget();
             if (component && component.hasClass('btn')) {
                 component.addClass('disabled');
             }
@@ -874,7 +889,7 @@
     	//	grobject.setSingleIndex(options.index);
     	//}
     	
-        attachElementEvents();
+        subscribeEvents();
         if (input.prop('disabled')) {
             grobject.disable();
         }

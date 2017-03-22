@@ -194,9 +194,9 @@
             return grexport;
         },
         notifyEvent = function (e) {
-            if ((e.type === 'change.gonrin')  && ((e.value && (e.value === e.oldValue)) || (!e.value && !e.oldValue))) {
-                return;
-            }
+            //if ((e.type === 'change.gonrin')  && ((e.value && (e.value === e.oldValue)) || (!e.value && !e.oldValue))) {
+            //    return;
+            //}
             element.trigger(e);
         },
         hide = function(){

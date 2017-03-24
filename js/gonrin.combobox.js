@@ -267,7 +267,7 @@
         	
         	if(data && (data.length > 0) && (data.length > idx) && (idx > -1)){
         		var item = data[idx];
-        		var oldvalue = value;
+        		var oldvalue = value.slice(0);
         		if(!!oldval){
         			oldvalue = oldval;
         		}
@@ -327,7 +327,6 @@
                 	};
         		}
         		setState(null);
-        		
         		notifyEvent({
                     type: 'change.gonrin',
                     value: value,

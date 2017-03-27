@@ -133,7 +133,7 @@
 			return grexport;
 		},
 		show = function () {
-        	if (input.prop('disabled') || (!options.ignoreReadonly && input.prop('readonly'))) {
+        	if (input.prop('disabled') || (!options.ignoreReadonly && input.prop('readonly')) || (!!options.readonly)) {
                 return grexport;
             };
             if(widget){

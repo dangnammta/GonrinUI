@@ -8,7 +8,7 @@
     } else {
         // Neither AMD nor CommonJS used. Use global variables.
         if (typeof jQuery === 'undefined') {
-            throw 'gonrin combobox requires jQuery to be loaded first';
+            throw 'gonrin imagelink requires jQuery to be loaded first';
         }
         factory(jQuery);
     }
@@ -85,7 +85,7 @@
         },
         
         
-        data_to_options = function () {
+        dataToOptions = function () {
             var eData,
                 data_options = {};
 
@@ -105,30 +105,44 @@
         },
         
         upload = function (file) {
-            
-            var xhttp    = xhr(),
-                fd       = new FormData();
-            fd.append('image', file);
-            xhttp.open('POST', 'https://api.imgur.com/3/image');
-            xhttp.setRequestHeader('Authorization', 'Client-ID ee4a3ba23904db0'); //Get yout Client ID here: http://api.imgur.com/
-            xhttp.onreadystatechange = function () {
-                if (xhttp.status === 200 && xhttp.readyState === 4) {
-                    var res = JSON.parse(xhttp.responseText), link, p, t;
-                    //self.remove(status);
-                    link = res.data.link;
-                    //p    = self.create('p');
-                    //t    = document.createTextNode('Image uploaded!');
-                    element.val(link);
-                    notifyEvent({
-	                    type: 'change.gonrin',
-	                    value: link,
-	                });
-                }
-            };
-            xhttp.send(fd);
+            if(!!options.service){
+            	var service = options.service;
+            	var xhttp    = xhr(),
+                fd       = new FormData(),
+                url = service.url;
+	            fd.append('image', file);
+	            xhttp.open('POST', url);
+	            if(!!service.headers){
+	            	$.each(service.headers, function(key, prop){
+	            		xhttp.setRequestHeader(key, prop); //Get yout Client ID here: http://api.imgur.com/  
+	            	});
+	            }
+	            xhttp.onreadystatechange = function () {
+	                if (xhttp.status === 200 && xhttp.readyState === 4) {
+	                	var link;
+	                	if(!!service.parse){
+	                		link = service.parse(xhttp.responseText);
+	                	}else{
+	                		link = xhttp.responseText;
+	                	}
+	                	
+	                    //var res = JSON.parse(xhttp.responseText), link, p, t;
+	                    //self.remove(status);
+	                    //link = res.data.link;
+	                    //p    = self.create('p');
+	                    //t    = document.createTextNode('Image uploaded!');
+	                    element.val(link);
+	                    notifyEvent({
+		                    type: 'change.gonrin',
+		                    value: link,
+		                });
+	                }
+	            };
+	            xhttp.send(fd);
+            }
         },
         
-        attach_element_events = function () {
+        subscribeEvents = function () {
             if (component) {
             	var browserBtn  = component.find('button');
             	var fileUpl  = component.find('#fileUpload')[0];
@@ -198,7 +212,7 @@
             throw new Error('Cannot apply to non input element');
         }
 
-        $.extend(true, options, data_to_options());
+        $.extend(true, options, dataToOptions());
         
         grobject.options(options);
         
@@ -208,7 +222,7 @@
     		options.placeholder = input.attr("placeholder");
     	}
     	
-        attach_element_events();
+        subscribeEvents();
         
         return grobject;
 		
@@ -231,6 +245,6 @@
     $.fn.imagelink.defaults = {
         /*The value of the widget.*/
         value: null,
-        clientID: null,
+        service: null,
     };
 }));

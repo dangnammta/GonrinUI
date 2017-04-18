@@ -119,11 +119,11 @@
 	            }
 	            xhttp.onreadystatechange = function () {
 	                if (xhttp.status === 200 && xhttp.readyState === 4) {
-	                	var link;
+	                	var imgobj;
 	                	if(!!service.parse){
-	                		link = service.parse(xhttp.responseText);
+	                		imgobj = service.parse(xhttp.responseText);
 	                	}else{
-	                		link = xhttp.responseText;
+	                		imgobj = JSON.parse(xhttp.responseText);
 	                	}
 	                	
 	                    //var res = JSON.parse(xhttp.responseText), link, p, t;
@@ -131,10 +131,10 @@
 	                    //link = res.data.link;
 	                    //p    = self.create('p');
 	                    //t    = document.createTextNode('Image uploaded!');
-	                    element.val(link);
+	                    element.val(imgobj.link);
 	                    notifyEvent({
 		                    type: 'change.gonrin',
-		                    value: link,
+		                    value: imgobj,
 		                });
 	                }
 	            };
@@ -246,5 +246,6 @@
         /*The value of the widget.*/
         value: null,
         service: null,
+        context: null,
     };
 }));

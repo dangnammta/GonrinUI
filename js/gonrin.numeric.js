@@ -21,18 +21,43 @@
         input,
         tryParseValue = function(str,defaultValue, format) {
             var retValue = defaultValue;
-            if(str !== null) {
+            if(options.format==='i'){
+        		try {
+        			retValue = parseInt(str);
+				} catch (error) {
+					retValue = null;
+				}
+        	}
+        	else if(options.format==='f'){
+        		try {
+        			retValue = parseFloat(str);
+				} catch (error) {
+					retValue = null;
+				}
+        	}
+            if(isNaN(retValue)){
+            	retValue = null;
+            }
+            /*if(str !== null) {
                 if(str.length > 0) {
                     if (!isNaN(str)) {
                     	if(options.format==='i'){
-                    		retValue = parseInt(str);
+                    		try {
+                    			retValue = parseInt(str);
+        					} catch (error) {
+        						retValue = null;
+        					}
                     	}
                     	else if(options.format==='f'){
-                    		retValue = parseFloat(str);
+                    		try {
+                    			retValue = parseFloat(str);
+        					} catch (error) {
+        						retValue = null;
+        					}
                     	}
                     }
                 }
-            }
+            }*/
             return retValue;
         },
 		getValue = function(){

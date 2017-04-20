@@ -65,6 +65,7 @@
     	            var img = new Image();
     	            img.src = $(imgel).attr("data-img-src");
     	            img.className = "pop-in";
+    	            img.style = "width:"+ (!!options.width ? options.width: "auto") + ";height:" + (!!options.height ? options.height: "auto")
     	            $(imgel).append(img);
     	        });
     	    }
@@ -128,7 +129,8 @@
     	context: null,
 		dataSource: null,
 		caption: null,
-		imageKey: "url"
-		
+		imageKey: "url",
+		width: null,
+		height: null
     };
 }));

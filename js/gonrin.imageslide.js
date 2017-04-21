@@ -20,7 +20,6 @@
 		elementId = null,
 		
 		setupWidget = function(){
-			console.log(options);
 			element.empty();
 			element.addClass("carousel slide").attr("data-ride","carousel");
 			
@@ -60,12 +59,15 @@
 			
 			//async load image
 			var imgs = element.find(".carousel-img");
+			
     		if (imgs.length > 0) {
     			imgs.each(function (index, imgel) {
-    	            var img = new Image();
-    	            img.src = $(imgel).attr("data-img-src");
-    	            img.className = "pop-in";
-    	            img.style = "width:"+ (!!options.width ? options.width: "auto") + ";height:" + (!!options.height ? options.height: "auto")
+    				var img = $("<img>");
+    				img.attr("src", $(imgel).attr("data-img-src")).addClass("pop-in");
+    				img.css({
+    					width: (!!options.width ? options.width: "auto"),
+    					height: (!!options.height ? options.height: "auto")
+    				});
     	            $(imgel).append(img);
     	        });
     	    }

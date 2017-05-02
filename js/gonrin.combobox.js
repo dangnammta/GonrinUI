@@ -813,6 +813,7 @@
                 inputGroupEl = element.parent();
             }
             
+            
             var parentInputGroupEl = inputGroupEl.parent();
             if(parentInputGroupEl.is('div') && parentInputGroupEl.hasClass('combobox-group')){
             	groupElement = parentInputGroupEl;
@@ -867,7 +868,9 @@
 				value = [];
 			}
         }
-        
+        if(!!options.groupSize){
+        	inputGroupEl.addClass("input-group-" + options.groupSize);
+        }
         
     	setupWidget();
     	
@@ -959,6 +962,7 @@
         focusOnShow: true,
         validators:[],
         selectionMode: "single",
+        groupSize: null,
         showStateOnValidateSuccess: false
     };
 }));

@@ -415,16 +415,16 @@
 									if ($.isPlainObject(command)){
 										if (!!command.action){
 											if (command.action === "delete"){
-												button = $("<button/>").addClass("btn btn-danger").html(command.label || language.command_delete_label);
+												button = $("<button/>").attr("type","button").addClass("btn btn-danger").html(command.label || language.command_delete_label);
 										        button.bind("click", commandDeleteRow);
 											}
 											
 											if (command.action === "edit"){
-												button = $("<button/>").addClass("btn btn-warning").html(command.label || language.command_edit_label);
+												button = $("<button/>").attr("type","button").addClass("btn btn-warning").html(command.label || language.command_edit_label);
 										        button.bind("click", commandEditRow);
 											}
 											if (typeof command.action === "function"){
-												button = $("<button/>").addClass("btn").html(command.label || " ");
+												button = $("<button/>").attr("type","button").addClass("btn").html(command.label || " ");
 												button.bind("click", function(e){
 											        e.stopPropagation();
 											        var $this = $(this);

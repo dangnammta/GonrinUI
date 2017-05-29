@@ -2319,7 +2319,10 @@
         		return date.clone().toDate();
         	}
             return null;*/
-        	return this.getDate();
+        	if(!!date){
+        		return date.clone().format(actualFormat);
+        	}
+        	return null;
         };
 
         // initializing element and component attributes

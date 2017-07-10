@@ -1339,9 +1339,9 @@
         sortingIndicatorDescClass: "glyphicon glyphicon-chevron-down text-muted",
 
         datatableContainerClass: "table", //"table-responsive"
-        datatableClass: "table table-bordered table-hover",
+        datatableClass: "table table-bordered", //table-hover
         commonThClass: "th-common",
-        selectedTrClass: "warning",
+        selectedTrClass: "bg-primary",
 
         filterContainerClass: "well filters-container",
         filterToolsClass: "",

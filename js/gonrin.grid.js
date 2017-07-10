@@ -15,6 +15,8 @@
 }(function ($) {
 	'use strict';
 	
+	var rowSelectEventList = ["rowclick", "rowdblclick", "rowcontextmenu"];
+	
 	function isObjectEqual(a, b) {
 	    // Create arrays of property names
 	    var aProps = Object.getOwnPropertyNames(a);
@@ -156,14 +158,22 @@
 			return grobject;
         },
         attachElementEvents = function () {
-        	
-        	element.unbind("cellclick").bind("cellclick", options.context? $.proxy(options.onCellClick, options.context): options.onCellClick);
-            element.unbind("rowclick").bind("rowclick", options.context? $.proxy(options.onRowClick, options.context): options.onRowClick);
+        	//element.unbind("cellclick").bind("cellclick", options.context? $.proxy(options.onCellClick, options.context): options.onCellClick);
+            //element.unbind("rowclick").bind("rowclick", options.context? $.proxy(options.onRowClick, options.context): options.onRowClick);
             element.unbind("griderror").bind("griderror", options.context? $.proxy(options.onGridError, options.context): options.onGridError);
             element.unbind("debug").bind("debug", options.context? $.proxy(options.onDebug, options.context): options.onDebug);
             element.unbind("render").bind("render", options.context? $.proxy(options.onRender, options.context): options.onRender);
             element.unbind("rowdeleted").bind("rowdeleted", options.context? $.proxy(options.onRowDeleted, options.context): options.onRowDeleted);
             element.unbind("rowedited").bind("rowedited", options.context? $.proxy(options.onRowEdited, options.context): options.onRowEdited);
+            
+            options.events = options.events || {};
+            
+            if(!!options.onRowClick){
+            	options.events.rowclick = options.onRowClick;
+            }
+            $.each(options.events, function(evtname, handler){
+            	element.unbind(evtname).bind(evtname, options.context? $.proxy(handler, options.context): handler);
+            });
         },
         detachElementEvents = function () {
         	element.unbind("cellclick");
@@ -171,6 +181,14 @@
         	element.unbind("griderror");
         	element.unbind("debug");
         	element.unbind("render");
+        	element.unbind("rowdeleted");
+            element.unbind("rowedited");
+            
+        	if(!!options.events){
+            	$.each(options.events, function(evtname, handler){
+            		element.unbind(evtname);
+            	});
+            }
         },
         notifyEvent = function (e) {
             element.triggerHandler(e);
@@ -260,6 +278,37 @@
             	type:"rowcreatted",
             	rowUuid: null,
             	rowData: null
+            });
+        },
+        
+        processRowEvent = function(evtname, rowId, rowStatus, rowData){
+        	
+        	if((rowSelectEventList.indexOf(evtname) > -1) && options.primaryField && 
+	    		(options.selectionMode == "single" || options.selectionMode == "multiple")) {
+        		
+		    	var idx = selectedRows("selected_index", removeDataUUID(rowData));
+		    	if(idx > -1) {
+		            selectedRows("remove_id", idx);
+		            selectedRows("mark_deselected", rowData);
+		            rowStatus = "deselected";
+		        } else {
+		            if(options.selectionMode == "single") {
+		                selectedRows("clear_all_ids");
+		                selectedRows("mark_page_deselected");
+		            };
+		            selectedRows("add_id", rowData);
+		            selectedRows("mark_selected", rowData);
+		            rowStatus = "selected";
+		        }
+		        selectedRows("update_counter");
+		    }
+        	//notify
+        	notifyEvent({
+            	type:evtname,
+            	rowId: rowId, 
+            	rowStatus: rowStatus, 
+            	rowData:removeDataUUID(rowData), 
+            	selectedItems: removeDataUUID(options.selectedItems)
             });
         },
         renderData = function(dataToRender){
@@ -626,114 +675,65 @@
             //TOOLS - columns list -----------------------------------------
             //Edit later
             //var settings = s;
-         // row selection -----------------------------------------------
-            if(options.primaryField &&
-                (options.selectionMode == "single" || options.selectionMode == "multiple")) {
-            	
-            	var rowPrefixLen = (tableId + "_tr_").length;
-                
-                // click on row
-            	elemTable.off("click", "tbody tr").on("click", "tbody tr", function() {
-                    var rowId = parseInt($(this).attr("id").substr(rowPrefixLen)),
-                        rowStatus,
-                        rowData = $(this).data("row_data"),
-                        idx = selectedRows("selected_index", removeDataUUID(rowData));
-
-                    
-                    if(idx > -1) {
-                        selectedRows("remove_id", idx);
-                        selectedRows("mark_deselected", rowData);
-                        rowStatus = "deselected";
-                    } else {
-                        if(options.selectionMode == "single") {
-                            selectedRows("clear_all_ids");
-                            selectedRows("mark_page_deselected");
-                        };
-                        selectedRows("add_id", rowData);
-                        selectedRows("mark_selected", rowData);
-                        rowStatus = "selected";
-                    }
-                    selectedRows("update_counter");
-                    
-                    notifyEvent({
-                    	type:"rowclick",
-                    	rowId: rowId, 
-                    	rowStatus: rowStatus, 
-                    	rowData:removeDataUUID(rowData), 
-                    	selectedItems: removeDataUUID(options.selectedItems)
-                    });
-                    //element.triggerHandler("rowclick", {rowId: rowId, rowStatus: rowStatus, rowData:rowData, selectedItems: options.selectedItems});
-                });
-            	
-            	
-            	// selection list
-                /*var container_id = elem.attr("id");
-                var selection_list_id = createId(settings.selectionListIdPrefix, container_id);
-                var elem_selection_list = elem.find("#" + selection_list_id);
-
-                elem_selection_list.off("click", "li").on("click", "li", function() {
-                    var sel_index = $(this).index();
-
-                    if(settings.selectionMode == "single") {
-                        grid.selectedRows.call(elem, "clear_all_ids");
-                        grid.selectedRows.call(elem, "mark_page_deselected");
-                    } else if(settings.selectionMode == "multiple") {
-
-                        var selector_table_tr = "#" + table_id + " tbody tr",
-                            row_prefix_len = (table_id + "_tr_").length,
-                            row_id, idx;
-                        switch(sel_index) {
-                            case 0:
-                                $(selector_table_tr).each(function() {
-                                    row_id = parseInt($(this).attr("id").substr(row_prefix_len));
-                                    idx = grid.selectedRows.call(elem, "selected_index", row_id);
-                                    if(idx == -1) {
-                                        grid.selectedRows.call(elem, "add_id", row_id);
-                                    }
-                                });
-                                grid.selectedRows.call(elem, "mark_page_selected");
-                                break;
-                            case 1:
-                                $(selector_table_tr).each(function() {
-                                    row_id = parseInt($(this).attr("id").substr(row_prefix_len));
-                                    idx = grid.selectedRows.call(elem, "selected_index", row_id);
-                                    if(idx > -1) {
-                                        grid.selectedRows.call(elem, "remove_id", idx);
-                                    }
-                                });
-                                grid.selectedRows.call(elem, "mark_page_deselected");
-                                break;
-                            case 2:
-                                $(selector_table_tr).each(function() {
-                                    row_id = parseInt($(this).attr("id").substr(row_prefix_len));
-                                    idx = grid.selectedRows.call(elem, "selected_index", row_id);
-                                    if(idx > -1) {
-                                        grid.selectedRows.call(elem, "remove_id", idx);
-                                    } else {
-                                        grid.selectedRows.call(elem, "add_id", row_id);
-                                    }
-                                });
-                                grid.selectedRows.call(elem, "mark_page_inversed");
-                                break;
-                            case 4:
-                                grid.selectedRows.call(elem, "clear_all_ids");
-                                grid.selectedRows.call(elem, "mark_page_deselected");
-                                break;
-                        }
-                    }
-
-                    // update selected rows counter
-                    grid.selectedRows.call(elem, "update_counter");
-                });*/
-            	
-            };
-            
+         
          // click on cell -----------------------------------------------
             /*elemTable.off("click", "tbody tr td").on("click", "tbody tr td", function() {
                 var col_index = $(this).index();
                 var row_index = $(this).parent("tr").index();
                 element.triggerHandler("onCellClick", {col: col_index, row: row_index});
             });*/
+            
+            
+            //event processing
+            if(!!options.events){
+            	$.each(options.events, function(evtname, handler){
+            		//row events
+            		if(evtname.startsWith("row")){
+            			var rowPrefixLen = (tableId + "_tr_").length;
+            			var evt = evtname.substring(3, evtname.length);
+            			elemTable.off(evt, "tbody tr").on(evt, "tbody tr", function() {
+            				var $this = $(this);
+                            var rowStatus;
+                            var rowData = $this.data("row_data");
+                            var rowId;
+                            if(!!options.primaryField){
+                            	rowId = parseInt($this.attr("id").substr(rowPrefixLen));
+                            }
+                            
+                            if(((evtname === "rowclick") || (evtname === "rowdblclick")) && (!!options.preventClickOnDblClickEvent)){
+                            	if (typeof $this.data("grid_rowClickCount") === 'undefined'){
+                            		$this.data("grid_rowClickCount", 0);
+                            	}
+                            	if(evtname === "rowclick"){
+                            		if ($this.data("grid_rowClickCount") == 0){
+                            			$this.data("grid_rowClickCount", 1);
+                            		}
+                                	setTimeout(function() {
+                                        if ($this.data("grid_rowClickCount") == 1) {
+                                        	$this.data("grid_rowClickCount", 0);
+                                        	processRowEvent(evtname, rowId, rowStatus, rowData);
+                                        }
+                                        if ($this.data("grid_rowClickCount") == 2) {
+                                        	$this.data("grid_rowClickCount", 0);
+                                        }
+                                    }, options.clickTimeout || 200);
+                                }
+                                if(evtname === "rowdblclick"){
+                                	$this.data("grid_rowClickCount", 2);
+                                	processRowEvent(evtname, rowId, rowStatus, rowData);
+                                }
+                            }else{
+                            	processRowEvent(evtname, rowId, rowStatus, rowData);
+                            }
+            			});
+            		}
+            		
+            		//cell event
+            		if(evtname.startsWith("cell")){
+            			
+            		}
+            	});
+            }
             
             
          // columns sorting --------------------------------------
@@ -1233,6 +1233,17 @@
         initialize();
     	setupWidget();
         attachElementEvents();
+        
+        //
+        if(options.preventClickOnDblClickEvent === null){
+        	if(options.events !== null){
+        		if((options.events.rowclick !== null) && (options.events.rowdblclick !== null)){
+        			options.preventClickOnDblClickEvent = true;
+        		}else{
+        			options.preventClickOnDblClickEvent = false;
+        		}
+        	}
+        }
         return grobject;
 		
 	};
@@ -1260,11 +1271,12 @@
     	context: null,
     	dataSource: null,
         primaryField: "",
+        
         selectionMode: "single", // "multiple", "single", false
         selectedItems: [],
         /**
-         * MANDATORY PROPERTIES: field
-         * UNIQUE PROPERTIES: field
+         * MANDATORY PROPERTIES: fields
+         * UNIQUE PROPERTIES: fields
          * {field: "customer_id", header: "Code", visible: "no", is_function: "no", "headerClass": "th_code hidden-xs", "dataClass": "td_code hidden-xs"},
          */
         fields: [],
@@ -1278,9 +1290,9 @@
         tools: null,
         showRowNumbers: false,
         
-        // events
-        onCellClick: function() {},
-        onRowClick: function() {},
+        // events -- deprecated
+        //onCellClick: function() {},
+        onRowClick: null,
         onGridError: function() {},
         onDebug: function() {},
         onRender: function() {},
@@ -1289,16 +1301,16 @@
         
         onValidateError: function(){},
         onValidateSuccess: function(){},
+        events:null,
+        preventClickOnDblClickEvent:null,
+        clickTimeout: 200,
+        //end events
         
         orderByMode: "client",
         filterMode: "client",
         paginationMode: "client",
-        
-        //sortable: {
-        //	serverOrdering: false,
-        //},
-        //useSortableLists: true,
-        
+        //
+        //manualSelectionEvents: false,
         // bs 3
         containerClass: "grid_container",
         noResultsClass: "alert alert-warning no-records-found",
@@ -1349,9 +1361,6 @@
         tableIdPrefix: "tbl_",
 
         noResultsIdPrefix: "no_res_",
-
-        //custom_html1_id_prefix: "custom1_",
-        //custom_html2_id_prefix: "custom2_",
         rowClass : "grid_row",
 
         paginationIdPrefix: "pag_",

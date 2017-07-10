@@ -190,8 +190,26 @@
 						{id:4,name:"ABC1", address: "223 Huynh thuc khang", age: 40},
 						{id:21,name:"ABC", address: "22 Huynh thuc khang", age: 30},
                      ],
-                     onRowClick: function(e){
+                     /*onRowClick: function(e){
                     	 console.log(e);
+                     },*/
+                     events:{
+                   		 "rowclick": function(e){
+                   			 console.log(e);
+                   		 },
+                   		"rowdblclick": function(e){
+                  			 console.log(e);
+                  		 },
+                   		 "rowcontextmenu": function(e){
+                   			console.log(e);
+                   		 },
+                   	 
+                   		 "celldblclick": function(e){
+                   			console.log(e);
+                   		 },
+                   		 "cellcontextmenu": function(e){
+                   			console.log(e);	 
+                    	 }
                      }
                 });
                 

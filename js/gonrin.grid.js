@@ -1237,7 +1237,7 @@
         //
         if(options.preventClickOnDblClickEvent === null){
         	if(options.events !== null){
-        		if((options.events.rowclick !== null) && (options.events.rowdblclick !== null)){
+        		if((!!options.events.rowclick) && (!!options.events.rowdblclick)){
         			options.preventClickOnDblClickEvent = true;
         		}else{
         			options.preventClickOnDblClickEvent = false;

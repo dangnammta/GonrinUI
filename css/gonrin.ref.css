@@ -18,10 +18,17 @@
     border-radius: 4px;
     cursor: default;
     float: left;
-    margin: 0px;
+    margin: 0px 2px;
     padding: 0px 6px;
 }
 
 .ref-form-control{
 	overflow: hidden;
+}
+
+.ref-wg-data-del{
+	position: absolute;
+	right: 1em;
+	font-size: 6pt;
+	margin-top: 2pt;
 }

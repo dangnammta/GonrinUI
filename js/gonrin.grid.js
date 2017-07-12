@@ -285,19 +285,19 @@
         	
         	if((rowSelectEventList.indexOf(evtname) > -1) && options.primaryField && 
 	    		(options.selectionMode == "single" || options.selectionMode == "multiple")) {
-        		
-		    	var idx = selectedRows("selected_index", removeDataUUID(rowData));
+        		var curRowData = removeDataUUID(rowData);
+		    	var idx = selectedRows("selected_index", curRowData);
 		    	if(idx > -1) {
 		            selectedRows("remove_id", idx);
-		            selectedRows("mark_deselected", rowData);
+		            selectedRows("mark_deselected", curRowData);
 		            rowStatus = "deselected";
 		        } else {
 		            if(options.selectionMode == "single") {
 		                selectedRows("clear_all_ids");
 		                selectedRows("mark_page_deselected");
 		            };
-		            selectedRows("add_id", rowData);
-		            selectedRows("mark_selected", rowData);
+		            selectedRows("add_id", curRowData);
+		            selectedRows("mark_selected", curRowData);
 		            rowStatus = "selected";
 		        }
 		        selectedRows("update_counter");
@@ -307,7 +307,7 @@
             	type:evtname,
             	rowId: rowId, 
             	rowStatus: rowStatus, 
-            	rowData:removeDataUUID(rowData), 
+            	rowData:curRowData, 
             	selectedItems: removeDataUUID(options.selectedItems),
             	el: $el
             });

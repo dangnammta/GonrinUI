@@ -181,6 +181,7 @@
     		setSelectedState(node, !node.state.selected, opts);
     	},
     	setSelectedState = function (node, state, opts) {
+    		if(!options.enableSelect) return;
 
     		if (state === node.state.selected) return;
 
@@ -217,7 +218,13 @@
     		if (state === node.state.checked) return;
 
     		if (state) {
-
+    			
+    			// If multiSelect false, unselect previously selected
+    			if (!options.multiCheck) {
+    				$.each(findNodes('true', 'g', 'state.checked'), $.proxy(function (index, node) {
+    					setCheckedState(node, false, opts);
+    				}, this));
+    			}
     			// Check node
     			node.state.checked = true;
 
@@ -464,17 +471,23 @@
     		return findNodes('false', 'g', 'state.disabled');
     	},
     	selectNode = function (identifiers, opts) {
-    		forEachIdentifier(identifiers, opts, function (node, opts) {
-    			setSelectedState(node, true, opts);
-    		});
-			render();
+    		if(options.enableSelect){
+    			forEachIdentifier(identifiers, opts, function (node, opts) {
+        			setSelectedState(node, true, opts);
+        		});
+    			render();
+    		}
+    		
     	},
     	unselectNode = function (identifiers, opts) {
-    		forEachIdentifier(identifiers, opts, function (node, opts) {
-    			setSelectedState(node, false, opts);
-    		});
+    		if(options.enableSelect){
+    			forEachIdentifier(identifiers, opts, function (node, opts) {
+        			setSelectedState(node, false, opts);
+        		});
 
-    		render();
+        		render();
+    		}
+    		
     	},
     	toggleNodeSelected = function (identifiers, opts) {
     		forEachIdentifier(identifiers, opts, function (node, opts) {
@@ -932,7 +945,9 @@
 		showIcon: true,
 		showCheckbox: false,
 		showTags: false,
+		enableSelect:true,
 		multiSelect: false,
+		multiCheck: false,
 		
 		nodesField: "nodes",
 		textField: "text",

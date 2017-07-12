@@ -326,11 +326,11 @@
 	        current_elem.prop("title", active_title);
 	
 	        if(options.showRowsInfo && options.showRowsDefaultInfo) {
-	            var page_first_row = ((options.currentPage - 1) * options.pageSize) + 1,
+	            var page_first_row = ((options.page - 1) * options.pageSize) + 1,
 	                page_last_row = Math.min(page_first_row + options.pageSize - 1, options.totalRows),
 	                info_html = page_first_row + "-" + page_last_row + " " +
 	                    language.total_rows_label + " " + options.totalRows + " " + language.rows_info_records +
-	                    " (" + language.current_page_abbr_label + options.currentPage + language.total_pages_abbr_label + options.totalPages + ")",
+	                    " (" + language.current_page_abbr_label + options.page + language.total_pages_abbr_label + options.totalPages + ")",
 	                rows_info_id = createId(options.navRowsInfoIdPrefix, container_id);
 	            element.find("#" + rows_info_id).html(info_html);
 	        }
@@ -416,6 +416,7 @@
     	page: 1,
     	pageSize: 10,
     	totalPages: null,
+    	totalRows: null,
     	virtualTotalPages:null,
         pageLinks: 5,
         showGotoPage: false,

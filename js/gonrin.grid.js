@@ -51,6 +51,7 @@
         	pageSize: 10,
         	//totalPages: null,
         	//virtualTotalPages:null,
+        	totalRows: null,
             pageLinks: 5,
             showGotoPage: false,
             showRowsPerPage: false,
@@ -624,6 +625,8 @@
                 		page: options.pagination.page,
                     	pageSize: options.pagination.pageSize,
                     	totalPages: options.pagination.totalPages,
+                    	totalRows: options.pagination.totalRows,
+                    	showRowsInfo: options.pagination.showRowsInfo,
                     	virtualTotalPages:null,
                     	onChangePage: function(event){
                     		//console.log("change page");
@@ -956,6 +959,7 @@
                         	options.pagination.page = collection.page;
                         	//options.pagination.pageSize = collection.num_rows;
                         	options.pagination.totalPages = collection.totalPages;
+                        	options.pagination.totalRows = collection.numRows;
                         	data.splice(0,data.length);
                         	collection.each(function(model) {
                         		data.push(model.attributes);
@@ -1229,8 +1233,8 @@
         }
         
         $.extend(true, options, dataToOptions());
-        
         options.pagination = $.extend({}, paginationOptions, options.pagination || {});
+        
         language = $.extend({}, language, options.language || {});
         grobject.options(options);
         initialize();

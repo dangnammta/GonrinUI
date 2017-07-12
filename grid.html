@@ -202,6 +202,7 @@
                   		 //},
                    		 "rowcontextmenu": function(e){
                    			console.log(e);
+                   			return false;
                    		 },
                    	 
                    		 "celldblclick": function(e){
@@ -211,6 +212,10 @@
                    			console.log(e);	 
                     	 }
                      }
+                });
+                
+                $("#grid").on("rowclick", function(e){
+                	console.log(e);
                 });
                 
                 

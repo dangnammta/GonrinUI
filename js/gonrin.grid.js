@@ -1222,6 +1222,8 @@
         grobject.deleteRow = deleteRow;
         grobject.boundData = boundData;
         
+        grobject.selectedRows = selectedRows;
+        
         grobject.applyRowSelections = function(){
         	applyRowSelections();
         }

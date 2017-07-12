@@ -129,16 +129,16 @@
 				});
         	}else if(selectionMode == "single"){
         		
-        		var txt = seleted.length > 0 ? seleted[0][options.textField]: "";
+        		var txt = selected.length > 0 ? selected[0][options.textField]: "";
 				textElement.text(txt);
 				
 				if(options.valueField){
-					value = seleted.length > 0 ? seleted[0][options.valueField]: null;
-					var inputtxt = seleted.length > 0 ? seleted[0][options.valueField]: "";
+					value = selected.length > 0 ? selected[0][options.valueField]: null;
+					var inputtxt = selected.length > 0 ? selected[0][options.valueField]: "";
 					input.val(inputtxt);
 				}else{
 					//console.log(seleted[0]);
-					value = seleted.length > 0 ? seleted[0]: null;
+					value = selected.length > 0 ? selected[0]: null;
 					input.val(JSON.stringify(value));
 				}
 				notifyEvent({

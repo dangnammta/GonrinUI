@@ -921,8 +921,8 @@
 
 		levels: 2,
 
-		expandIcon: 'glyphicon glyphicon-plus',
-		collapseIcon: 'glyphicon glyphicon-minus',
+		expandIcon: 'glyphicon glyphicon-triangle-right',
+		collapseIcon: 'glyphicon glyphicon-triangle-bottom',
 		emptyIcon: 'glyphicon',
 		nodeIcon: '',
 		selectedIcon: '',

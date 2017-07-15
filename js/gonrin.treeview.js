@@ -218,13 +218,6 @@
     		if (state === node.state.checked) return;
 
     		if (state) {
-    			
-    			// If multiSelect false, unselect previously selected
-    			if (!options.multiCheck) {
-    				$.each(findNodes('true', 'g', 'state.checked'), $.proxy(function (index, node) {
-    					setCheckedState(node, false, opts);
-    				}, this));
-    			}
     			// Check node
     			node.state.checked = true;
 
@@ -947,7 +940,6 @@
 		showTags: false,
 		enableSelect:true,
 		multiSelect: false,
-		multiCheck: false,
 		
 		nodesField: "nodes",
 		textField: "text",

@@ -569,6 +569,7 @@
 	
     var dialog = $(templates.dialog);
     var innerDialog = dialog.find(".modal-dialog");
+    
     var body = dialog.find(".modal-body");
     var buttons = options.buttons;
     var buttonStr = "";
@@ -636,6 +637,10 @@
     if (buttonStr.length) {
       body.after(templates.footer);
       dialog.find(".modal-footer").html(buttonStr);
+    }
+    
+    if(options.width){
+    	innerDialog.css("width", options.width);
     }
 
 

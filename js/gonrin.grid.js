@@ -922,7 +922,7 @@
         	if(typeof dataSource === "object"){
         		if(isBackBoneDataSource(dataSource)){
         			//console.log('instance of collection view');
-        			options.paginationMode = options.paginationMode;
+        			options.paginationMode = options.paginationMode || "server";
         			options.filterMode = options.filterMode || "server";
         			options.orderByMode = options.orderByMode || "server";
         			
@@ -951,7 +951,14 @@
         			//query["order_by"] = {"field": "name", "direction": "asc"}
         			
         			//end filter
-        			var url = collection.url + "?page=" + page + "&results_per_page=" + pageSize + (query? "&q=" + JSON.stringify(query): "");
+        			//var url = collection.url + "?page=" + page + "&results_per_page=" + pageSize + (query? "&q=" + JSON.stringify(query): "");
+        			var url = collection.url;
+        			if(options.paginationMode === "server"){
+        				url = url + "?page=" + page + "&results_per_page=" + pageSize + (query? "&q=" + JSON.stringify(query): "");
+        			}else{
+        				url = url + (query? "?q=" + JSON.stringify(query): "");
+        			}
+        			
         			collection.fetch({
         				url: url,
                         success: function (objs) {
@@ -1258,6 +1265,7 @@
 /*****************************************/
 	
 	$.fn.grid = function (options) {
+		console.log(options);
         return this.each(function () {
             var $this = $(this);
             options.refresh = options.refresh || false;

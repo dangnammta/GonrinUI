@@ -408,8 +408,7 @@
 			}
             
 			//value =  (options.value !== null) ? options.value : ((input.val().trim().length !== 0) ? input.val().trim(): null);
-            //var css = 
-            
+  
             var prevEl = element.prev('input');
             if((prevEl.length == 0 ) || !($(prevEl[0]).hasClass('form-control'))){
             	prevEl = $('<input class="form-control" type="text">');
@@ -468,6 +467,7 @@
         /*The value of the widget.*/
     	value: null,
     	tabindex: null,
+    	cssClass: false,
         currency: {
 			symbol : "$",		// default currency symbol is '$'
 			format : "%s%v",	// controls output: %s = symbol, %v = value (can be object, see docs)

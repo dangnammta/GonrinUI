@@ -1265,7 +1265,6 @@
 /*****************************************/
 	
 	$.fn.grid = function (options) {
-		console.log(options);
         return this.each(function () {
             var $this = $(this);
             options.refresh = options.refresh || false;

@@ -13,9 +13,13 @@
 
 	
 	<script type="text/javascript">
-            $(function () {
+            $(document).ready(function () {
             	//console.log($('#editor').val());
                 $('#editor').gonrinEditor();
+                $("#setval").bind("click", function(){
+                	$('#editor').val("EFG");
+                	$('#editor').trigger("change");
+                });
 				//TODO: fix error
             	
             });
@@ -27,8 +31,9 @@
 	 <div class="container">
 	    <div class="row-fluid" id="content" style="margin-top:20px;">
 	    	<br/>
-	    	<textarea id="editor">abc</textarea>
-			
+	    	<textarea id="editor">abc CDE</textarea>
+			<br/>
+			<button type="button" id="setval">Set value</button>
 	    </div>
 	    
 	</div>

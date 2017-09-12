@@ -207,8 +207,10 @@
             .blur(function () {
                 // Update the iframe when the textarea loses focus
                 updateFrame(editor, true);
+            }).change(function(){
+            	updateFrame(editor, true);
             });
-
+        
         // Create the main container
         var $main = editor.$main = $(DIV_TAG)
             .addClass(MAIN_CLASS)
@@ -308,6 +310,8 @@
         // Bind the window resize event when the width or height is auto or %
         if (/auto|%/.test("" + options.width + options.height))
             $(window).bind("resize.gonrinEditor", function () { refresh(editor); });
+        
+        
 
         // Create the iframe and resize the controls
         refresh(editor);

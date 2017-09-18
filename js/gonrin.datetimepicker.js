@@ -818,6 +818,9 @@
             },
 
             setValue = function (targetMoment) {
+            	//if (input.prop('disabled') || (!options.ignoreReadonly && input.prop('readonly')) || widget || (!options.ignoreReadonly && options.readonly)) {
+                //    return;
+                //}
                 var oldDate = unset ? null : date;
 
                 // case of calling setValue(null or false)
@@ -1166,8 +1169,8 @@
                             return m.seconds(0);
                         }
                     };
-
-                if (input.prop('disabled') || (!options.ignoreReadonly && input.prop('readonly')) || widget) {
+               
+                if (input.prop('disabled') || (!options.ignoreReadonly && input.prop('readonly')) || widget || (!options.ignoreReadonly && options.readonly)) {
                     return picker;
                 }
                 if (input.val() !== undefined && input.val().trim().length !== 0) {
@@ -2388,6 +2391,11 @@
         else if (options.defaultDate && input.attr('placeholder') === undefined) {
             setValue(options.defaultDate);
         }
+        
+        if(!options.ignoreReadonly && options.readonly){
+        	textElement.prop('readonly', true);
+        }
+        
         if (options.inline) {
             show();
         }
@@ -2422,6 +2430,7 @@
         defaultDate: false,
         disabledDates: false,
         enabledDates: false,
+        readonly: false,
         icons: {
             time: 'glyphicon glyphicon-time',
             date: 'glyphicon glyphicon-calendar',

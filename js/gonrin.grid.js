@@ -172,6 +172,7 @@
             if(!!options.onRowClick){
             	options.events.rowclick = options.onRowClick;
             }
+            
             $.each(options.events, function(evtname, handler){
             	element.unbind(evtname).bind(evtname, options.context? $.proxy(handler, options.context): handler);
             });
@@ -692,9 +693,11 @@
             if(!!options.events){
             	$.each(options.events, function(evtname, handler){
             		//row events
+            		
             		if(evtname.startsWith("row")){
             			var rowPrefixLen = (tableId + "_tr_").length;
             			var evt = evtname.substring(3, evtname.length);
+            			
             			elemTable.off(evt, "tbody tr").on(evt, "tbody tr", function() {
             				var $this = $(this);
                             var rowStatus;
@@ -1244,9 +1247,11 @@
         
         language = $.extend({}, language, options.language || {});
         grobject.options(options);
-        initialize();
-    	setupWidget();
         attachElementEvents();
+        initialize();
+        
+    	setupWidget();
+        
         
         //
         if(options.preventClickOnDblClickEvent === null){

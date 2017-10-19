@@ -23,7 +23,7 @@
                           "bold italic underline strikethrough subscript superscript | font size " +
                           "style | color highlight removeformat | bullets numbering | outdent " +
                           "indent | alignleft center alignright justify | undo redo | " +
-                          "rule image link unlink | cut copy paste pastetext | print source",
+                          "rule image link unlink | cut copy paste youtube | print source",
             colors:       // colors in the color popup
                           "FFF FCC FC9 FF9 FFC 9F9 9FF CFF CCF FCF " +
                           "CCC F66 F96 FF6 FF3 6F9 3FF 6FF 99F F9F " +
@@ -86,7 +86,7 @@
             "cut,,|" +
             "copy,,|" +
             "paste,,|" +
-            "pastetext,Paste as Text,inserthtml,|" +
+            "youtube,Paste as Youtube,insertyoutube,|" +
             "print,,|" +
             "source,Show Source"
         },
@@ -252,13 +252,12 @@
                     .appendTo($toolbar);
 
             }
-
+            
             // Button
             else {
-
                 // Get the button definition
                 var button = buttons[buttonName];
-
+                
                 // Add a new button to the group
                 var $buttonDiv = $(DIV_TAG)
                     .data(BUTTON_NAME, button.name)
@@ -267,7 +266,7 @@
                     .bind(CLICK, $.proxy(buttonClick, editor))
                     .appendTo($group)
                     .hover(hoverEnter, hoverLeave);
-
+                //console.log($buttonDiv);
                 // Update the group width
                 groupWidth += 24;
                 $group.width(groupWidth + 1);
@@ -285,7 +284,7 @@
 
                 // Create the popup
                 if (button.popupName)
-                    createPopup(button.popupName, options, button.popupClass,
+                      createPopup(button.popupName, options, button.popupClass,
                       button.popupContent, button.popupHover);
 
             }
@@ -430,7 +429,6 @@
             // Handle popups
             if (popupName) {
                 var $popup = $(popup);
-
                 // URL
                 if (popupName === "url") {
 
@@ -481,6 +479,27 @@
 
                         });
 
+                }
+                
+                else if (popupName === "youtube"){
+                	// Wire up the submit button click event handler
+                    $popup.children(":button")
+                        .unbind(CLICK)
+                        .bind(CLICK, function () {
+
+                        	// Insert the image or link if a url was entered
+                            var $text = $popup.find(":text"),
+                                url = $.trim($text.val());
+                            
+                            if (url !== "")
+                                execCommand(editor, data.command, url, null, data.button);
+
+                            // Reset the text, hide the popup and set focus
+                            $text.val("");
+                            hidePopups();
+                            focus(editor);
+
+                        });
                 }
 
                 // Show the popup if not already showing for this button
@@ -572,7 +591,6 @@
 
         if (button.popupClick && button.popupClick(e, data) === false)
             return;
-
         // Execute the command
         if (data.command && !execCommand(editor, data.command, data.value, data.useCSS, buttonDiv))
             return false;
@@ -667,6 +685,12 @@
             $popup.html('<label>Paste your content here:<br /><textarea rows="3" style="width:200px"></textarea></label><br /><input type="button" value="Submit" />');
             popupTypeClass = PROMPT_CLASS;
         }
+        
+     // Youtube
+        else if (popupName === "youtube") {
+            $popup.html('<label>Enter Youtube URL:<br /><input type="text" value="" style="width:200px" /></label><br /><input type="button" value="Submit" />');
+            popupTypeClass = PROMPT_CLASS;
+        }
 
         // Add the popup type class name
         if (!popupTypeClass && !popupContent)
@@ -721,7 +745,7 @@
 
     // execCommand - executes a designMode command
     function execCommand(editor, command, value, useCSS, button) {
-
+    
         // Restore the current ie selection
         restoreRange(editor);
 
@@ -734,6 +758,7 @@
 
         // Execute the command and check for error
         var inserthtml = command.toLowerCase() === "inserthtml";
+        var insertyoutube = command.toLowerCase() === "insertyoutube";
         if (ie && inserthtml)
             getRange(editor).pasteHTML(value);
 
@@ -744,6 +769,24 @@
             range.insertNode(range.createContextualFragment(value));
             selection.removeAllRanges();
             selection.addRange(range);
+        }
+        //youtube
+        else if (insertyoutube) {
+        	value = '<div class="align-youtube"><iframe width="100%" height="auto" src="' + value + '" frameborder="0" allowfullscreen></iframe></div>';
+        	if (ie ){
+        		getRange(editor).pasteHTML(value);
+        	}else if(iege11){
+        		var selection = getSelection(editor),
+                range = selection.getRangeAt(0);
+	            range.deleteContents();
+	            range.insertNode(range.createContextualFragment(value));
+	            selection.removeAllRanges();
+	            selection.addRange(range);
+        	}else{
+        		var success = true, message;
+        		try { success = editor.doc.execCommand("inserthtml", 0, value || null); }
+                catch (err) { message = err.message; success = false; }
+        	}
         }
         
         else {
@@ -994,8 +1037,9 @@
                 button = $.gonrinEditor.buttons[$.data(elem, BUTTON_NAME)],
                 command = button.command,
                 enabled = true;
-
+            
             // Determine the state
+
             if (editor.disabled)
                 enabled = false;
             else if (button.getEnabled) {
@@ -1015,6 +1059,9 @@
             else if (((inSourceMode || iOS) && button.name !== "source") ||
             (ie && (command === "undo" || command === "redo")))
                 enabled = false;
+            else if (command && command == "insertyoutube") {
+            	enabled = true;
+            }
             else if (command && command !== "print") {
                 if (ie && command === "hilitecolor")
                     command = "backcolor";
@@ -1024,6 +1071,7 @@
                     catch (err) { enabled = false; }
                 }
             }
+            
 
             // Enable or disable the button
             if (enabled) {

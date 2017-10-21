@@ -704,7 +704,7 @@
                             var rowData = $this.data("row_data");
                             var rowId;
                             if(!!options.primaryField){
-                            	rowId = $this.attr("id").substr(rowPrefixLen);
+                            	rowId = $this.attr(options.primaryField || "id").substr(rowPrefixLen);
                             }
                             
                             if(((evtname === "rowclick") || (evtname === "rowdblclick")) && (!!options.preventClickOnDblClickEvent)){

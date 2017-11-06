@@ -419,7 +419,7 @@
 	        
             for(row in dataToRender) {
             	rowIdHtml = (primaryField ? tableId + '_tr_' + dataToRender[row][primaryField] : '');
-            	var trow = $("<tr>").attr("id",rowIdHtml).data("row_data", dataToRender[row] );
+            	var trow = $("<tr>").attr(options.primaryField || "id",rowIdHtml).data("row_data", dataToRender[row] );
             	//class
             	if(!!options.rowClass){
             		if (typeof options.rowClass === "string"){

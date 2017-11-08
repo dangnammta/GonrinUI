@@ -493,7 +493,12 @@
 												});
 											}
 											if(!!command.class){
-												button.addClass(command.class);
+												 if (typeof command.class === "function") {
+                                                     button.addClass(command.class({rowData: dataToRender[row]}));
+                                                 }
+                                                 if (typeof command.class === "string") {
+                                                     button.addClass(command.class);
+                                                 }
 											}
 										}
 									}

@@ -278,6 +278,7 @@
             };
             if(selectDialog){
             	//selectDialog.uiControl.selectedItems = options.selectedItems || [];
+            	selectDialog.uiControl.filters = options.filters;
             	selectDialog.dialog();
             	selectDialog.on("onSelected", function(){
             		if((!!selectDialog) && (!!selectDialog.uiControl) && (!!selectDialog.uiControl.selectedItems)){
@@ -434,6 +435,7 @@
         grexport.getValue = getValue;
         grexport.clearValue = clearValue;
         grexport.setFilters = setFilters;
+        grexport.filters = setFilters;
         grexport.getFilters = getFilters;
         grexport.clearFilters = clearFilters;
         

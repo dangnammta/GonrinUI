@@ -772,6 +772,7 @@
         }
         //youtube
         else if (insertyoutube) {
+        	value = value.replace("watch?v=","embed/");
         	value = '<div class="align-youtube"><iframe width="100%" height="auto" src="' + value + '" frameborder="0" allowfullscreen></iframe></div>';
         	if (ie ){
         		getRange(editor).pasteHTML(value);

@@ -23,13 +23,14 @@
                     valueField: "id",
                     cssClassField: "cssClass",
                     dataSource: [
+								{ name: "0 value", id: 0 },
                                  { name: "< 1.4 Petrol, 92kW", id: 1, cssClass: "yeallow" },
                                  { name: "Parent2", id: 2 },
                                  { name: "Parent3", id: 5 },
                                  { name: "Parent4", id: 7 },
                     ],
-                    value: 2,
-                    readonly: true
+                    //value: 2,
+                    //readonly: true
             	});
             	
             	$("button#setval").bind("click", function(){
@@ -63,7 +64,7 @@
 	    <div class="row-fluid" id="content" style="margin-top:20px;">
 	    	<div style="width:100%">
 	    		<div style="width:50%;">
-					<input type='text' id='radio' value="5"/>
+					<input type='text' id='radio'/>
 				</div>
 				<button id="setval">Set Value</button>
 				<hr>

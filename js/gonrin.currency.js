@@ -144,6 +144,72 @@
     		// Otherwise, assume format was fine:
     		return format;
     	};
+    	
+    	var notifyEvent = function (e) {
+            if ((e.type === 'change.gonrin')  && (e.value && (e.value === e.oldValue)) ) {
+                return;
+            }
+            element.trigger(e);
+        };
+        
+		var onChange = function(){
+			var oldvalue = value;
+			if(textElement){
+				value = ((textElement.val().trim().length !== 0) ? parseFloat(textElement.val().trim()): null);
+				notifyEvent({
+	                type: 'change.gonrin',
+	                value: value,
+	                oldValue: oldvalue
+	            });
+			}
+			
+		};
+		var onFocus = function(){
+			if(textElement){
+				if(value !== null){
+					textElement.val(value);
+				}else{
+					textElement.val('');
+				}
+			}
+		};
+		var onBlur = function(){
+			if(value !== null){
+				text = formatMoney(value);
+				textElement.val(text);
+			}
+		};
+		var unsubscribeEvents = function(){
+			if (textElement) {
+        		textElement.off({
+                    'change': onChange,
+                    'blur': onBlur,
+                    //'keydown': keydown,
+                    'focus': onFocus
+                });
+        	}
+		};
+		var subscribeEvents = function(){
+			unsubscribeEvents();
+			if (textElement) {
+        		textElement.on({
+                    'change': onChange,
+                    'blur': onBlur,
+                    //'keydown': keydown,
+                    'focus':  onFocus,
+                });
+        	}
+		};
+		
+    	
+    	function setValue(val){
+    		if(val !== null){
+				text = formatMoney(val);
+			}
+            if(text !== null){
+            	textElement.val(text);
+            }
+    	}
 		/********************************************************************************
         *
         * Public API functions
@@ -157,6 +223,7 @@
        
        
 		grobject.getValue = getValue;
+		grobject.setValue = setValue;
 		
 		/* --- API Methods --- */
 
@@ -301,61 +368,6 @@
 			// Return with currency symbol added:
 			return useFormat.replace('%s', opts.symbol).replace('%v', formatNumber(Math.abs(number), checkPrecision(opts.precision), opts.thousand, opts.decimal));
 		};
-		var notifyEvent = function (e) {
-            if ((e.type === 'change.gonrin')  && ((e.value && (e.value === e.oldValue)) || (!e.value && !e.oldValue))) {
-                return;
-            }
-            element.trigger(e);
-        };
-        
-		var onChange = function(){
-			var oldvalue = value;
-			if(textElement){
-				value = ((textElement.val().trim().length !== 0) ? parseFloat(textElement.val().trim()): null);
-				notifyEvent({
-	                type: 'change.gonrin',
-	                value: value,
-	                oldValue: oldvalue
-	            });
-			}
-			
-		};
-		var onFocus = function(){
-			if(textElement){
-				if(value !== null){
-					textElement.val(value);
-				}else{
-					textElement.val('');
-				}
-			}
-		};
-		var onBlur = function(){
-			if(value !== null){
-				text = formatMoney(value);
-				textElement.val(text);
-			}
-		};
-		var unsubscribeEvents = function(){
-			if (textElement) {
-        		textElement.off({
-                    'change': onChange,
-                    'blur': onBlur,
-                    //'keydown': keydown,
-                    'focus': onFocus
-                });
-        	}
-		};
-		var subscribeEvents = function(){
-			unsubscribeEvents();
-			if (textElement) {
-        		textElement.on({
-                    'change': onChange,
-                    'blur': onBlur,
-                    //'keydown': keydown,
-                    'focus':  onFocus,
-                });
-        	}
-		};
 		
 		
         grobject.options = function (newOptions) {
@@ -403,9 +415,7 @@
 			} catch (error) {
 				value = null;
 			}
-			if(value !== null){
-				text = formatMoney(value);
-			}
+			
             
 			//value =  (options.value !== null) ? options.value : ((input.val().trim().length !== 0) ? input.val().trim(): null);
   
@@ -425,9 +435,8 @@
             if(options.tabindex !== null){
             	textElement.attr("tabindex", options.tabindex);
             }
-            if(text !== null){
-            	textElement.val(text);
-            }
+            
+            setValue(value);
             
             element.css("display", "none");
             element.attr("tabindex", -1);

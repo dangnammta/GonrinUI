@@ -166,6 +166,8 @@
             element.unbind("render").bind("render", options.context? $.proxy(options.onRender, options.context): options.onRender);
             element.unbind("rowdeleted").bind("rowdeleted", options.context? $.proxy(options.onRowDeleted, options.context): options.onRowDeleted);
             element.unbind("rowedited").bind("rowedited", options.context? $.proxy(options.onRowEdited, options.context): options.onRowEdited);
+            element.unbind("changepage").bind("changepage", options.context? $.proxy(options.onChangePage, options.context): options.onChangePage);
+            
             
             options.events = options.events || {};
             
@@ -642,6 +644,11 @@
                     		}else{
                     			renderData(pagingData());
                     		}
+                    		
+                    		notifyEvent({
+                            	type:"changepage",
+                            	page: event.page
+                            });
                     		
                     	}
                     });
@@ -1238,6 +1245,11 @@
         	//renderData(pagingData());
         };
         
+        grobject.changePage = function(page){
+        	options.pagination.page = page;
+        	boundData();
+        };
+        
         grobject.deleteRow = deleteRow;
         grobject.boundData = boundData;
         
@@ -1325,6 +1337,7 @@
         
         onValidateError: function(){},
         onValidateSuccess: function(){},
+        onChangePage: function(){},
         events:null,
         preventClickOnDblClickEvent:null,
         clickTimeout: 200,

@@ -28,7 +28,7 @@
 		text_element = false,
 		unset = true,
         input,
-        menu_template = '<input type="file" accept="image/*" id="fileUpload"/>',
+        menu_template = '<input type="file" accept="file_extension|audio/*|video/*|image/*|media_type" id="fileUpload"/>',
         
         component = false,
         widget = false,
@@ -110,7 +110,24 @@
             	var xhttp    = xhr(),
                 fd       = new FormData(),
                 url = service.url;
-	            fd.append('image', file);
+            	
+//            	file_extension|audio/*|video/*|image/*|media_type
+            	if (file.type.match(/image.*/)) {
+            		fd.append('image', file);
+                }
+            	if (file.type.match(/video.*/)) {
+            		fd.append('video', file);
+                }
+            	if (file.type.match(/audio.*/)) {
+            		fd.append('audio', file);
+                }
+//            	if (file.type.match(/media_type/)) {
+//            		fd.append('media_type', file);
+//                }
+//            	if (file.type.match(/file_extension/)) {
+//            		fd.append('file_extension', file);
+//                }
+	            
 	            xhttp.open('POST', url);
 	            if(!!service.headers){
 	            	$.each(service.headers, function(key, prop){
@@ -153,10 +170,11 @@
                     var files = e.target.files, file, p, t, i, len;
                     for (i = 0, len = files.length; i < len; i += 1) {
                         file = files[i];
-                        if (file.type.match(/image.*/)) {
+//                        || file.type.match(/media_type/) || file.type.match(/file_extension/)
+                        if (file.type.match(/image.*/) || file.type.match(/video.*/) || file.type.match(/audio.*/)) {
                             upload(file);
                         } else {
-                            
+                        	alert('The data type is incorrect');
                         }
                     }
                 }, false);

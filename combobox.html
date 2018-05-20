@@ -15,21 +15,22 @@
 	<script type="text/javascript">
             $(function () {
                 $('#combobox').combobox({
-                	textField: "name",
+                	textField: "age",
                     valueField: "id",
+                    dataSource: "http://abc.com/list.json",
                     dataSource: [
-                        { name: "Parent1", id: 1 },
-                        { name: "Parent2", id: 2 },
-                        { name: "Parent3", id: 3 },
-                        { name: "Parent4", id: 4 },
+                        { age: "Parent1", id: 1 },
+                        { age: "Parent2", id: 2 },
+                        { age: "Parent3", id: 3 },
+                        { age: "Parent4", id: 4 },
                     ],
                     /*data_source: {
                     	type:"",
                     },*/
-                    index: -1,
+                    /*index: -1,
                     headerTemplate: "<span>ABC CDE</span",
                     template: '<span class="k-state-default" style="background-color: \'#666\'"></span>' +
-                    '<span class="k-state-default"><h3>{{ name }}</h3><p>{{ id }}</p></span>',
+                    '<span class="k-state-default"><h3>{{ age }}</h3><p>{{ id }}</p></span>',
                     
                     validators:[
                         {
@@ -42,7 +43,7 @@
                         	message:"Not null"
                         }
                     ],
-                    showStateOnValidateSuccess : true
+                    showStateOnValidateSuccess : true*/
                 });
                 $('#combobox').on('change.gonrin', function(e){
                 	console.log($('#combobox').getValue());

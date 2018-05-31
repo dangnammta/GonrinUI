@@ -422,7 +422,7 @@
         
         if (element.is('input') ) {
             input = element;
-            value = input.val();
+            //value = input.val();
             try {
         		value = (options.value !== null) ? options.value : ((input.val().trim().length !== 0) ? parseFloat(input.val().trim()): null);
 			} catch (error) {

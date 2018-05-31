@@ -203,17 +203,18 @@
 		
     	
     	function setValue(val){
-    		
     		var oldvalue = value;
     		value = val;
     		input.val(value);
 			
     		if(val !== null){
 				text = formatMoney(val);
+			}else{
+				text = "";
 			}
             if(text !== null){
             	textElement.val(text);
-            };
+            }
             
             notifyEvent({
                 type: 'change.gonrin',

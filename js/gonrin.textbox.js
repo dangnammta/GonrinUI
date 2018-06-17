@@ -19,9 +19,30 @@
 		var grobject = {},
 		value,
         input,
+        notifyEvent = function (e) {
+            if ((e.type === 'change.gonrin')  && ((e.value && (e.value === e.oldValue)) || (!e.value && !e.oldValue))) {
+                return;
+            }
+            element.trigger(e);
+        },
         getValue = function(){
-        	return input.val();
-        };;
+        	return value;
+        },
+        setValue = function(val){
+        	if (value === val){
+        		return;
+        	}
+        	
+        	var oldval = value;
+        	value = val;
+        	input.val(val);
+        	
+        	notifyEvent({
+                type: 'change.gonrin',
+                value: val,
+                oldValue: oldvalue
+            });
+        }
 	
 		/********************************************************************************
         *
@@ -34,7 +55,7 @@
         *
         ********************************************************************************/
 		grobject.getValue = getValue;
-       
+		grobject.setValue = setValue;
         grobject.options = function (newOptions) {
             if (arguments.length === 0) {
                 return $.extend(true, {}, options);
@@ -51,7 +72,8 @@
         
         if ((element.is('input')) || (element.is('textarea'))) {
             input = element;
-            value = input.val();
+            //value = input.val();
+            value =  (options.value !== null) ? options.value : ((input.val().trim().length !== 0) ? input.val().trim(): null);
             //css
             if( !options.hasOwnProperty("cssClass") ){
             	element.addClass("form-control");

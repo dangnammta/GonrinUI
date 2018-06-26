@@ -17,6 +17,7 @@
 	var TextBox = function (element, options) {
 		var gonrin = window.gonrin;
 		var grobject = {},
+		textElement = false,
 		value,
         input,
         notifyEvent = function (e) {
@@ -33,16 +34,44 @@
         		return;
         	}
         	
-        	var oldval = value;
+        	var oldvalue = value;
         	value = val;
         	input.val(val);
-        	
         	notifyEvent({
                 type: 'change.gonrin',
                 value: val,
                 oldValue: oldvalue
             });
-        }
+        },
+        change = function (e) {
+            var val = $(e.target).val();
+            var parsedDate = val ? val : null;
+            setValue(parsedDate);
+            e.stopImmediatePropagation();
+            return false;
+        },
+        unsubscribeEvents = function () {
+        	if (textElement) {
+        		textElement.off({
+                    'change': change,
+                    //'blur': options.debug ? '' : hideWidget,
+                    //'keydown': keydown,
+                    //'focus': showWidget
+                });
+        	}
+            
+        },
+        subscribeEvents = function () {
+        	unsubscribeEvents();
+        	if (textElement) {
+        		textElement.on({
+                    'change': change,
+                    //'blur': options.debug ? '' : hideWidget,
+                    //'keydown': keydown,
+                    //'focus':  showWidget,
+                });
+        	}
+        };
 	
 		/********************************************************************************
         *
@@ -72,6 +101,7 @@
         
         if ((element.is('input')) || (element.is('textarea'))) {
             input = element;
+            textElement = element;
             //value = input.val();
             value =  (options.value !== null) ? options.value : ((input.val().trim().length !== 0) ? input.val().trim(): null);
             //css
@@ -87,6 +117,7 @@
     	if(!options.placeholder){
     		options.placeholder = input.attr("placeholder");
     	}
+    	subscribeEvents();
         return grobject;
 	};
 	

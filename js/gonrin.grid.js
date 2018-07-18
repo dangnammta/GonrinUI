@@ -421,7 +421,7 @@
 	        
             for(row in dataToRender) {
             	rowIdHtml = (primaryField ? tableId + '_tr_' + dataToRender[row][primaryField] : '');
-            	var trow = $("<tr>").attr(options.primaryField || "id",rowIdHtml).data("row_data", dataToRender[row] );
+            	var trow = $("<tr>").attr("id",rowIdHtml).data("row_data", dataToRender[row] );
             	//class
             	if(!!options.rowClass){
             		if (typeof options.rowClass === "string"){
@@ -715,9 +715,11 @@
                             var rowStatus;
                             var rowData = $this.data("row_data");
                             var rowId;
-                            if(!!options.primaryField){
-                            	rowId = $this.attr(options.primaryField || "id").substr(rowPrefixLen);
-                            }
+                            
+                            //if(!!options.primaryField){
+                            //	rowId = $this.attr(options.primaryField || "id").substr(rowPrefixLen);
+                            //}
+                            rowId = $this.attr("id").substr(rowPrefixLen);
                             
                             if(((evtname === "rowclick") || (evtname === "rowdblclick")) && (!!options.preventClickOnDblClickEvent)){
                             	if (typeof $this.data("grid_rowClickCount") === 'undefined'){

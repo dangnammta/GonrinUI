@@ -159,21 +159,28 @@
 			return grobject;
         },
         attachElementEvents = function () {
-        	//element.unbind("cellclick").bind("cellclick", options.context? $.proxy(options.onCellClick, options.context): options.onCellClick);
-            //element.unbind("rowclick").bind("rowclick", options.context? $.proxy(options.onRowClick, options.context): options.onRowClick);
-            element.unbind("griderror").bind("griderror", options.context? $.proxy(options.onGridError, options.context): options.onGridError);
-            element.unbind("debug").bind("debug", options.context? $.proxy(options.onDebug, options.context): options.onDebug);
-            element.unbind("render").bind("render", options.context? $.proxy(options.onRender, options.context): options.onRender);
-            element.unbind("rowdeleted").bind("rowdeleted", options.context? $.proxy(options.onRowDeleted, options.context): options.onRowDeleted);
-            element.unbind("rowedited").bind("rowedited", options.context? $.proxy(options.onRowEdited, options.context): options.onRowEdited);
-            element.unbind("changepage").bind("changepage", options.context? $.proxy(options.onChangePage, options.context): options.onChangePage);
-            
-            
-            options.events = options.events || {};
+        	options.events = options.events || {};
             
             if(!!options.onRowClick){
             	options.events.rowclick = options.onRowClick;
             }
+            if(!!options.onRendered){
+            	options.events.render = options.onRendered;
+            }
+            
+            if(!!options.onChangePage){
+            	options.events.changepage = options.onChangePage;
+            }
+            
+        	//element.unbind("cellclick").bind("cellclick", options.context? $.proxy(options.onCellClick, options.context): options.onCellClick);
+            //element.unbind("rowclick").bind("rowclick", options.context? $.proxy(options.onRowClick, options.context): options.onRowClick);
+            element.unbind("griderror").bind("griderror", options.context? $.proxy(options.onGridError, options.context): options.onGridError);
+            element.unbind("debug").bind("debug", options.context? $.proxy(options.onDebug, options.context): options.onDebug);
+            //element.unbind("render").bind("render", options.context? $.proxy(options.onRendered, options.context): options.onRendered);
+            element.unbind("rowdeleted").bind("rowdeleted", options.context? $.proxy(options.onRowDeleted, options.context): options.onRowDeleted);
+            element.unbind("rowedited").bind("rowedited", options.context? $.proxy(options.onRowEdited, options.context): options.onRowEdited);
+            //element.unbind("changepage").bind("changepage", options.context? $.proxy(options.onChangePage, options.context): options.onChangePage);
+            
             
             $.each(options.events, function(evtname, handler){
             	element.unbind(evtname).bind(evtname, options.context? $.proxy(handler, options.context): handler);
@@ -279,7 +286,7 @@
         	}*/
         	
         	notifyEvent({
-            	type:"rowcreatted",
+            	type:"rowcreated",
             	rowUuid: null,
             	rowData: null
             });
@@ -788,7 +795,7 @@
             });
          // trigger event onDisplay
             notifyEvent({
-            	type:"render.gonrin"
+            	type:"render"
             });
             //element.triggerHandler("render.gonrin");
         },
@@ -1333,7 +1340,7 @@
         onRowClick: null,
         onGridError: function() {},
         onDebug: function() {},
-        onRender: function() {},
+        onRendered: function() {},
         onRowDeleted: function(){},
         onRowEdited : function(){},
         

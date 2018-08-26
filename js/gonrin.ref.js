@@ -163,7 +163,6 @@
         },
         showWidget = function(){
         	//clear
-        	//console.log("showWidget");
         	widget.empty();
         	if((!!selectDialog) && (!!selectDialog.uiControl) && (!!selectDialog.uiControl.selectedItems)
         			&& options.selectionMode === "multiple"){
@@ -276,10 +275,12 @@
         	if (input.prop('disabled') || (!options.ignoreReadonly && input.prop('readonly')) || (!!options.readonly)) {
                 return grexport;
             };
+            
             if(selectDialog){
             	//selectDialog.uiControl.selectedItems = options.selectedItems || [];
             	selectDialog.uiControl.filters = options.filters;
             	selectDialog.dialog();
+            	
             	selectDialog.on("onSelected", function(){
             		if((!!selectDialog) && (!!selectDialog.uiControl) && (!!selectDialog.uiControl.selectedItems)){
             			options.selectedItems = selectDialog.uiControl.selectedItems;
@@ -371,6 +372,65 @@
         getValue = function(){
         	return value;
         },
+        setValue = function (val) {
+        	if((!!selectDialog) && (!!selectDialog.uiControl)){
+        		//var selected = selectDialog.uiControl.selectedItems = val;
+        		
+				if(options.selectionMode === "single"){
+					options.selectedItems = selectDialog.uiControl.selectedItems = val;
+					onSelectChange("single");
+				}
+				if(options.selectionMode === "multiple"){
+					options.selectedItems = selectDialog.uiControl.selectedItems = val;
+					onSelectChange("multiple");
+				}
+    		};
+        	
+        	/*if (value === val){
+        		return;
+        	}
+        	if ((options.selectionMode === "multiple") && !$.isArray(val)){
+        		return;
+        	}
+        	var oldval = value;
+        	//clear select
+        	clearValue();
+        	//return;
+        	if(data && (data.length > 0)){
+        		var txt = null;
+        		for(var i = 0; i < data.length; i++){
+        			var item = data[i];
+        			var itemval;
+        			if(dataSourceType === 'object'){
+        				if((options.valueField != null) && (options.textField != null)){
+        					itemval = item[options.valueField];
+            				//if(val == item[options.valueField]){
+            				//	setSingleIndex(i);
+            				//	return;
+            				//}
+            			}
+        			}
+        			else if(dataSourceType === 'common'){
+        				itemval = item;
+        				//if(val === item){
+        				//	setSingleIndex(i);
+        				//	return;
+        				//}
+        			};
+        			
+        			if(options.selectionMode === "single"){
+        				if(val === itemval){
+        					setSingleIndex(i);
+            				return;
+        				}
+        			}else if (options.selectionMode === "multiple"){
+        				if (($.isArray(val))&&($.inArray(itemval, val) > -1)){
+							setMultiIndex(i, oldval);
+						}
+        			}
+        		}
+        	}*/
+        },
         clearFilters = function(){
         	options.filters = null;
         	if(selectDialog){
@@ -433,6 +493,7 @@
             return grexport;
         };
         grexport.getValue = getValue;
+        grexport.setValue = setValue;
         grexport.clearValue = clearValue;
         grexport.setFilters = setFilters;
         grexport.filters = setFilters;

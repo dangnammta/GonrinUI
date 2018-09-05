@@ -387,7 +387,7 @@
             return (widget.is(':hidden') ? showWidget() : hideWidget());
         },
         notifyEvent = function (e) {
-            if ((e.type === 'change.gonrin')  && ((e.value && (e.value === e.oldValue)) || (!e.value && !e.oldValue))) {
+            if ((e.type === 'change.gonrin')  && (e.value && (e.value === e.oldValue))) {
                 return;
             }
             element.trigger(e);

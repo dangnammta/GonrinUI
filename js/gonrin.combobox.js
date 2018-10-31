@@ -71,6 +71,7 @@
          *
          ********************************************************************************/
         renderData = function(){
+			
 			if($.isArray(data) && data.length > 0){
 				$.each(data, function (idx, item) {
 					var $item = $(itemTemplate);
@@ -264,10 +265,9 @@
         	}
         },
         setMultiIndex = function(idx, oldval){
-        	
         	if(data && (data.length > 0) && (data.length > idx) && (idx > -1)){
         		var item = data[idx];
-        		var oldvalue = value.slice(0);
+        		var oldvalue = value.slice(idx);
         		if(!!oldval){
         			oldvalue = oldval;
         		}
@@ -291,7 +291,7 @@
         			if($.isArray(value)){
         				var found = -1;
         				for(var k = 0; k < value.length; k++){
-        					if(value[k] == val){
+        					if(value[k] === val){
         						found = k;
         						break;
         					}
@@ -316,11 +316,10 @@
         		}else{
         			itemidx.addClass("active");
         			//text add
-        			if($.isArray(value)){
+        			if($.isArray(value) && !($.inArray(val, value) > -1)){
         				value.push(val);
         			}
         			//value add
-        			
         			if(textElement){
             			text = (!!text) && (text.length > 0)? text + "," + txt : txt;
                 		textElement.val(text);
@@ -922,6 +921,7 @@
     };
 
     $.fn.combobox.defaults = {
+    	type: null,
     	/*autobind: Controls whether to bind the widget to the data source on initialization.*/
     	autobind: true,
     	/*cascadeFrom: Use it to set the Id of the parent ComboBox widget.*/

@@ -102,6 +102,7 @@
                 $('#combobox4').combobox({
                 	textField: "name",
                     valueField: "id",
+                    type: "list",
                     dataSource: [
                         { name: "Parent1", id: 1 },
                         { name: "Parent2", id: 2 },
@@ -114,7 +115,9 @@
                 
                 $("button#setval").bind("click", function(){
                 	var cb = $('#combobox4').data('gonrin');
-                	cb.setValue([1,3]);
+                	//cb.setValue([1,3]);
+                	var val = cb.getValue();
+                	console.log(val);
             	});
                 
             });

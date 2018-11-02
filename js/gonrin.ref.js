@@ -137,7 +137,6 @@
 					var inputtxt = selected.length > 0 ? selected[0][options.valueField]: "";
 					input.val(inputtxt);
 				}else{
-					//console.log(seleted[0]);
 					value = selected.length > 0 ? selected[0]: null;
 					input.val(JSON.stringify(value));
 				}
@@ -223,51 +222,61 @@
 			
 			//check is gonrin dialog
 			if ((!!selectDialog) && isBackBoneDataSource(selectDialog)) {
-
-				//require([ options.dataSource ], function ( RefView ) {
-					//selectDialog = new RefView();
+				options.textField = options.textField || selectDialog.textField;
+				//options.valueField = options.valueField || selectDialog.valueField;
+//				selectDialog.uiControl.selectedItems = options.selectedItems || [];
+				selectDialog.uiControl.selectedItems = [];
+				selectDialog.uiControl.selectionMode = options.selectionMode || "single";
+				
+				if(!!input.val()){
+					try{
+						value = $.parseJSON(input.val());
+					} catch (error) {
+						//console.log(error);
+					}
 					
-					options.textField = options.textField || selectDialog.textField;
-					//options.valueField = options.valueField || selectDialog.valueField;
-					selectDialog.uiControl.selectedItems = options.selectedItems || [];
-					selectDialog.uiControl.selectionMode = options.selectionMode || "single";
-					
-					if(!!input.val()){
-						if(options.selectionMode === "single"){
-							try{
-								value = $.parseJSON(input.val());
-								if(value){
-									textElement.text(value[options.textField]);
-								}
-							} catch (error) {
-								//console.log(error);
-							}
+					if(options.selectionMode === "single"){
+						if(!!value){
+							selectDialog.uiControl.selectedItems = options.selectedItems = [value];
+							textElement.text(value[options.textField]);
 						}
-						if(options.selectionMode === "multiple"){
-				        	setupWidget();
-				        	var ul = textElement.find("ul");
-				        	ul.unbind("click").bind("click", function(){
-				        		toggleWidget();
-				        	});
-							try{
-								value = $.parseJSON(input.val());
-				            	if(value){
-				            		$.each(value, function(key, item){
-				            			var txt = item[options.textField];
-				            			$(itemTemplate).html(txt).appendTo(ul);
-				            		});
-				            	}
-								//if(value){
-								//	textElement.text(value[options.textField]);
-								//}
-							} catch (error) {
-								//console.log(error);
-							}
-						}
-		            }else{
-		            	//console.log(input.val() + " val");
-		            }
-		    	//});
+//						try{
+//							value = $.parseJSON(input.val());
+//							if(value){
+//								textElement.text(value[options.textField]);
+//							}
+//						} catch (error) {
+//							//console.log(error);
+//						}
+					}
+					if(options.selectionMode === "multiple"){
+			        	setupWidget();
+			        	var ul = textElement.find("ul");
+			        	ul.unbind("click").bind("click", function(){
+			        		toggleWidget();
+			        	});
+			        	
+			        	if(!!value){
+			        		selectDialog.uiControl.selectedItems = options.selectedItems = value;
+		            		$.each(value, function(key, item){
+		            			var txt = item[options.textField];
+		            			$(itemTemplate).html(txt).appendTo(ul);
+		            		});
+		            	}
+			        	
+//			        	try{
+//							value = $.parseJSON(input.val());
+//			            	if(!!value){
+//			            		$.each(value, function(key, item){
+//			            			var txt = item[options.textField];
+//			            			$(itemTemplate).html(txt).appendTo(ul);
+//			            		});
+//			            	}
+//						} catch (error) {
+//							//console.log(error);
+//						}
+					}
+	            }
 			};
 			return grexport;
 		},
@@ -277,7 +286,16 @@
             };
             
             if(selectDialog){
-            	//selectDialog.uiControl.selectedItems = options.selectedItems || [];
+//            	selectDialog.uiControl.selectedItems = options.selectedItems || [];
+            	if (!!value){
+            		if(options.selectionMode === "single"){
+    					selectDialog.uiControl.selectedItems = options.selectedItems = [value];
+                	}
+                	if(options.selectionMode === "multiple"){
+    		        	selectDialog.uiControl.selectedItems = options.selectedItems = value;
+                	}
+            	}
+            	
             	selectDialog.uiControl.filters = options.filters;
             	selectDialog.dialog();
             	
@@ -385,51 +403,6 @@
 					onSelectChange("multiple");
 				}
     		};
-        	
-        	/*if (value === val){
-        		return;
-        	}
-        	if ((options.selectionMode === "multiple") && !$.isArray(val)){
-        		return;
-        	}
-        	var oldval = value;
-        	//clear select
-        	clearValue();
-        	//return;
-        	if(data && (data.length > 0)){
-        		var txt = null;
-        		for(var i = 0; i < data.length; i++){
-        			var item = data[i];
-        			var itemval;
-        			if(dataSourceType === 'object'){
-        				if((options.valueField != null) && (options.textField != null)){
-        					itemval = item[options.valueField];
-            				//if(val == item[options.valueField]){
-            				//	setSingleIndex(i);
-            				//	return;
-            				//}
-            			}
-        			}
-        			else if(dataSourceType === 'common'){
-        				itemval = item;
-        				//if(val === item){
-        				//	setSingleIndex(i);
-        				//	return;
-        				//}
-        			};
-        			
-        			if(options.selectionMode === "single"){
-        				if(val === itemval){
-        					setSingleIndex(i);
-            				return;
-        				}
-        			}else if (options.selectionMode === "multiple"){
-        				if (($.isArray(val))&&($.inArray(itemval, val) > -1)){
-							setMultiIndex(i, oldval);
-						}
-        			}
-        		}
-        	}*/
         },
         clearFilters = function(){
         	options.filters = null;
@@ -438,7 +411,6 @@
         		if(colEl){
         			colEl.filter(null);
         		}
-        		//selectDialog.filters = null;
         	}
         },
 		setFilters = function(filters){

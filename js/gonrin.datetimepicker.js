@@ -2607,8 +2607,6 @@
         disabledTimeIntervals: false,
         disabledHours: false,
         enabledHours: false,
-        viewDate: false,
-        parseInput: false,
-        parseOutput: false
+        viewDate: false
     };
 }));

@@ -818,9 +818,6 @@
             },
 
             setValue = function (targetMoment) {
-            	//if (input.prop('disabled') || (!options.ignoreReadonly && input.prop('readonly')) || widget || (!options.ignoreReadonly && options.readonly)) {
-                //    return;
-                //}
                 var oldDate = unset ? null : date;
 
                 // case of calling setValue(null or false)
@@ -848,7 +845,12 @@
                 if (isValid(targetMoment)) {
                     date = targetMoment;
                     viewDate = date.clone();
-                    input.val(date.format(actualFormat));
+                    if (options.parseOutputDate === undefined) {
+                    	input.val(date.format(actualFormat));
+                    } else {
+                    	input.val(options.parseOutputDate(date));
+                    }
+//                    input.val(date.format(actualFormat));
                     
                     //textElement here
                     textElement.val(date.format(textFormat));
@@ -2323,7 +2325,14 @@
         	}
             return null;*/
         	if(!!date){
-        		return date.clone().format(actualFormat);
+        		if (options.parseOutputDate === undefined) {
+        			return date.clone().format(actualFormat);
+                } else {
+                	return options.parseOutputDate(date.clone());
+                }
+        		
+        	}else if (input.is('input') && input.val().trim().length !== 0) {
+            	return input.val().trim();
         	}
         	return null;
         };
@@ -2598,6 +2607,8 @@
         disabledTimeIntervals: false,
         disabledHours: false,
         enabledHours: false,
-        viewDate: false
+        viewDate: false,
+        parseInput: false,
+        parseOutput: false
     };
 }));

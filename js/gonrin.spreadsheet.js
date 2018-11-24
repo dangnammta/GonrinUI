@@ -2232,7 +2232,7 @@
 		options = $.extend(true, {}, gonrin.spreadsheet.defaults, options);
 		options.excel.file_name = options.excel.file_name || null;
 		var fields = options.fields || [];
-		var datasource = options.data_source || [];
+		var datasource = options.dataSource || [];
 		var columns = [];
 		var worksheetData = [];
 		
@@ -2253,7 +2253,6 @@
             {id: 'startDate', name: "Start Date", type: 'date', width: 15},
             {id: 'endDate', name: "End Date", type: 'date', width: 15}
         ];*/
-		console.log(columns);
 		var dhrow = [];
 		for(var i in fields) {
 			var obj;
@@ -2309,7 +2308,6 @@
               {value: "End 6", metadata: {type: 'string'}}
           ],
         ];*/
-		console.log(worksheetData);
 	
 		var basic_template = new Template();
 		

@@ -25,7 +25,8 @@
                         excel: {
                             file_name: "Order.xlsx"
                         }
-                    }).save_excel();
+                    });
+                report.save_excel();
                 
                 var createFile = function (workbook, options) {
                     var zip = new JSZip();

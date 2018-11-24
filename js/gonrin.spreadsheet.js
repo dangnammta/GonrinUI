@@ -1121,8 +1121,9 @@
         },
 		
         setTableColumns: function (columns) {
+        	var self = this;
             _.each(columns, function (column) {
-                this.addTableColumn(column);
+            	self.addTableColumn(column);
             }, this);
         },
 		

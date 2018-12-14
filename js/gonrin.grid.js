@@ -945,7 +945,6 @@
         	dataSource = options["dataSource"];
         	if(typeof dataSource === "object"){
         		if(isBackBoneDataSource(dataSource)){
-        			//console.log('instance of collection view');
         			options.paginationMode = options.paginationMode || "server";
         			options.filterMode = options.filterMode || "server";
         			options.orderByMode = options.orderByMode || "server";
@@ -1168,7 +1167,6 @@
                     element.find("#" + selectedRowsId).text(options.selectedItems.length);
                     break;
                 case "selected_index":
-                	//console.log(options.selectedItems);
                 	for (var idx = 0 ; idx < options.selectedItems.length; idx ++){
                 		if ((!!options.primaryField) && (options.primaryField.length > 0)){
                 			if(row_data[options.primaryField] === options.selectedItems[idx][options.primaryField])

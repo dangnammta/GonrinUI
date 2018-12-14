@@ -144,7 +144,7 @@
             html += '</ul>';
             html += '</div>';
             html += '</div>';
-
+            
             if(options.showGoToPage && options.pageLinks < options.totalPages) {
                 html += '<div class="' + options.navGoToPageContainerClass + '">';
                 html += '<div class="input-group">';
@@ -208,7 +208,7 @@
                 // click on go to next
                 selectorNavNext = "#" + nav_next_id;
                 element.off("click", selectorNavNext).on("click", selectorNavNext, function() {
-                    if(options.page < options.totalPages) {
+                    if((options.page < options.totalPages) || (!options.totalPages)) {
                         var previousSelection = options.page;
                         options.page = parseInt(options.page) + 1;
                         var currentSelection = options.page;
@@ -246,9 +246,8 @@
         },
         changePage = function(container_id, previousSelection, currentSelection, updateNavItems, triggerChangePage){
         	var navItemIdPrefix = createId(options.navItemIdPrefix, container_id) + "_";
-	
+        	
 	        if(updateNavItems) {
-	
 	            var nav_list = createId(options.navListIdPrefix, container_id),
 	                nav_top_id = createId(options.navTopIdPrefix, container_id),
 	                nav_prev_id = createId(options.navPrevIdPrefix, container_id),
@@ -264,7 +263,11 @@
 	                no_url = "javascript:void(0);";
 	
 	            // navigation pages numbers
-	            if(options.totalPages < options.pageLinks) {
+	            
+	            if(!options.totalPages){
+	            	nav_start = options.page;
+	            	nav_end = options.page;
+	            } else if(options.totalPages < options.pageLinks) {
 	                nav_start = 1;
 	                nav_end = options.totalPages;
 	            } else {
@@ -278,26 +281,35 @@
 	                }
 	                nav_end = nav_start + options.pageLinks - 1;
 	            }
-	
 	            // store nav_start nav_end
 	            element.data("nav_start", nav_start);
 	            element.data("nav_end", nav_end);
-	
+	            
 	            // create nav pages html -----------------------------------------------
 	            // show - hide backward nav controls
-	            if(nav_start > 1) {
+	            if (!options.totalPages){
+	            	nav_url = options.directURL ? options.directURL(nav_start - 1) : no_url;
+	                nav_html += '<li><a id="' + nav_prev_id + '" href="' + nav_url + '">' + language.go_prev_text + '</a></li>';
+	            }
+	            else if(nav_start > 1) {
 	                nav_url = options.directURL ? options.directURL(1) : no_url;
 	                nav_html += '<li><a id="' + nav_top_id + '" href="' + nav_url + '">' + language.go_top_text + '</a></li>';
 	                nav_url = options.directURL ? options.directURL(nav_start - 1) : no_url;
 	                nav_html += '<li><a id="' + nav_prev_id + '" href="' + nav_url + '">' + language.go_prev_text + '</a></li>';
 	            }
+	            
 	            // show nav pages
+	            
 	            for(i = nav_start; i <= nav_end; i++) {
 	                nav_url = options.directURL ? options.directURL(i) : no_url;
 	                nav_html += '<li><a id="' + navItemIdPrefix + i + '" href="' + nav_url + '">' + i + '</a></li>';
 	            }
 	            // show - hide forward nav controls
-	            if(nav_end < options.totalPages) {
+	            if (!options.totalPages){
+	            	nav_url = no_url;
+	            	nav_html += '<li><a id="' + nav_next_id + '" href="' + nav_url + '">' + language.go_next_text + '</a></li>';
+	            }
+	            else if(nav_end < options.totalPages) {
 	                nav_url = options.directURL ? options.directURL(nav_end + 1) : no_url;
 	                nav_html += '<li><a id="' + nav_next_id + '" href="' + nav_url + '">' + language.go_next_text + '</a></li>';
 	                nav_url = options.directURL ? options.directURL(options.totalPages) : no_url;

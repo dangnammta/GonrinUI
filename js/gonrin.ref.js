@@ -425,6 +425,24 @@
         getFilters = function(){
         	return options.filters;
         },
+        setRefViewData = function(key, value){
+        	if(selectDialog){
+        		if (!selectDialog.viewData) {
+        			selectDialog.viewData = {};
+        		}
+    			
+    			// Sets multiple values
+    			if ( typeof key === "object" ) {
+    				$.each(key, function(k,val){
+    					selectDialog.viewData[k] = val;
+    				});
+    			}
+    			
+    			if ( (typeof key === "string") && (value !== undefined )) {
+    				selectDialog.viewData[key] = value;
+    			}
+        	}
+		},
         clearValue = function(){
         	value = null;
         	text = null;
@@ -471,6 +489,7 @@
         grexport.filters = setFilters;
         grexport.getFilters = getFilters;
         grexport.clearFilters = clearFilters;
+        grexport.setRefViewData = setRefViewData;
         
         
 		// initializing element and component attributes

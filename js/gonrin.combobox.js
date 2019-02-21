@@ -120,6 +120,9 @@
 			return grobject;
 		},
         setupWidget = function () {
+			if(!!widget){
+				widget.empty();
+			}
 			if (!!options.dataSource) {
 				//var menu = $(menuTemplate);
 				widget = $(menuTemplate);
@@ -706,6 +709,12 @@
         	if(groupElement){
         		groupElement.show();
         	}
+        },
+        setDataSource = function(dataSource){
+        	if(!!dataSource){
+        		options.dataSource = dataSource;
+        		setupWidget();
+        	}
         }
         ;
 
@@ -743,6 +752,7 @@
         //grobject.getIndex = getIndex;
         grobject.validate = validate;
         grobject.setState = setState;
+        grobject.setDataSource = setDataSource;
         
         
         grobject.disable = function () {

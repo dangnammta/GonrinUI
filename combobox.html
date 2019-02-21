@@ -109,8 +109,8 @@
                         { name: "Parent3", id: 3 },
                         { name: "Parent4", id: 4 },
                     ],
-                    value:[2,4],
-                    selectionMode: "multiple"
+                    //value:[2,4],
+                    //selectionMode: "multiple"
                 });
                 
                 $("button#setval").bind("click", function(){
@@ -119,6 +119,23 @@
                 	var val = cb.getValue();
                 	console.log(val);
             	});
+                
+                $("button#setdatasource").bind("click", function(){
+                	var cb = $('#combobox4').data('gonrin');
+                	
+                	var data = [
+                                 { name: "Parent A", id: 1 },
+                                 { name: "Parent B", id: 2 },
+                                 { name: "Parent C", id: 3 },
+                                 { name: "Parent D", id: 4 },
+                                 { name: "Parent E", id: 5 },
+                             ];
+                	
+                	cb.setDataSource(data);
+                	//var val = cb.getValue();
+                	//console.log(val);
+            	});
+                
                 
             });
      </script>
@@ -157,6 +174,7 @@
 				</div>
 			</div>
 			<button id="setval">Set Value</button>
+			<button id="setdatasource">Set dataSource</button>
 	    </div> 
 	</div>
 </body>

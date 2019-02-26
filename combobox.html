@@ -3,12 +3,11 @@
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<script src="js/jquery.js"></script>
-	<script src="vendor/bootstrap/js/bootstrap.js"></script>
-	<link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css">
-		<!-- Optional theme -->
-	<link rel="stylesheet" href="vendor/bootstrap/css/bootstrap-theme.min.css">
-	
+	<script src="vendor/bootstrap3/js/bootstrap.js"></script>
+	<link rel="stylesheet" href="vendor/bootstrap3/css/bootstrap.min.css">
 	<script src="js/underscore.js"></script>
+	<script src="vendor/backbone-min.js"></script>
+	
 	<script src="js/gonrin.core.js"></script>
 	<script src="js/gonrin.combobox.js"></script>
 
@@ -17,7 +16,9 @@
                 $('#combobox').combobox({
                 	textField: "age",
                     valueField: "id",
-                    dataSource: "http://abc.com/list.json",
+                    allowTextInput: true,
+                    enableSearch: true,
+                    //dataSource: "http://abc.com/list.json",
                     dataSource: [
                         { age: "Parent1", id: 1 },
                         { age: "Parent2", id: 2 },
@@ -46,11 +47,15 @@
                     showStateOnValidateSuccess : true*/
                 });
                 $('#combobox').on('change.gonrin', function(e){
-                	console.log($('#combobox').getValue());
+                	console.log($('#combobox').data('gonrin').getValue());
+                });
+                
+                $('#combobox').on('search.gonrin', function(e){
+                	console.log(e);
                 });
                 
                 $("button#validate").bind("click", function(){
-                	var ret = $('#combobox').validate();
+                	var ret = $('#combobox').data('gonrin').validate();
                 	console.log(ret);
             	});
                 
@@ -103,12 +108,19 @@
                 	textField: "name",
                     valueField: "id",
                     type: "list",
-                    dataSource: [
+                    /* dataSource: [
                         { name: "Parent1", id: 1 },
                         { name: "Parent2", id: 2 },
                         { name: "Parent3", id: 3 },
                         { name: "Parent4", id: 4 },
-                    ],
+                    ], */
+                    dataSource:{
+                    	"1": "Parent1",
+                    	"2": "Parent2",
+                    	"3": "Parent3",
+                    	"4": "Parent4",
+                    	"5": "Parent5",
+                    }
                     //value:[2,4],
                     //selectionMode: "multiple"
                 });
@@ -135,6 +147,22 @@
                 	//var val = cb.getValue();
                 	//console.log(val);
             	});
+                
+                var Books = Backbone.Collection.extend({
+                	  	url: '/api/v1/quocgia',
+                	  	parse: function (response) {
+                  			//this.page = response.page;
+                  			//this.numRows = response.num_results;
+                  			//this.totalPages = response.total_pages;
+              				return response.objects;
+              			},
+                	});
+                
+                $('#combobox5').combobox({
+                	textField: "ten",
+                    valueField: "id",
+                    dataSource: new Books()
+                });
                 
                 
             });
@@ -175,6 +203,14 @@
 			</div>
 			<button id="setval">Set Value</button>
 			<button id="setdatasource">Set dataSource</button>
+			
+			<br/>
+			<br/>
+			<div style="width:100%">
+	    		<div style="width:50%;">
+					<input type='text' id='combobox5' placeholder="select5..."/>
+				</div>
+			</div>
 	    </div> 
 	</div>
 </body>

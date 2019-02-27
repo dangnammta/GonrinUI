@@ -297,7 +297,7 @@
             	}
             	
             	selectDialog.uiControl.filters = options.filters;
-            	selectDialog.dialog();
+            	selectDialog.dialog({size: options.size || "medium"});
             	
             	selectDialog.on("onSelected", function(){
             		if((!!selectDialog) && (!!selectDialog.uiControl) && (!!selectDialog.uiControl.selectedItems)){

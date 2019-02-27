@@ -649,7 +649,7 @@
                     		if(options.paginationMode === "server"){
                     			boundData();
                     		}else{
-                    			renderData(pagingData());
+                    			renderData(pagingClientData());
                     		}
                     		
                     		notifyEvent({
@@ -825,10 +825,11 @@
             // update selected rows counter
             selectedRows("update_counter");
         },
-        pagingData = function(){
+        pagingClientData = function(){
         	//serverPage
-        	
+        	console.log("pagingClientData11", "cde");
         	if(options.paginationMode  === "client"){
+				console.log("pagingClientData", "cde");
         		if(filteredData.length == 0){
         			options.pagination.totalPages = 0;
         			options.pagination.page = 1;
@@ -996,8 +997,14 @@
 							});
                         	
                         	genDataUUID();
-                        	filterData();
-                    		renderData(filteredData);
+							filterData();
+							if (options.paginationMode === "client"){
+								renderData(pagingClientData());
+							}
+							else {
+								renderData(filteredData);
+							}								
+                    		
                         },
                         error:function(){
                         	var filter_error;
@@ -1017,7 +1024,7 @@
         			genDataUUID();
         			filterData();
         			sortData();
-        			renderData(pagingData());
+        			renderData(pagingClientData());
         		}
         		
         	}

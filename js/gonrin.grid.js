@@ -644,7 +644,6 @@
                     	showRowsInfo: options.pagination.showRowsInfo,
                     	virtualTotalPages:null,
                     	onChangePage: function(event){
-                    		//console.log("change page");
                     		options.pagination.page = event.page;
                     		if(options.paginationMode === "server"){
                     			boundData();
@@ -827,9 +826,7 @@
         },
         pagingClientData = function(){
         	//serverPage
-        	console.log("pagingClientData11", "cde");
         	if(options.paginationMode  === "client"){
-				console.log("pagingClientData", "cde");
         		if(filteredData.length == 0){
         			options.pagination.totalPages = 0;
         			options.pagination.page = 1;

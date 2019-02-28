@@ -1212,7 +1212,6 @@
         filterData = function(){
         	//check Server Filter
         	var query = options.filters;
-        	
         	if((options.filterMode === "client") && (query !== null) && (!! gonrin) && (!! gonrin.query)){
         		filteredData = gonrin.query( data, query);
         	}else{
@@ -1252,8 +1251,14 @@
         	options.filters = query;
         	options.pagination.page = 1;
         	boundData();
-        	//sortData();
-        	//renderData(pagingData());
+		};
+		
+		grobject.clientFilter = function(query){
+        	options.filters = query;
+			options.pagination.page = 1;
+			filterData();
+			sortData();
+        	renderData(pagingClientData());
         };
         
         grobject.changePage = function(page){

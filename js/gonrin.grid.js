@@ -848,7 +848,6 @@
         		for (var i = startIndex; i < endIndex ; i++){
         			pagingData.push(filteredData[i]);
 				}
-				console.log(pagingData, options.pagination, startIndex, endIndex, filteredData);
         		return pagingData;
         	}
         	

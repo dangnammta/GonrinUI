@@ -825,8 +825,9 @@
             selectedRows("update_counter");
         },
         pagingClientData = function(){
-        	//serverPage
+			//serverPage
         	if(options.paginationMode  === "client"){
+				//options.pagination.page = options.pagination.page || 1;
         		if(filteredData.length == 0){
         			options.pagination.totalPages = 0;
         			options.pagination.page = 1;
@@ -846,7 +847,8 @@
         		
         		for (var i = startIndex; i < endIndex ; i++){
         			pagingData.push(filteredData[i]);
-        		}
+				}
+				console.log(pagingData, options.pagination, startIndex, endIndex, filteredData);
         		return pagingData;
         	}
         	
@@ -996,6 +998,7 @@
                         	genDataUUID();
 							filterData();
 							if (options.paginationMode === "client"){
+								console.log("Client mode");
 								renderData(pagingClientData());
 							}
 							else {
@@ -1209,10 +1212,15 @@
             }
 
         },
-        filterData = function(){
-        	//check Server Filter
-        	var query = options.filters;
-        	if((options.filterMode === "client") && (query !== null) && (!! gonrin) && (!! gonrin.query)){
+        filterData = function(query, mode){
+			//check Server Filter
+			if(!query){
+				query = options.filters;
+			}
+			if (!mode){
+				mode =  options.filterMode
+			}
+        	if((mode === "client") && (query !== null) && (!! gonrin) && (!! gonrin.query)){
         		filteredData = gonrin.query( data, query);
         	}else{
         		filteredData = data
@@ -1253,10 +1261,11 @@
         	boundData();
 		};
 		
-		grobject.clientFilter = function(query){
-        	options.filters = query;
+		grobject.clientFilter = function(query, mode="client"){
+        	//options.filters = query;
 			options.pagination.page = 1;
-			filterData();
+			console.log(query, mode);
+			filterData(query, mode);
 			sortData();
         	renderData(pagingClientData());
         };

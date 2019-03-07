@@ -392,14 +392,21 @@
         },
         setValue = function (val) {
         	if((!!selectDialog) && (!!selectDialog.uiControl)){
-        		//var selected = selectDialog.uiControl.selectedItems = val;
-        		
 				if(options.selectionMode === "single"){
-					options.selectedItems = selectDialog.uiControl.selectedItems = val;
+					if (val === null){
+						options.selectedItems = selectDialog.uiControl.selectedItems = []
+					}else{
+						options.selectedItems = selectDialog.uiControl.selectedItems = [val];
+					}
 					onSelectChange("single");
 				}
 				if(options.selectionMode === "multiple"){
-					options.selectedItems = selectDialog.uiControl.selectedItems = val;
+					if (val === null){
+						options.selectedItems = selectDialog.uiControl.selectedItems = []
+					}else{
+						options.selectedItems = selectDialog.uiControl.selectedItems = val;
+					}
+					//options.selectedItems = selectDialog.uiControl.selectedItems = val;
 					onSelectChange("multiple");
 				}
     		};

@@ -997,7 +997,6 @@
                         	genDataUUID();
 							filterData();
 							if (options.paginationMode === "client"){
-								console.log("Client mode");
 								renderData(pagingClientData());
 							}
 							else {
@@ -1263,7 +1262,6 @@
 		grobject.clientFilter = function(query, mode="client"){
         	//options.filters = query;
 			options.pagination.page = 1;
-			console.log(query, mode);
 			filterData(query, mode);
 			sortData();
         	renderData(pagingClientData());

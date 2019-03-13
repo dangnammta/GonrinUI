@@ -234,49 +234,31 @@
 					} catch (error) {
 						//console.log(error);
 					}
+				}
 					
-					if(options.selectionMode === "single"){
-						if(!!value){
-							selectDialog.uiControl.selectedItems = options.selectedItems = [value];
-							textElement.text(value[options.textField]);
-						}
-//						try{
-//							value = $.parseJSON(input.val());
-//							if(value){
-//								textElement.text(value[options.textField]);
-//							}
-//						} catch (error) {
-//							//console.log(error);
-//						}
+				if (options.selectionMode === "single") {
+					if (!!value) {
+						selectDialog.uiControl.selectedItems = options.selectedItems = [value];
+						textElement.text(value[options.textField]);
 					}
-					if(options.selectionMode === "multiple"){
-			        	setupWidget();
-			        	var ul = textElement.find("ul");
-			        	ul.unbind("click").bind("click", function(){
-			        		toggleWidget();
-			        	});
-			        	
-			        	if(!!value){
-			        		selectDialog.uiControl.selectedItems = options.selectedItems = value;
-		            		$.each(value, function(key, item){
-		            			var txt = item[options.textField];
-		            			$(itemTemplate).html(txt).appendTo(ul);
-		            		});
-		            	}
-			        	
-//			        	try{
-//							value = $.parseJSON(input.val());
-//			            	if(!!value){
-//			            		$.each(value, function(key, item){
-//			            			var txt = item[options.textField];
-//			            			$(itemTemplate).html(txt).appendTo(ul);
-//			            		});
-//			            	}
-//						} catch (error) {
-//							//console.log(error);
-//						}
+				}
+				if (options.selectionMode === "multiple") {
+					setupWidget();
+					var ul = textElement.find("ul");
+					ul.unbind("click").bind("click", function () {
+						toggleWidget();
+					});
+
+					if (!!value) {
+						selectDialog.uiControl.selectedItems = options.selectedItems = value;
+						$.each(value, function (key, item) {
+							var txt = item[options.textField];
+							$(itemTemplate).html(txt).appendTo(ul);
+						});
 					}
-	            }
+
+				}
+	            
 			};
 			return grexport;
 		},

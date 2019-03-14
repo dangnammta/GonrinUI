@@ -819,7 +819,6 @@
 
             setValue = function (targetMoment) {
                 var oldDate = unset ? null : date;
-
                 // case of calling setValue(null or false)
                 if (!targetMoment) {
                     unset = true;
@@ -2319,7 +2318,18 @@
         	}
             return null;
         };
-        picker.setValue = setValue;
+        picker.setValue = function(newDate){
+            
+            if(newDate === null){
+                setValue(null);
+            }else if($.type(newDate) === "string"){
+                setValue(parseInputDate(newDate.trim()));
+            }else{
+                setValue(newDate);
+            }
+            
+            
+        };
         picker.getValue = function () {
         	/*if(!!date){
         		return date.clone().toDate();

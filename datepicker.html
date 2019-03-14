@@ -25,9 +25,19 @@
                 		return date.unix()
                 	}
                 });
+                
+                $('#datetime2').datetimepicker({
+                	textFormat:'DD-MM-YYYY',
+                	extraFormats:['DDMMYYYY'],
+                });
+                
             	$('#datetime').on('change.gonrin', function (e) {
 				  	console.log(e.date);
-				})
+				});
+            	$('#setvalue').bind('click', function (e) {
+            		$('#datetime2').data("gonrin").setValue(null);
+				});
+				
             });
        </script>
 </head>
@@ -40,8 +50,13 @@
 	    		<div style="width:50%;">
 					<!-- <input type='text' id='datetime' value='22012016'/>-->
 					<input type='text' id='datetime' value="1544029200"/>
-					
 				</div>
+				<div style="width:50%;">
+					<input type='text' id='datetime2'/>
+				</div>
+			</div>
+			<div>
+				<button id="setvalue">Set Null</button>
 			</div>
 	    </div>
 	</div>

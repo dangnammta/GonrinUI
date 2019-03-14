@@ -2319,6 +2319,7 @@
         	}
             return null;
         };
+        picker.setValue = setValue;
         picker.getValue = function () {
         	/*if(!!date){
         		return date.clone().toDate();

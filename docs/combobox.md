@@ -26,3 +26,17 @@ To initialize the ComboBox, use any of the following methods:
   });
 </script>
 ```
+
+# Methods
+### setDataSource
+```javascript
+var data = [
+             { name: "Parent A", id: 1 },
+             { name: "Parent B", id: 2 },
+             { name: "Parent C", id: 3 },
+             { name: "Parent D", id: 4 },
+             { name: "Parent E", id: 5 },
+            ];
+var cb = $('#combobox').data('gonrin');
+cb.setDataSource(data);
+```

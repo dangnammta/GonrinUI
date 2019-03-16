@@ -2319,16 +2319,18 @@
             return null;
         };
         picker.setValue = function(newDate){
+            console.log("---------------------");
             
-            if(newDate === null){
+            if(newDate == null){
+                console.log("newDate1", newDate);
                 setValue(null);
             }else if($.type(newDate) === "string"){
+                console.log("newDate2", newDate);
                 setValue(parseInputDate(newDate.trim()));
             }else{
+                console.log("newDate3", newDate);
                 setValue(newDate);
             }
-            
-            
         };
         picker.getValue = function () {
         	/*if(!!date){

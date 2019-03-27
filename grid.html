@@ -213,9 +213,9 @@
                     	 }
                      },
                      
-                     onRendered: function(e){
+                     /* onRendered: function(e){
                     	 console.log(e)
-                     }
+                     } */
                 });
                 
                 $("#grid").on("rowclick", function(e){
@@ -229,7 +229,7 @@
                         //id: {$gt:25}
                 		address: {$like: ftext}
                     });
-                })
+                });
                 
                
                 var dataqe = [
@@ -247,6 +247,20 @@
                 });
                 //console.log(ret);
                 
+                
+                $("#set_source").bind("click", function(){
+                	console.log("setwource");
+                	/* $('#grid').data('gonrin').filter({
+                        //id: {$gt:25}
+                		address: {$like: ftext}
+                    }); */
+                    
+                	$('#grid').data('gonrin').setDataSource(dataqe);
+                    
+                	var abc = $('#grid').data('gonrin').selectedRows("get_ids");
+                	
+                	console.log("selected item", abc);
+                });
             });
      </script>
 </head>
@@ -258,5 +272,7 @@
 	</div>
 	<input type="text" id="filter_text"/>
 	<button id="filter">Filter</button>
+	<br/>
+	<button id="set_source">Set Data Source</button>
 </body>
 </html>

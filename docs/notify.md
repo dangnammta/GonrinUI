@@ -18,6 +18,6 @@ To initialize the ComboBox, use any of the following methods:
 
 ```html
 <script>
-	gonrin.notify({message: "ERROR"}, {type: "danger"});
+	gonrin.notify({message: "ERROR"}, {type: "danger", z_index:1555});
 </script>
 ```

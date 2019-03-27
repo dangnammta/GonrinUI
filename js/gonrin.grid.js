@@ -1223,6 +1223,10 @@
         	}else{
         		filteredData = data
         	}
+        },
+        setDataSource = function(data){
+        	options["dataSource"] = data;
+        	boundData();
         };
         
         /********************************************************************************
@@ -1276,6 +1280,8 @@
         grobject.boundData = boundData;
         
         grobject.selectedRows = selectedRows;
+        
+        grobject.setDataSource = setDataSource;
         
         grobject.applyRowSelections = function(){
         	applyRowSelections();

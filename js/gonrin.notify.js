@@ -34,7 +34,7 @@
 		},
 		offset: 50,
 		spacing: 10,
-		z_index: 1031,
+		z_index: 10031,
 		delay: 3000,
 		timer: 1000,
 		url_target: '_blank',

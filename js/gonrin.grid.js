@@ -1281,6 +1281,11 @@
         
         grobject.selectedRows = selectedRows;
         
+        grobject.getSelectedItems = function(){
+        	//return selectedRows("")
+        	return removeDataUUID(options.selectedItems);
+        },
+        
         grobject.setDataSource = setDataSource;
         
         grobject.applyRowSelections = function(){

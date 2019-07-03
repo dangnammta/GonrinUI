@@ -377,13 +377,14 @@
             },
 
             place = function () {
-                var position = (component || textElement).position(),
-                    offset = (component || textElement).offset(),
+            	var position = (component || textElement).position();
+            	
+                var offset = (component || textElement).offset(),
                     textoffset = textElement.offset(),
                     vertical = options.widgetPositioning.vertical,
                     horizontal = options.widgetPositioning.horizontal,
                     parent;
-            
+            	
                 if (options.widgetParent) {
                     parent = options.widgetParent.append(widget);
                 } else if (element.is('input')) {
@@ -401,11 +402,15 @@
                 // Top and bottom logic
                 if (vertical === 'auto') {
                     if (offset.top + widget.height() * 1.5 >= $(window).height() + $(window).scrollTop() &&
-                        widget.height() + element.outerHeight() < offset.top) {
+                        widget.height() + textElement.outerHeight() < offset.top) {
                         vertical = 'top';
                     } else {
                         vertical = 'bottom';
                     }
+                }
+                
+                if(!component){
+                	vertical = 'bottom';
                 }
 
                 // Left and right logic
@@ -446,13 +451,14 @@
                 if (parent.length === 0) {
                     throw new Error('datetimepicker component should be placed within a relative positioned container');
                 }
-             
+                
                 widget.css({
-                    top: vertical === 'top' ? 'auto' : position.top + element.outerHeight(),
-                    bottom: vertical === 'top' ? position.top + element.outerHeight() : 'auto',
-                    left: horizontal === 'left' ? (parent === element ? 0 : position.left) : 'auto',
-                    right: horizontal === 'left' ? 'auto' : parent.outerWidth() - parent.outerWidth() - (parent === element ? 0 : position.left)
+                    top: vertical === 'top' ? 'auto' : position.top + textElement.outerHeight(),
+                    bottom: vertical === 'top' ? position.top + textElement.outerHeight() : 'auto',
+                    left: horizontal === 'left' ? (parent === textElement ? 0 : position.left) : 'auto',
+                    right: horizontal === 'left' ? 'auto' : parent.outerWidth() - parent.outerWidth() - (parent === textElement ? 0 : position.left)
                 });
+                
             },
 
             notifyEvent = function (e) {
@@ -2347,36 +2353,47 @@
         	}
         	return null;
         };
+        
+        $.extend(true, options, dataToOptions());
+
+        
 
         // initializing element and component attributes
         if (element.is('input')) {
             input = element;
-            //gonrin inject input element
-            var inputGroupSpan;
             
-            var parentEl = element.parent();
-            
-            if(parentEl.is('div') && parentEl.hasClass('date-group')){
-            	inputGroupSpan = parentEl;
+            if (!options.disabledComponentButton){
+            	//gonrin inject input element
+                var inputGroupSpan;
+                
+                var parentEl = element.parent();
+                
+                if(parentEl.is('div') && parentEl.hasClass('date-group')){
+                	inputGroupSpan = parentEl;
+                }else{
+                	element.wrap( '<div class="input-group date-group"></div>' );
+                    inputGroupSpan = element.parent();
+                }
+                
+                //component
+                var componentButton = element.nextAll('span:first');
+                
+                if((componentButton.length == 0 ) || !($(componentButton[0]).hasClass('input-group-addon'))){
+                	componentButton = $('<span class="input-group-addon">').html('<span class="glyphicon glyphicon-calendar"></span>');
+                    inputGroupSpan.append(componentButton);
+                }
+                
+                component = componentButton;
+                //element.addClass("form-control");
+                
+                
             }else{
-            	element.wrap( '<div class="input-group date-group"></div>' );
-                inputGroupSpan = element.parent();
+            	component = null;
             }
-            
-            //component
-            var componentButton = element.nextAll('span:first');
-            
-            if((componentButton.length == 0 ) || !($(componentButton[0]).hasClass('input-group-addon'))){
-            	componentButton = $('<span class="input-group-addon">').html('<span class="glyphicon glyphicon-calendar"></span>');
-                inputGroupSpan.append(componentButton);
-            }
-            
-            component = componentButton;
-            element.addClass("form-control");
             
             var prevEl = element.prev('input');
             if((prevEl.length == 0 ) || !($(prevEl[0]).hasClass('datetimepicker-input'))){
-            	prevEl = $('<input class="form-control datetimepicker-input" type="text">');
+            	prevEl = $('<input class="datetimepicker-input" type="text">');
             	var classList = element.attr("class").split(' ');
             	$.each(classList, function(idx, clz){
             		prevEl.addClass(clz);
@@ -2384,7 +2401,14 @@
                 element.before(prevEl);
             }
             textElement = prevEl;
+            if( !options.hasOwnProperty("cssClass") ){
+            	textElement.addClass("form-control");
+            }else if (options.hasOwnProperty("cssClass") && (options["cssClass"] !== false)){
+            	textElement.addClass(options.cssClass);
+            }
+            
             element.css("display", "none");
+            
         }else{
             throw new Error('Could not initialize DateTimePicker without an input element');
         }
@@ -2393,9 +2417,8 @@
         date = getMoment();
         viewDate = date.clone();
 
-        $.extend(true, options, dataToOptions());
-
         picker.options(options);
+        //disabledComponentButton
 
         initFormatting();
 
@@ -2614,10 +2637,11 @@
             }
         },
         debug: false,
-        allowInputToggle: false,
+        allowInputToggle: true,
         disabledTimeIntervals: false,
         disabledHours: false,
         enabledHours: false,
+        disabledComponentButton: false,
         viewDate: false
     };
 }));

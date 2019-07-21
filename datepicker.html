@@ -31,9 +31,9 @@
                 	extraFormats:['DDMMYYYY'],
                 });
                 
-            	$('#datetime').on('change.gonrin', function (e) {
+            	/* $('#datetime').on('change.gonrin', function (e) {
 				  	console.log(e.date);
-				});
+				});*/
             	$('#setvalue').bind('click', function (e) {
             		$('#datetime2').data("gonrin").setValue(null);
 				});
@@ -49,8 +49,10 @@
 			<div style="width:100%">
 	    		<div style="width:50%;">
 					<!-- <input type='text' id='datetime' value='22012016'/>-->
-					<input type='text' id='datetime' value="1544029200"/>
+					<!-- <input type='text' id='datetime' value="1544029200"/>-->
+					<input type='text' id='datetime'/>
 				</div>
+				<br/>
 				<div style="width:50%;">
 					<input type='text' id='datetime2'/>
 				</div>

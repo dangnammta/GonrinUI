@@ -1227,9 +1227,8 @@
                 /// <summary>Shows or hides the widget</summary>
                 return (widget ? hide() : show());
             },
-
             parseInputDate = function (inputDate) {
-                if (options.parseInputDate === undefined) {
+                if ((options.parseInputDate === undefined)) {
                     if (moment.isMoment(inputDate) || inputDate instanceof Date) {
                         inputDate = moment(inputDate);
                     } else {
@@ -1298,7 +1297,15 @@
 
             change = function (e) {
                 var val = $(e.target).val().trim(),
-                    parsedDate = val ? parseInputDate(val) : null;
+                    parsedDate =  null;
+                    
+                if (moment.isMoment(val) || (val instanceof Date)) {
+                	parsedDate = moment(val);
+                } else {
+                	parsedDate = getMoment(val);
+                }
+                
+                parsedDate.locale(options.locale);
                 setValue(parsedDate);
                 e.stopImmediatePropagation();
                 return false;
@@ -2325,8 +2332,6 @@
             return null;
         };
         picker.setValue = function(newDate){
-            console.log("---------------------");
-            
             if(newDate == null){
                 setValue(null);
             }else if($.type(newDate) === "string"){
@@ -2357,7 +2362,6 @@
         $.extend(true, options, dataToOptions());
 
         
-
         // initializing element and component attributes
         if (element.is('input')) {
             input = element;
@@ -2385,8 +2389,6 @@
                 
                 component = componentButton;
                 //element.addClass("form-control");
-                
-                
             }else{
             	component = null;
             }
@@ -2394,10 +2396,14 @@
             var prevEl = element.prev('input');
             if((prevEl.length == 0 ) || !($(prevEl[0]).hasClass('datetimepicker-input'))){
             	prevEl = $('<input class="datetimepicker-input" type="text">');
-            	var classList = element.attr("class").split(' ');
-            	$.each(classList, function(idx, clz){
-            		prevEl.addClass(clz);
-            	});
+            	var clazzs = element.attr("class");
+            	if(!!clazzs){
+            		var classList = clazzs.split(' ');
+                	$.each(classList, function(idx, clz){
+                		prevEl.addClass(clz);
+                	});
+            	}
+            	
                 element.before(prevEl);
             }
             textElement = prevEl;

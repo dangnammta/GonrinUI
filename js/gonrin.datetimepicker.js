@@ -24,6 +24,7 @@
 
     var dateTimePicker = function (element, options) {
         var picker = {},
+        	value=null,
             date,
             viewDate,
             unset = true,
@@ -823,8 +824,9 @@
                 fillTime();
             },
 
-            setValue = function (targetMoment) {
+            setDate = function (targetMoment) {
                 var oldDate = unset ? null : date;
+                var oldValue = unset ? null : value;
                 // case of calling setValue(null or false)
                 if (!targetMoment) {
                     unset = true;
@@ -834,7 +836,8 @@
                     notifyEvent({
                         type: 'change.gonrin',
                         date: false,
-                        oldDate: oldDate
+                        oldDate: oldDate,
+                        oldValue: oldValue
                     });
                     update();
                     hide();
@@ -851,10 +854,12 @@
                     date = targetMoment;
                     viewDate = date.clone();
                     if (options.parseOutputDate === undefined) {
-                    	input.val(date.format(actualFormat));
+                    	value = date.format(actualFormat);
                     } else {
-                    	input.val(options.parseOutputDate(date));
+                    	value = options.parseOutputDate(date);
+                    	
                     }
+                    input.val(value);
 //                    input.val(date.format(actualFormat));
                     
                     //textElement here
@@ -866,7 +871,8 @@
                     notifyEvent({
                         type: 'change.gonrin',
                         date: date.clone(),
-                        oldDate: oldDate
+                        oldDate: oldDate,
+                        oldValue: oldValue
                     });
                 } else {
                     if (!options.keepInvalid) {
@@ -954,7 +960,7 @@
                     var month = $(e.target).closest('tbody').find('span').index($(e.target));
                     viewDate.month(month);
                     if (currentViewMode === minViewModeNumber) {
-                        setValue(date.clone().year(viewDate.year()).month(viewDate.month()));
+                    	setDate(date.clone().year(viewDate.year()).month(viewDate.month()));
                         if (!options.inline) {
                             hide();
                         }
@@ -969,7 +975,7 @@
                     var year = parseInt($(e.target).text(), 10) || 0;
                     viewDate.year(year);
                     if (currentViewMode === minViewModeNumber) {
-                        setValue(date.clone().year(viewDate.year()));
+                    	setDate(date.clone().year(viewDate.year()));
                         if (!options.inline) {
                             hide();
                         }
@@ -984,7 +990,7 @@
                     var year = parseInt($(e.target).data('selection'), 10) || 0;
                     viewDate.year(year);
                     if (currentViewMode === minViewModeNumber) {
-                        setValue(date.clone().year(viewDate.year()));
+                    	setDate(date.clone().year(viewDate.year()));
                         if (!options.inline) {
                             hide();
                         }
@@ -1003,7 +1009,7 @@
                     if ($(e.target).is('.new')) {
                         day.add(1, 'M');
                     }
-                    setValue(day.date(parseInt($(e.target).text(), 10)));
+                    setDate(day.date(parseInt($(e.target).text(), 10)));
                     if (!hasTime() && !options.keepOpen && !options.inline) {
                         hide();
                     }
@@ -1012,47 +1018,47 @@
                 incrementHours: function () {
                     var newDate = date.clone().add(1, 'h');
                     if (isValid(newDate, 'h')) {
-                        setValue(newDate);
+                    	setDate(newDate);
                     }
                 },
 
                 incrementMinutes: function () {
                     var newDate = date.clone().add(options.stepping, 'm');
                     if (isValid(newDate, 'm')) {
-                        setValue(newDate);
+                    	setDate(newDate);
                     }
                 },
 
                 incrementSeconds: function () {
                     var newDate = date.clone().add(1, 's');
                     if (isValid(newDate, 's')) {
-                        setValue(newDate);
+                    	setDate(newDate);
                     }
                 },
 
                 decrementHours: function () {
                     var newDate = date.clone().subtract(1, 'h');
                     if (isValid(newDate, 'h')) {
-                        setValue(newDate);
+                    	setDate(newDate);
                     }
                 },
 
                 decrementMinutes: function () {
                     var newDate = date.clone().subtract(options.stepping, 'm');
                     if (isValid(newDate, 'm')) {
-                        setValue(newDate);
+                    	setDate(newDate);
                     }
                 },
 
                 decrementSeconds: function () {
                     var newDate = date.clone().subtract(1, 's');
                     if (isValid(newDate, 's')) {
-                        setValue(newDate);
+                    	setDate(newDate);
                     }
                 },
 
                 togglePeriod: function () {
-                    setValue(date.clone().add((date.hours() >= 12) ? -12 : 12, 'h'));
+                	setDate(date.clone().add((date.hours() >= 12) ? -12 : 12, 'h'));
                 },
 
                 togglePicker: function (e) {
@@ -1121,17 +1127,17 @@
                             }
                         }
                     }
-                    setValue(date.clone().hours(hour));
+                    setDate(date.clone().hours(hour));
                     actions.showPicker.call(picker);
                 },
 
                 selectMinute: function (e) {
-                    setValue(date.clone().minutes(parseInt($(e.target).text(), 10)));
+                	setDate(date.clone().minutes(parseInt($(e.target).text(), 10)));
                     actions.showPicker.call(picker);
                 },
 
                 selectSecond: function (e) {
-                    setValue(date.clone().seconds(parseInt($(e.target).text(), 10)));
+                	setDate(date.clone().seconds(parseInt($(e.target).text(), 10)));
                     actions.showPicker.call(picker);
                 },
 
@@ -1140,7 +1146,7 @@
                 today: function () {
                     var todaysDate = getMoment();
                     if (isValid(todaysDate, 'd')) {
-                        setValue(todaysDate);
+                    	setDate(todaysDate);
                     }
                 },
 
@@ -1181,13 +1187,13 @@
                     return picker;
                 }
                 if (input.val() !== undefined && input.val().trim().length !== 0) {
-                    setValue(parseInputDate(input.val().trim()));
+                	setDate(parseInputDate(input.val().trim()));
                 } else if (options.useCurrent && unset && ((input.is('input') && input.val().trim().length === 0) || options.inline)) {
                     currentMoment = getMoment();
                     if (typeof options.useCurrent === 'string') {
                         currentMoment = useCurrentGranularity[options.useCurrent](currentMoment);
                     }
-                    setValue(currentMoment);
+                    setDate(currentMoment);
                 }
 
                 widget = getTemplate();
@@ -1306,7 +1312,7 @@
                 }
                 
                 parsedDate.locale(options.locale);
-                setValue(parsedDate);
+                setDate(parsedDate);
                 e.stopImmediatePropagation();
                 return false;
             },
@@ -1420,7 +1426,7 @@
                 currentViewMode = Math.max(minViewModeNumber, currentViewMode);
 
                 if (!unset) {
-                    setValue(date);
+                	setDate(date);
                 }
             };
 
@@ -1519,7 +1525,7 @@
                 throw new TypeError('date() parameter must be one of [null, string, moment or Date]');
             }
 
-            setValue(newDate === null ? null : parseInputDate(newDate));
+            setDate(newDate === null ? null : parseInputDate(newDate));
             return picker;
         };
 
@@ -1679,7 +1685,7 @@
                     }
                     tries++;
                 }
-                setValue(date);
+                setDate(date);
             }
             update();
             return picker;
@@ -1712,7 +1718,7 @@
             }
             options.maxDate = parsedDate;
             if (options.useCurrent && !options.keepInvalid && date.isAfter(maxDate)) {
-                setValue(options.maxDate);
+            	setDate(options.maxDate);
             }
             if (viewDate.isAfter(parsedDate)) {
                 viewDate = parsedDate.clone().subtract(options.stepping, 'm');
@@ -1748,7 +1754,7 @@
             }
             options.minDate = parsedDate;
             if (options.useCurrent && !options.keepInvalid && date.isBefore(minDate)) {
-                setValue(options.minDate);
+            	setDate(options.minDate);
             }
             if (viewDate.isBefore(parsedDate)) {
                 viewDate = parsedDate.clone().add(options.stepping, 'm');
@@ -1791,7 +1797,7 @@
             options.defaultDate = parsedDate;
 
             if ((options.defaultDate && options.inline) || input.val().trim() === '') {
-                setValue(options.defaultDate);
+            	setDate(options.defaultDate);
             }
             return picker;
         };
@@ -2255,7 +2261,7 @@
                     }
                     tries++;
                 }
-                setValue(date);
+                setDate(date);
             }
             update();
             return picker;
@@ -2293,7 +2299,7 @@
                     }
                     tries++;
                 }
-                setValue(date);
+                setDate(date);
             }
             update();
             return picker;
@@ -2331,32 +2337,21 @@
         	}
             return null;
         };
-        picker.setValue = function(newDate){
-            if(newDate == null){
-                setValue(null);
-            }else if($.type(newDate) === "string"){
-                setValue(parseInputDate(newDate.trim()));
-            }else{
-                setValue(parseInputDate(newDate));
-                //setValue(newDate);
-            }
+        picker.setDate = function(newDate){
+        	setDate(newDate);
+        };
+        
+        picker.setValue = function(newValue){
+        	if($.type(newValue) === "string"){
+        		setDate(parseInputDate(newValue.trim()));
+        	}else{
+        		setDate(parseInputDate(newValue));
+        		//setValue(newDate);
+        	}
+        	value = newValue;
         };
         picker.getValue = function () {
-        	/*if(!!date){
-        		return date.clone().toDate();
-        	}
-            return null;*/
-        	if(!!date){
-        		if (options.parseOutputDate === undefined) {
-        			return date.clone().format(actualFormat);
-                } else {
-                	return options.parseOutputDate(date.clone());
-                }
-        		
-        	}else if (input.is('input') && input.val().trim().length !== 0) {
-            	return input.val().trim();
-        	}
-        	return null;
+        	return value;
         };
         
         $.extend(true, options, dataToOptions());
@@ -2420,25 +2415,25 @@
         }
 
         // Set defaults for date here now instead of in var declaration
+        
         date = getMoment();
         viewDate = date.clone();
-
+        
         picker.options(options);
         //disabledComponentButton
 
         initFormatting();
 
         attachDatePickerElementEvents();
-
+        
         if (input.prop('disabled')) {
             picker.disable();
         }
         if (input.is('input') && input.val().trim().length !== 0) {
-        	setValue(parseInputDate(input.val().trim()));
-			//parseInputDate(input.val().trim());          
+        	setDate(parseInputDate(input.val().trim()));      
         }
         else if (options.defaultDate && input.attr('placeholder') === undefined) {
-            setValue(options.defaultDate);
+        	setDate(options.defaultDate);
         }
         
         if(!options.ignoreReadonly && options.readonly){

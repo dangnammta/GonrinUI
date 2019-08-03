@@ -26,6 +26,14 @@
                 	}
                 });
                 
+                $('#getvalue').bind('click', function (e) {
+            		var value = $('#datetime').data("gonrin").getValue();
+            		var date = $('#datetime').data("gonrin").getDate();
+            		console.log(value, date);
+				});
+                
+                console.log("datetime value=",$('#datetime').data("gonrin").getValue());
+                
                 $('#datetime2').datetimepicker({
                 	textFormat:'DD-MM-YYYY',
                 	extraFormats:['DDMMYYYY'],
@@ -51,6 +59,10 @@
 					<!-- <input type='text' id='datetime' value='22012016'/>-->
 					<!-- <input type='text' id='datetime' value="1544029200"/>-->
 					<input type='text' id='datetime'/>
+				</div>
+				<br/>
+				<div>
+					<button id="getvalue">Get Value</button>
 				</div>
 				<br/>
 				<div style="width:50%;">

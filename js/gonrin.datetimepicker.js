@@ -833,9 +833,11 @@
                     input.val('');
                     textElement.val('');
                     element.data('date', '');
+                    value = null;
                     notifyEvent({
                         type: 'change.gonrin',
                         date: false,
+                        value: value,
                         oldDate: oldDate,
                         oldValue: oldValue
                     });
@@ -871,6 +873,7 @@
                     notifyEvent({
                         type: 'change.gonrin',
                         date: date.clone(),
+                        value: value,
                         oldDate: oldDate,
                         oldValue: oldValue
                     });
@@ -928,7 +931,7 @@
             },
 
             clear = function () {
-                setValue(null);
+                setDate(null);
             },
 
             /********************************************************************************

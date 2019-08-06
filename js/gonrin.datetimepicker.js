@@ -1234,6 +1234,9 @@
                 return (widget ? hide() : show());
             },
             parseInputDate = function (inputDate) {
+            	if ((inputDate === null) || (inputDate === undefined)){
+            		return null;
+            	}
                 if ((options.parseInputDate === undefined)) {
                     if (moment.isMoment(inputDate) || inputDate instanceof Date) {
                         inputDate = moment(inputDate);

@@ -48,13 +48,13 @@
 		paginationOptions = {
         	serverPaging: false,
         	page: 1,
-        	pageSize: 10,
+        	pageSize: 15,
         	//totalPages: null,
         	//virtualTotalPages:null,
         	totalRows: null,
             pageLinks: 5,
             showGotoPage: false,
-            showRowsPerPage: false,
+            showRowsPerPage: true,
             showRowsInfo: false,
             showRowsDefaultInfo: true,
             //disable_text_selection_in_navpane: true
@@ -644,11 +644,12 @@
                     	showRowsInfo: options.pagination.showRowsInfo,
                     	virtualTotalPages:null,
                     	onChangePage: function(event){
+                    		//console.log("change page");
                     		options.pagination.page = event.page;
                     		if(options.paginationMode === "server"){
                     			boundData();
                     		}else{
-                    			renderData(pagingClientData());
+                    			renderData(pagingData());
                     		}
                     		
                     		notifyEvent({
@@ -824,10 +825,10 @@
             // update selected rows counter
             selectedRows("update_counter");
         },
-        pagingClientData = function(){
-			//serverPage
+        pagingData = function(){
+        	//serverPage
+        	
         	if(options.paginationMode  === "client"){
-				//options.pagination.page = options.pagination.page || 1;
         		if(filteredData.length == 0){
         			options.pagination.totalPages = 0;
         			options.pagination.page = 1;
@@ -847,7 +848,7 @@
         		
         		for (var i = startIndex; i < endIndex ; i++){
         			pagingData.push(filteredData[i]);
-				}
+        		}
         		return pagingData;
         	}
         	
@@ -944,6 +945,7 @@
         	dataSource = options["dataSource"];
         	if(typeof dataSource === "object"){
         		if(isBackBoneDataSource(dataSource)){
+        			//console.log('instance of collection view');
         			options.paginationMode = options.paginationMode || "server";
         			options.filterMode = options.filterMode || "server";
         			options.orderByMode = options.orderByMode || "server";
@@ -995,14 +997,8 @@
 							});
                         	
                         	genDataUUID();
-							filterData();
-							if (options.paginationMode === "client"){
-								renderData(pagingClientData());
-							}
-							else {
-								renderData(filteredData);
-							}								
-                    		
+                        	filterData();
+                    		renderData(filteredData);
                         },
                         error:function(){
                         	var filter_error;
@@ -1022,7 +1018,7 @@
         			genDataUUID();
         			filterData();
         			sortData();
-        			renderData(pagingClientData());
+        			renderData(pagingData());
         		}
         		
         	}
@@ -1172,6 +1168,12 @@
                     element.find("#" + selectedRowsId).text(options.selectedItems.length);
                     break;
                 case "selected_index":
+                	if(options.selectionMode == "multiple" && typeof options.selectedItems === 'string') {
+                		try{
+                			options.selectedItems = JSON.parse(options.selectedItems);
+						}catch(e){
+						}
+                	};
                 	for (var idx = 0 ; idx < options.selectedItems.length; idx ++){
                 		if ((!!options.primaryField) && (options.primaryField.length > 0)){
                 			if(row_data[options.primaryField] === options.selectedItems[idx][options.primaryField])
@@ -1187,6 +1189,12 @@
                 	//return $.inArray(row_data, options.selectedItems);
                     break;
                 case "add_id":
+                	if(options.selectionMode == "multiple" && typeof options.selectedItems === 'string') {
+                		try{
+                			options.selectedItems = JSON.parse(options.selectedItems);
+						}catch(e){
+						}
+                	};
                 	options.selectedItems.push(row_data);
                     break;
                 case "remove_id":
@@ -1210,23 +1218,15 @@
             }
 
         },
-        filterData = function(query, mode){
-			//check Server Filter
-			if(!query){
-				query = options.filters;
-			}
-			if (!mode){
-				mode =  options.filterMode
-			}
-        	if((mode === "client") && (query !== null) && (!! gonrin) && (!! gonrin.query)){
+        filterData = function(){
+        	//check Server Filter
+        	var query = options.filters;
+        	
+        	if((options.filterMode === "client") && (query !== null) && (!! gonrin) && (!! gonrin.query)){
         		filteredData = gonrin.query( data, query);
         	}else{
         		filteredData = data
         	}
-        },
-        setDataSource = function(data){
-        	options["dataSource"] = data;
-        	boundData();
         };
         
         /********************************************************************************
@@ -1261,14 +1261,8 @@
         	options.filters = query;
         	options.pagination.page = 1;
         	boundData();
-		};
-		
-		grobject.clientFilter = function(query, mode="client"){
-        	//options.filters = query;
-			options.pagination.page = 1;
-			filterData(query, mode);
-			sortData();
-        	renderData(pagingClientData());
+        	//sortData();
+        	//renderData(pagingData());
         };
         
         grobject.changePage = function(page){
@@ -1280,13 +1274,6 @@
         grobject.boundData = boundData;
         
         grobject.selectedRows = selectedRows;
-        
-        grobject.getSelectedItems = function(){
-        	//return selectedRows("")
-        	return removeDataUUID(options.selectedItems);
-        };
-        
-        grobject.setDataSource = setDataSource;
         
         grobject.applyRowSelections = function(){
         	applyRowSelections();
@@ -1408,8 +1395,8 @@
         sortingIndicatorAscClass: "glyphicon glyphicon-chevron-up text-muted",
         sortingIndicatorDescClass: "glyphicon glyphicon-chevron-down text-muted",
 
-        datatableContainerClass: "table", //"table-responsive"
-        datatableClass: "table table-bordered", //table-hover
+        datatableContainerClass: "table-responsive", //"table-responsive"
+        datatableClass: "table table-striped", //table-hover
         commonThClass: "th-common",
         selectedTrClass: "bg-primary",
 

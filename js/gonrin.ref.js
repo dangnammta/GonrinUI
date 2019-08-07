@@ -50,9 +50,14 @@
 		unset = true,
         input,
         menuTemplate = '<ul class="ref-selection-multiple"></ul>',
-        itemTemplate =  '<li class="ref-selection-choice"></li>',
+        itemTemplate =  '<li class="ref-selection-choice float-left" style="margin-right: 5px;"></li>',
         widgetMenuTemplate = '<ul class="dropdown-menu" style="overflow-y:scroll; width: 100%"></ul>',
-        widgetItemTemplate =  '<li><a class="ref-wg-data" href="javascript:void(0)"><span class="btn btn-xs btn-danger ref-wg-data-del">X</span></a></li>',
+		widgetItemTemplate = `<li class="dropdown-item;" style="position: relative; line-height: 34px; padding-left: 10px;">
+								<a class="ref-wg-data" href="javascript:void(0)">
+									<button class="btn btn-xs btn-danger ref-wg-data-del" style="position: absolute; right: 2px; padding: 3px 8px 3px 8px;">
+										<span class="fa fa-times"></span>
+									</button>
+								</a></li>`,
         component = false,
         selectDialog = false,  //dialogView
         widget = false,
@@ -182,6 +187,9 @@
             		    	selectDialog.uiControl.selectedItems.splice(itemidx, 1);
             		    }
             			$item.remove();
+            			if (!!selectDialog.uiControl.selectedItems && selectDialog.uiControl.selectedItems.length === 0){
+            				widget.hide();
+            			}
             			onSelectChange("multiple");
 					});
             		
@@ -486,11 +494,16 @@
             input = element;
             //value = input.val().length > 0 ? ;
           
-            element.wrap( '<span class="input-group"></span>');
-            var inputGroupSpan = element.parent();
+            element.wrap( '<div class="input-group"></div>');
+            var parentGroupElement = element.parent();
+            var inputGroupSpan = $('<div class="input-group-append">');
+            parentGroupElement.append(inputGroupSpan);
             //inputGroupSpan.css("width", element.outerWidth());
-            var componentButton = $('<span class="input-group-addon dropdown-toggle" data-dropdown="dropdown">').html('<span class="glyphicon glyphicon-th-list"></span><span class="glyphicon glyphicon-remove" style="display:none;"></span>');
+//            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</button>
+            var componentButton = $('<button type="button" style="padding-left:35px" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-dropdown="dropdown">').html('<span class="sr-only">Toggle Dropdown</span>');
             inputGroupSpan.append(componentButton);
+//            var componentButton = $('<span class="input-group-addon dropdown-toggle" data-dropdown="dropdown">').html('<span class="glyphicon glyphicon-th-list"></span><span class="glyphicon glyphicon-remove" style="display:none;"></span>');
+//            inputGroupSpan.append(componentButton);
             component = componentButton;
             textElement = $('<span class="form-control ref-form-control">');
             if(options.selectionMode === "multiple"){

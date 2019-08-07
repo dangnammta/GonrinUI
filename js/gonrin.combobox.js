@@ -19,14 +19,14 @@
 		var grobject = {},
 		value,
 		text,
-		data = [], //datalist
+		data, //datalist
 		index = -1,
 		textElement = false,
 		groupElement = false,
 		unset = true,
         input,
-        menuTemplate = '<ul class="dropdown-menu" style="overflow-y:scroll; width: 100%"></ul>',
-        itemTemplate =  '<li><a href="javascript:void(0)"></a></li>',
+        menuTemplate = '<ul class="dropdown-menu" style="overflow-y:scroll; width: 100%;"></ul>',
+        itemTemplate =  '<li class="dropdown-item"><a href="javascript:void(0)"></a></li>',
         component = false,
         helpmsg = false,
         widget = false,
@@ -70,112 +70,7 @@
          * Private functions
          *
          ********************************************************************************/
-        isBackBoneDataSource = function(source){
-        	var key, _i, _len, _ref;
-            _ref = ["fetch"];
-            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-              key = _ref[_i];
-              if (!source[key]) {
-            	  return false;
-              }
-            }
-            return true;
-        },
-        boundData = function(){
-        	if($.isArray(options.dataSource)){
-				data = options.dataSource;
-				renderData();
-			} else if (isBackBoneDataSource(options.dataSource)){
-				options.paginationMode = options.paginationMode || "server";
-    			options.filterMode = options.filterMode || "server";
-    			options.orderByMode = options.orderByMode || "server";
-    			
-    			var collection = options.dataSource;
-    			//var pageSize = options.pagination.pageSize;
-    			//var page = options.pagination.page > 0 ? options.pagination.page : 1;
-    			var pageSize = 10;
-    			var page = 1;
-    			//or filter
-    			var query = null;
-    			if ((!!options.filters) && (options.filterMode === "server")){
-    				query = query || {};
-    				query['filters'] = options.filters;
-    			}
-    			
-    			if ((!!options.orderBy) && (options.orderByMode === "server")){
-    				query = query || {};
-    				query['order_by'] = [];
-    				for(var k = 0; k < options.orderBy.length; k++){
-    					if(options.orderBy[k].direction){
-    						query['order_by'].push({field:options.orderBy[k].field, direction: options.orderBy[k].direction});
-    					}
-    					
-    				}
-    			}
-    			
-    			//order_by
-    			//query["order_by"] = {"field": "name", "direction": "asc"}
-    			
-    			//end filter
-    			//var url = collection.url + "?page=" + page + "&results_per_page=" + pageSize + (query? "&q=" + JSON.stringify(query): "");
-    			var url = collection.url;
-    			if(options.paginationMode === "server"){
-    				url = url + "?page=" + page + "&results_per_page=" + pageSize + (query? "&q=" + JSON.stringify(query): "");
-    			}else{
-    				url = url + (query? "?q=" + JSON.stringify(query): "");
-    			}
-    			
-    			collection.fetch({
-    				url: url,
-                    success: function (objs) {
-                    	//update paging;
-//                    	options.pagination.page = collection.page;
-//                    	options.pagination.totalPages = collection.totalPages;
-//                    	options.pagination.totalRows = collection.numRows;
-                    	
-                    	//var data = [];
-                    	
-                    	data.splice(0,data.length);
-                    	collection.each(function(model) {
-                    		data.push(model.toJSON());
-						});
-                    	
-                    	console.log(data);
-                    	
-                    	//genDataUUID();
-                    	//filterData();
-                		renderData();
-                    },
-                    error:function(){
-//                    	var filter_error;
-//                        var errMsg = "ERROR: " + language.error_load_data;
-//                        element.html('<span style="color: red;">' + errMsg + '</span>');
-//                        
-//                        notifyEvent({
-//                        	type:"griderror",
-//                        	errorCode: "SERVER_ERROR", 
-//                        	errorDescription: errMsg
-//                        });
-                        
-                    },
-                });
-				
-			} else if($.isPlainObject(options.dataSource)){
-				//var data = [];
-				$.each(options.dataSource, function(idx, value){
-					var obj = {};
-					obj[options.valueField] = idx;
-					obj[options.textField] = value;
-					data.push(obj);
-				});
-				
-            	//genDataUUID();
-            	//filterData();
-        		renderData();
-			}
-        },
         renderData = function(){
-			
 			if($.isArray(data) && data.length > 0){
 				$.each(data, function (idx, item) {
 					var $item = $(itemTemplate);
@@ -221,16 +116,9 @@
 					}
 				});
 			}
-			notifyEvent({
-                type: 'render.gonrin'
-            });
-			
 			return grobject;
 		},
         setupWidget = function () {
-			if(!!widget){
-				widget.empty();
-			}
 			if (!!options.dataSource) {
 				//var menu = $(menuTemplate);
 				widget = $(menuTemplate);
@@ -242,7 +130,18 @@
 					component.before(widget);
 				}
 				
-				boundData();
+				if($.isArray(options.dataSource)){
+					data = options.dataSource;
+					renderData();
+				}
+				if($.isPlainObject(options.dataSource)){
+					if(options.auto_bind){
+						console.log("bind to Ajax datasource");
+					}
+					//getdataSource json from HTTP
+					//setup_data();
+				}
+				
 				//setup width and height
 				
 				widget.css("width", (options.width !== null) ? options.width : "100%"); 
@@ -365,9 +264,10 @@
         	}
         },
         setMultiIndex = function(idx, oldval){
+        	
         	if(data && (data.length > 0) && (data.length > idx) && (idx > -1)){
         		var item = data[idx];
-        		var oldvalue = value.slice(idx);
+        		var oldvalue = value.slice(0);
         		if(!!oldval){
         			oldvalue = oldval;
         		}
@@ -391,7 +291,7 @@
         			if($.isArray(value)){
         				var found = -1;
         				for(var k = 0; k < value.length; k++){
-        					if(value[k] === val){
+        					if(value[k] == val){
         						found = k;
         						break;
         					}
@@ -416,10 +316,11 @@
         		}else{
         			itemidx.addClass("active");
         			//text add
-        			if($.isArray(value) && !($.inArray(val, value) > -1)){
+        			if($.isArray(value)){
         				value.push(val);
         			}
         			//value add
+        			
         			if(textElement){
             			text = (!!text) && (text.length > 0)? text + "," + txt : txt;
                 		textElement.val(text);
@@ -456,10 +357,11 @@
             
             widget.on('mousedown', false);
             widget.show();
-            
-            if (options.focusOnShow && !textElement.is(':focus')) {
-                textElement.focus();
-            }
+            textElement.off("focus");
+            subscribeEvents();
+//            if (options.focusOnShow && !textElement.is(':focus')) {
+//                textElement.focus();
+//            }
             
             notifyEvent({
                 type: 'show.gonrin'
@@ -472,6 +374,9 @@
             }
         	//$(window).off('resize', place);
             widget.off('mousedown', false);
+            if (textElement.is(':focus')) {
+                textElement.blur();
+            }
             widget.hide();
             
             notifyEvent({
@@ -644,24 +549,25 @@
         },
         
         keydown = function(e) {
+        	
             var key = e.keyCode;
             _lastkey = key;
             clearTimeout(_typing_timeout);
             _typing_timeout = null;
             
             if (key != keyMap.tab && !move(e)) {
-            	if(options.allowTextInput !== false){
-            		if (options.enableSearch !== false){
-            			triggerSearch();
-            		}
-            	}else{
+            	if(options.filter === false){
             		return false;
             	}
+                triggerSearch();
              }
         },
         
         change = function (e) {
             var val = $(e.target).val().trim();
+            /*var parsedDate = val ? parseInputDate(val) : null;
+            setValue(parsedDate);*/
+        	
         	//TODO: trigger search
             e.stopImmediatePropagation();
             return false;
@@ -699,10 +605,6 @@
                     if (_prev !== searchvalue) {
                         _prev = searchvalue;
                         search(searchvalue);
-                        notifyEvent({
-                            type: 'search.gonrin',
-                            value: searchvalue
-                        });
                     }
                     _typing_timeout = null;
                 }, options.delay);
@@ -809,12 +711,6 @@
         	if(groupElement){
         		groupElement.show();
         	}
-        },
-        setDataSource = function(dataSource){
-        	if(!!dataSource){
-        		options.dataSource = dataSource;
-        		setupWidget();
-        	}
         }
         ;
 
@@ -852,7 +748,6 @@
         //grobject.getIndex = getIndex;
         grobject.validate = validate;
         grobject.setState = setState;
-        grobject.setDataSource = setDataSource;
         
         
         grobject.disable = function () {
@@ -1031,7 +926,6 @@
     };
 
     $.fn.combobox.defaults = {
-    	type: null,
     	/*autobind: Controls whether to bind the widget to the data source on initialization.*/
     	autobind: true,
     	/*cascadeFrom: Use it to set the Id of the parent ComboBox widget.*/
@@ -1043,7 +937,7 @@
     	readonly: false,
     	debug: false,
     	/*The delay in milliseconds between a keystroke and when the widget displays the popup.*/
-    	delay: 1000,
+    	delay: 100,
     	textField: null,
         valueField: null,
         /*dataSource: The data source of the widget which is used to display a list of values. 
@@ -1061,8 +955,6 @@
         suggest: false,
         /*The minimum number of characters the user must type before a search is performed. Set to higher value than 1 if the search could match a lot of items.*/
         minLength: 1,
-        enableSearch: false,
-        allowTextInput: false,
         /*Specifies a static HTML content, which will be rendered as a header of the popup element.*/
         headerTemplate: false,
         /*The template used to render the items. By default the widget displays only the text of the data item (configured via textField).*/

@@ -25,7 +25,7 @@
   // the base DOM structure needed to create a modal
   var templates = {
     dialog:
-      "<div class='bootbox modal' tabindex='-1' role='dialog'>" +
+      "<div class='modal' tabindex='-1' role='dialog'>" +
         "<div class='modal-dialog'>" +
           "<div class='modal-content'>" +
             "<div class='modal-body'><div class='bootbox-body'></div></div>" +
@@ -39,7 +39,7 @@
     footer:
       "<div class='modal-footer'></div>",
     closeButton:
-      "<button type='button' class='bootbox-close-button close' data-dismiss='modal' aria-hidden='true'>&times;</button>",
+    	"<button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>&times;</span></button>",
     form:
       "<form class='bootbox-form'></form>",
     inputs: {
@@ -618,21 +618,21 @@
 
     if (options.title) {
       body.before(templates.header);
+      dialog.find(".modal-title").html(options.title);
     }
 
     if (options.closeButton) {
       var closeButton = $(templates.closeButton);
-
+      
       if (options.title) {
-        dialog.find(".modal-header").prepend(closeButton);
+    	  dialog.find(".modal-header").append(closeButton);
       } else {
-        closeButton.css("margin-top", "-10px").prependTo(body);
+    	  body.prepend(closeButton);
+    	  closeButton.addClass("row px-3");
       }
     }
 
-    if (options.title) {
-      dialog.find(".modal-title").html(options.title);
-    }
+    
 
     if (buttonStr.length) {
       body.after(templates.footer);
@@ -721,7 +721,7 @@
       processCallback(e, dialog, callbacks[callbackKey]);
     });
 
-    dialog.on("click", ".bootbox-close-button", function(e) {
+    dialog.on("click", "button.close", function(e) {
       // onEscape might be falsy but that's fine; the fact is
       // if the user has managed to click the close button we
       // have to close the dialog, callback or not
@@ -955,7 +955,12 @@
       OK      : "OK",
       CANCEL  : "取消",
       CONFIRM : "確認"
-    }
+    },
+    vi : {
+        OK      : "Đồng ý",
+        CANCEL  : "Hủy bỏ",
+        CONFIRM : "Xác nhận"
+      }
   };
 
   exports.addLocale = function(name, values) {

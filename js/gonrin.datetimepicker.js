@@ -101,6 +101,11 @@
              * Private functions
              *
              ********************************************************************************/
+
+            hasTimeZone = function () {
+                return moment.tz !== undefined && options.timeZone !== undefined && options.timeZone !== null && options.timeZone !== '';
+            },
+
             getMoment = function (d) {
                 var tzEnabled = false,
                     returnMoment,
@@ -169,11 +174,11 @@
                 var headTemplate = $('<thead>')
                         .append($('<tr>')
                             .append($('<th>').addClass('prev').attr('data-action', 'previous')
-                                .append($('<span>').addClass(options.icons.previous))
+                                .append($('<i>').addClass(options.icons.previous))
                                 )
                             .append($('<th>').addClass('picker-switch').attr('data-action', 'pickerSwitch').attr('colspan', (options.calendarWeeks ? '6' : '5')))
                             .append($('<th>').addClass('next').attr('data-action', 'next')
-                                .append($('<span>').addClass(options.icons.next))
+                                .append($('<i>').addClass(options.icons.next))
                                 )
                             ),
                     contTemplate = $('<tbody>')
@@ -212,13 +217,11 @@
 
                 if (isEnabled('h')) {
                     topRow.append($('<td>')
-                        .append($('<a>').attr({href: '#', tabindex: '-1', 'title': options.tooltips.incrementHour}).addClass('btn').attr('data-action', 'incrementHours')
-                            .append($('<span>').addClass(options.icons.up))));
+                        .append($('<a>').attr({ href: '#', tabindex: '-1', 'title': options.tooltips.incrementHour }).addClass('btn').attr('data-action', 'incrementHours').append($('<i>').addClass(options.icons.up))));
                     middleRow.append($('<td>')
-                        .append($('<span>').addClass('timepicker-hour').attr({'data-time-component':'hours', 'title': options.tooltips.pickHour}).attr('data-action', 'showHours')));
+                        .append($('<span>').addClass('timepicker-hour').attr({ 'data-time-component': 'hours', 'title': options.tooltips.pickHour }).attr('data-action', 'showHours')));
                     bottomRow.append($('<td>')
-                        .append($('<a>').attr({href: '#', tabindex: '-1', 'title': options.tooltips.decrementHour}).addClass('btn').attr('data-action', 'decrementHours')
-                            .append($('<span>').addClass(options.icons.down))));
+                        .append($('<a>').attr({ href: '#', tabindex: '-1', 'title': options.tooltips.decrementHour }).addClass('btn').attr('data-action', 'decrementHours').append($('<i>').addClass(options.icons.down))));
                 }
                 if (isEnabled('m')) {
                     if (isEnabled('h')) {
@@ -227,13 +230,13 @@
                         bottomRow.append($('<td>').addClass('separator'));
                     }
                     topRow.append($('<td>')
-                        .append($('<a>').attr({href: '#', tabindex: '-1', 'title': options.tooltips.incrementMinute}).addClass('btn').attr('data-action', 'incrementMinutes')
-                            .append($('<span>').addClass(options.icons.up))));
+                        .append($('<a>').attr({ href: '#', tabindex: '-1', 'title': options.tooltips.incrementMinute }).addClass('btn').attr('data-action', 'incrementMinutes')
+                            .append($('<i>').addClass(options.icons.up))));
                     middleRow.append($('<td>')
-                        .append($('<span>').addClass('timepicker-minute').attr({'data-time-component': 'minutes', 'title': options.tooltips.pickMinute}).attr('data-action', 'showMinutes')));
+                        .append($('<span>').addClass('timepicker-minute').attr({ 'data-time-component': 'minutes', 'title': options.tooltips.pickMinute }).attr('data-action', 'showMinutes')));
                     bottomRow.append($('<td>')
-                        .append($('<a>').attr({href: '#', tabindex: '-1', 'title': options.tooltips.decrementMinute}).addClass('btn').attr('data-action', 'decrementMinutes')
-                            .append($('<span>').addClass(options.icons.down))));
+                        .append($('<a>').attr({ href: '#', tabindex: '-1', 'title': options.tooltips.decrementMinute }).addClass('btn').attr('data-action', 'decrementMinutes')
+                            .append($('<i>').addClass(options.icons.down))));
                 }
                 if (isEnabled('s')) {
                     if (isEnabled('m')) {
@@ -242,19 +245,19 @@
                         bottomRow.append($('<td>').addClass('separator'));
                     }
                     topRow.append($('<td>')
-                        .append($('<a>').attr({href: '#', tabindex: '-1', 'title': options.tooltips.incrementSecond}).addClass('btn').attr('data-action', 'incrementSeconds')
-                            .append($('<span>').addClass(options.icons.up))));
+                        .append($('<a>').attr({ href: '#', tabindex: '-1', 'title': options.tooltips.incrementSecond }).addClass('btn').attr('data-action', 'incrementSeconds')
+                            .append($('<i>').addClass(options.icons.up))));
                     middleRow.append($('<td>')
-                        .append($('<span>').addClass('timepicker-second').attr({'data-time-component': 'seconds', 'title': options.tooltips.pickSecond}).attr('data-action', 'showSeconds')));
+                        .append($('<span>').addClass('timepicker-second').attr({ 'data-time-component': 'seconds', 'title': options.tooltips.pickSecond }).attr('data-action', 'showSeconds')));
                     bottomRow.append($('<td>')
-                        .append($('<a>').attr({href: '#', tabindex: '-1', 'title': options.tooltips.decrementSecond}).addClass('btn').attr('data-action', 'decrementSeconds')
-                            .append($('<span>').addClass(options.icons.down))));
+                        .append($('<a>').attr({ href: '#', tabindex: '-1', 'title': options.tooltips.decrementSecond }).addClass('btn').attr('data-action', 'decrementSeconds')
+                            .append($('<i>').addClass(options.icons.down))));
                 }
 
                 if (!use24Hours) {
                     topRow.append($('<td>').addClass('separator'));
                     middleRow.append($('<td>')
-                        .append($('<button>').addClass('btn btn-primary').attr({'data-action': 'togglePeriod', tabindex: '-1', 'title': options.tooltips.togglePeriod})));
+                        .append($('<button>').addClass('btn btn-primary').attr({ 'data-action': 'togglePeriod', tabindex: '-1', 'title': options.tooltips.togglePeriod })));
                     bottomRow.append($('<td>').addClass('separator'));
                 }
 
@@ -288,16 +291,16 @@
             getToolbar = function () {
                 var row = [];
                 if (options.showTodayButton) {
-                    row.push($('<td>').append($('<a>').attr({'data-action':'today', 'title': options.tooltips.today}).append($('<span>').addClass(options.icons.today))));
+                    row.push($('<td>').append($('<a>').attr({ 'data-action': 'today', 'title': options.tooltips.today }).append($('<i>').addClass(options.icons.today))));
                 }
                 if (!options.sideBySide && hasDate() && hasTime()) {
-                    row.push($('<td>').append($('<a>').attr({'data-action':'togglePicker', 'title': options.tooltips.selectTime}).append($('<span>').addClass(options.icons.time))));
+                    row.push($('<td>').append($('<a>').attr({ 'data-action': 'togglePicker', 'title': options.tooltips.selectTime }).append($('<i>').addClass(options.icons.time))));
                 }
                 if (options.showClear) {
-                    row.push($('<td>').append($('<a>').attr({'data-action':'clear', 'title': options.tooltips.clear}).append($('<span>').addClass(options.icons.clear))));
+                    row.push($('<td>').append($('<a>').attr({ 'data-action': 'clear', 'title': options.tooltips.clear }).append($('<i>').addClass(options.icons.clear))));
                 }
                 if (options.showClose) {
-                    row.push($('<td>').append($('<a>').attr({'data-action':'close', 'title': options.tooltips.close}).append($('<span>').addClass(options.icons.close))));
+                    row.push($('<td>').append($('<a>').attr({ 'data-action': 'close', 'title': options.tooltips.close }).append($('<i>').addClass(options.icons.close))));
                 }
                 return $('<table>').addClass('table-condensed').append($('<tbody>').append($('<tr>').append(row)));
             },
@@ -340,7 +343,7 @@
                     content.append(toolbar);
                 }
                 if (hasDate()) {
-                    content.append($('<li>').addClass((options.collapse && hasTime() ? 'collapse in' : '')).append(dateView));
+                    content.append($('<li>').addClass((options.collapse && hasTime() ? 'collapse show' : '')).append(dateView));
                 }
                 if (options.toolbarPlacement === 'default') {
                     content.append(toolbar);
@@ -378,14 +381,13 @@
             },
 
             place = function () {
-            	var position = (component || textElement).position();
-            	
-                var offset = (component || textElement).offset(),
+                var position = (component || textElement).position(),
+                    offset = (component || textElement).offset(),
                     textoffset = textElement.offset(),
                     vertical = options.widgetPositioning.vertical,
                     horizontal = options.widgetPositioning.horizontal,
                     parent;
-            	
+            
                 if (options.widgetParent) {
                     parent = options.widgetParent.append(widget);
                 } else if (element.is('input')) {
@@ -449,6 +451,7 @@
                         return $(this).css('position') === 'relative';
                     }).first();
                 }
+
                 if (parent.length === 0) {
                     throw new Error('datetimepicker component should be placed within a relative positioned container');
                 }
@@ -572,6 +575,9 @@
             },
 
             updateMonths = function () {
+            	if (!widget) {
+                    return;
+                }
                 var monthsView = widget.find('.datepicker-months'),
                     monthsViewHeader = monthsView.find('th'),
                     months = monthsView.find('tbody').find('span');
@@ -605,6 +611,9 @@
             },
 
             updateYears = function () {
+            	if (!widget) {
+                    return;
+                }
                 var yearsView = widget.find('.datepicker-years'),
                     yearsViewHeader = yearsView.find('th'),
                     startYear = viewDate.clone().subtract(5, 'y'),
@@ -636,11 +645,17 @@
             },
 
             updateDecades = function () {
+            	if (!widget) {
+                    return;
+                }
                 var decadesView = widget.find('.datepicker-decades'),
                     decadesViewHeader = decadesView.find('th'),
-                    startDecade = moment({y: viewDate.year() - (viewDate.year() % 100) - 1}),
+                    startDecade = moment({ y: viewDate.year() - (viewDate.year() % 100) - 1 }),
                     endDecade = startDecade.clone().add(100, 'y'),
                     startedAt = startDecade.clone(),
+                    minDateDecade = false,
+                    maxDateDecade = false,
+                    endDecadeYear,
                     html = '';
 
                 decadesViewHeader.eq(0).find('span').attr('title', options.tooltips.prevCentury);
@@ -648,19 +663,22 @@
 
                 decadesView.find('.disabled').removeClass('disabled');
 
-                if (startDecade.isSame(moment({y: 1900})) || (options.minDate && options.minDate.isAfter(startDecade, 'y'))) {
+                if (startDecade.isSame(moment({ y: 1900 })) || (options.minDate && options.minDate.isAfter(startDecade, 'y'))) {
                     decadesViewHeader.eq(0).addClass('disabled');
                 }
 
                 decadesViewHeader.eq(1).text(startDecade.year() + '-' + endDecade.year());
 
-                if (startDecade.isSame(moment({y: 2000})) || (options.maxDate && options.maxDate.isBefore(endDecade, 'y'))) {
+                if (startDecade.isSame(moment({ y: 2000 })) || (options.maxDate && options.maxDate.isBefore(endDecade, 'y'))) {
                     decadesViewHeader.eq(2).addClass('disabled');
                 }
 
                 while (!startDecade.isAfter(endDecade, 'y')) {
-                    html += '<span data-action="selectDecade" class="decade' + (startDecade.isSame(date, 'y') ? ' active' : '') +
-                        (!isValid(startDecade, 'y') ? ' disabled' : '') + '" data-selection="' + (startDecade.year() + 6) + '">' + (startDecade.year() + 1) + ' - ' + (startDecade.year() + 12) + '</span>';
+                    endDecadeYear = startDecade.year() + 12;
+                    minDateDecade = options.minDate && options.minDate.isAfter(startDecade, 'y') && options.minDate.year() <= endDecadeYear;
+                    maxDateDecade = options.maxDate && options.maxDate.isAfter(startDecade, 'y') && options.maxDate.year() <= endDecadeYear;
+                    html += '<span data-action="selectDecade" class="decade' + (date.isAfter(startDecade) && date.year() <= endDecadeYear ? ' active' : '') +
+                        (!isValid(startDecade, 'y') && !minDateDecade && !maxDateDecade ? ' disabled' : '') + '" data-selection="' + (startDecade.year() + 6) + '">' + (startDecade.year() + 1) + ' - ' + (startDecade.year() + 12) + '</span>';
                     startDecade.add(12, 'y');
                 }
                 html += '<span></span><span></span><span></span>'; //push the dangling block over, at least this way it's even
@@ -670,7 +688,9 @@
             },
 
             fillDate = function () {
-            	
+            	if (!widget) {
+                    return;
+                }
                 var daysView = widget.find('.datepicker-days'),
                     daysViewHeader = daysView.find('th'),
                     currentDate,
@@ -686,16 +706,19 @@
                 daysViewHeader.eq(0).find('span').attr('title', options.tooltips.prevMonth);
                 daysViewHeader.eq(1).attr('title', options.tooltips.selectMonth);
                 daysViewHeader.eq(2).find('span').attr('title', options.tooltips.nextMonth);
+
                 daysView.find('.disabled').removeClass('disabled');
                 daysViewHeader.eq(1).text(viewDate.format(options.dayViewHeaderFormat));
-                
+
                 if (!isValid(viewDate.clone().subtract(1, 'M'), 'M')) {
                     daysViewHeader.eq(0).addClass('disabled');
                 }
                 if (!isValid(viewDate.clone().add(1, 'M'), 'M')) {
                     daysViewHeader.eq(2).addClass('disabled');
                 }
+
                 currentDate = viewDate.clone().startOf('M').startOf('w').startOf('d');
+
                 for (i = 0; i < 42; i++) { //always display 42 days (should show 6 weeks)
                     if (currentDate.weekday() === 0) {
                         row = $('<tr>');
@@ -793,6 +816,9 @@
             },
 
             fillTime = function () {
+            	if (!widget) {
+                    return;
+                }
                 var toggle, newDate, timeComponents = widget.find('.timepicker span[data-time-component]');
 
                 if (!use24Hours) {
@@ -833,11 +859,9 @@
                     input.val('');
                     textElement.val('');
                     element.data('date', '');
-                    value = null;
                     notifyEvent({
                         type: 'change.gonrin',
                         date: false,
-                        value: value,
                         oldDate: oldDate,
                         oldValue: oldValue
                     });
@@ -873,14 +897,21 @@
                     notifyEvent({
                         type: 'change.gonrin',
                         date: date.clone(),
-                        value: value,
                         oldDate: oldDate,
                         oldValue: oldValue
                     });
+                    hide();
                 } else {
                     if (!options.keepInvalid) {
                         input.val(unset ? '' : date.format(actualFormat));
                         textElement.val(unset ? '' : date.format(textFormat));
+                        
+                    } else {
+                        notifyEvent({
+                            type: 'change.gonrin',
+                            date: targetMoment,
+                            oldDate: oldDate
+                        });
                     }
                     notifyEvent({
                         type: 'error.gonrin',
@@ -890,8 +921,10 @@
                 hide();
             },
 
+            /**
+             * Hides the widget. Possibly will emit dp.hide
+             */
             hide = function () {
-                ///<summary>Hides the widget. Possibly will emit dp.hide</summary>
                 var transitioning = false;
                 if (!widget) {
                     return picker;
@@ -931,7 +964,7 @@
             },
 
             clear = function () {
-                setDate(null);
+                setValue(null);
             },
 
             /********************************************************************************
@@ -951,7 +984,6 @@
                     var navFnc = datePickerModes[currentViewMode].navFnc;
                     viewDate.subtract(datePickerModes[currentViewMode].navStep, navFnc);
                     fillDate();
-                    
                     viewUpdate(navFnc);
                 },
 
@@ -1067,8 +1099,8 @@
                 togglePicker: function (e) {
                     var $this = $(e.target),
                         $parent = $this.closest('ul'),
-                        expanded = $parent.find('.in'),
-                        closed = $parent.find('.collapse:not(.in)'),
+                        expanded = $parent.find('.show'),
+                        closed = $parent.find('.collapse:not(.show)'),
                         collapseData;
 
                     if (expanded && expanded.length) {
@@ -1080,13 +1112,13 @@
                             expanded.collapse('hide');
                             closed.collapse('show');
                         } else { // otherwise just toggle in class on the two views
-                            expanded.removeClass('in');
-                            closed.addClass('in');
+                            expanded.removeClass('show');
+                            closed.addClass('show');
                         }
-                        if ($this.is('span')) {
+                        if ($this.is('i')) {
                             $this.toggleClass(options.icons.time + ' ' + options.icons.date);
                         } else {
-                            $this.find('span').toggleClass(options.icons.time + ' ' + options.icons.date);
+                            $this.find('i').toggleClass(options.icons.time + ' ' + options.icons.date);
                         }
 
                         // NOTE: uncomment if toggled state will be restored in show()
@@ -1164,9 +1196,10 @@
                 return false;
             },
 
+            /**
+             * Shows the widget. Possibly will emit dp.show and dp.change
+             */
             show = function () {
-            	
-                ///<summary>Shows the widget. Possibly will emit dp.show and dp.change</summary>
                 var currentMoment,
                     useCurrentGranularity = {
                         'year': function (m) {
@@ -1232,15 +1265,18 @@
                 return picker;
             },
 
+            /**
+             * Shows or hides the widget
+             */
             toggle = function () {
-                /// <summary>Shows or hides the widget</summary>
                 return (widget ? hide() : show());
             },
+
             parseInputDate = function (inputDate) {
-            	if ((inputDate === null) || (inputDate === undefined)){
+            	if(inputDate === null || inputDate === undefined){
             		return null;
             	}
-                if ((options.parseInputDate === undefined)) {
+                if (options.parseInputDate === undefined) {
                     if (moment.isMoment(inputDate) || inputDate instanceof Date) {
                         inputDate = moment(inputDate);
                     } else {
@@ -2310,16 +2346,12 @@
             update();
             return picker;
         };
-
+        /**
+         * Returns the component's model current viewDate, a moment object or null if not set. Passing a null value unsets the components model current moment. Parsing of the newDate parameter is made using moment library with the options.format and options.useStrict components configuration.
+         * @param {Takes string, viewDate, moment, null parameter.} newDate
+         * @returns {viewDate.clone()}
+         */
         picker.viewDate = function (newDate) {
-            ///<signature helpKeyword="$.fn.datetimepicker.viewDate">
-            ///<summary>Returns the component's model current viewDate, a moment object or null if not set.</summary>
-            ///<returns type="Moment">viewDate.clone()</returns>
-            ///</signature>
-            ///<signature>
-            ///<summary>Sets the components model current moment to it. Passing a null value unsets the components model current moment. Parsing of the newDate parameter is made using moment library with the options.format and options.useStrict components configuration.</summary>
-            ///<param name="newDate" locid="$.fn.datetimepicker.date_p:newDate">Takes string, viewDate, moment, null parameter.</param>
-            ///</signature>
             if (arguments.length === 0) {
                 return viewDate.clone();
             }
@@ -2368,27 +2400,25 @@
             input = element;
             
             if (!options.disabledComponentButton){
-            	//gonrin inject input element
-                var inputGroupSpan;
-                
-                var parentEl = element.parent();
-                
-                if(parentEl.is('div') && parentEl.hasClass('date-group')){
-                	inputGroupSpan = parentEl;
-                }else{
-                	element.wrap( '<div class="input-group date-group"></div>' );
-                    inputGroupSpan = element.parent();
-                }
-                
-                //component
-                var componentButton = element.nextAll('span:first');
-                
-                if((componentButton.length == 0 ) || !($(componentButton[0]).hasClass('input-group-addon'))){
-                	componentButton = $('<span class="input-group-addon">').html('<span class="glyphicon glyphicon-calendar"></span>');
-                    inputGroupSpan.append(componentButton);
-                }
-                
-                component = componentButton;
+            //gonrin inject input element
+            var inputGroupSpan;
+            
+            var parentEl = element.parent();
+            
+            if(parentEl.is('div') && parentEl.hasClass('date-group')){
+            	inputGroupSpan = parentEl;
+            }else{
+            	element.wrap( '<div class="input-group date-group"></div>' );
+                inputGroupSpan = element.parent();
+            }
+            //component
+            var componentButton = element.nextAll('span:first');
+            
+            if((componentButton.length == 0 ) || !($(componentButton[0]).hasClass('input-group-append'))){
+            	componentButton = $('<span class="input-group-append">').html('<span class="btn btn-outline-secondary input-group-addon"><i class="fa fa-calendar"></i></span>');
+                inputGroupSpan.append(componentButton);
+            }
+            component = componentButton;
                 //element.addClass("form-control");
             }else{
             	component = null;
@@ -2426,12 +2456,11 @@
         viewDate = date.clone();
         
         picker.options(options);
-        //disabledComponentButton
 
         initFormatting();
 
         attachDatePickerElementEvents();
-        
+
         if (input.prop('disabled')) {
             picker.disable();
         }
@@ -2482,15 +2511,15 @@
         enabledDates: false,
         readonly: false,
         icons: {
-            time: 'glyphicon glyphicon-time',
-            date: 'glyphicon glyphicon-calendar',
-            up: 'glyphicon glyphicon-chevron-up',
-            down: 'glyphicon glyphicon-chevron-down',
-            previous: 'glyphicon glyphicon-chevron-left',
-            next: 'glyphicon glyphicon-chevron-right',
-            today: 'glyphicon glyphicon-screenshot',
-            clear: 'glyphicon glyphicon-trash',
-            close: 'glyphicon glyphicon-remove'
+            time: 'fa fa-clock-o',
+            date: 'fa fa-calendar',
+            up: 'fa fa-chevron-up',
+            down: 'fa fa-chevron-down',
+            previous: 'fa fa-chevron-left',
+            next: 'fa fa-chevron-right',
+            today: 'fa fa-crosshairs',
+            clear: 'fa fa-trash-o',
+            close: 'fa fa-times'
         },
         tooltips: {
             today: 'Go to today',
@@ -2632,6 +2661,9 @@
             //    if(toggle.length > 0) toggle.click();
             //},
             'control space': function (widget) {
+                if (!widget) {
+                    return;
+                }
                 if (widget.find('.timepicker').is(':visible')) {
                     widget.find('.btn[data-action="togglePeriod"]').click();
                 }
@@ -2651,4 +2683,5 @@
         disabledComponentButton: false,
         viewDate: false
     };
+
 }));

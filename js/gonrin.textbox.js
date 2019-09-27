@@ -104,6 +104,7 @@
             textElement = element;
             //value = input.val();
             value =  (options.value !== null) ? options.value : ((input.val().trim().length !== 0) ? input.val().trim(): null);
+            input.val(value);
             //css
             if( !options.hasOwnProperty("cssClass") ){
             	element.addClass("form-control");

@@ -140,7 +140,6 @@
                     		data.push(model.toJSON());
 						});
                     	
-                    	console.log(data);
                     	
                     	//genDataUUID();
                     	//filterData();
@@ -1015,7 +1014,6 @@
 /*****************************************/
 	
 	$.fn.combobox = function (options) {
-		
         return this.each(function () {
             var $this = $(this);
             options.refresh = options.refresh || false;

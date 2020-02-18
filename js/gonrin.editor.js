@@ -310,7 +310,10 @@
         if (/auto|%/.test("" + options.width + options.height))
             $(window).bind("resize.gonrinEditor", function () { refresh(editor); });
         
-        
+        editor.setValue = function(val){
+            editor.$area.val(val);
+            updateFrame(editor, true);
+        }
 
         // Create the iframe and resize the controls
         refresh(editor);

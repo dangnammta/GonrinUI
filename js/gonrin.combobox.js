@@ -25,8 +25,10 @@
 		groupElement = false,
 		unset = true,
         input,
-        menuTemplate = '<ul class="dropdown-menu" style="overflow-y:scroll; width: 100%"></ul>',
-        itemTemplate =  '<li><a href="javascript:void(0)"></a></li>',
+        // menuTemplate = '<ul class="dropdown-menu" style="overflow-y:scroll; width: 100%"></ul>',
+        menuTemplate = '<ul class="dropdown-menu" style="width: 100%; min-width: 240px; transform-origin: center bottom 0px;"></ul>',
+        itemTemplate =  '<li><a class="dropdown-item" href="javascript:void(0)"></a></li>',
+        textElementTemplate = '<div class="gr-input--suffix"><input class="gr-input__inner form-control" type="text" autocomplete="off" placeholder="Select"><span class="gr-input__suffix"><span class="gr-input__suffix-inner"><i class="gr-select__caret gr-input__icon gr-icon-arrow-up"></i></span></span></div>',
         component = false,
         helpmsg = false,
         widget = false,
@@ -227,6 +229,8 @@
 			return grobject;
 		},
         setupWidget = function () {
+
+            console.log("setupWidget");
 			if(!!widget){
 				widget.empty();
 			}
@@ -244,8 +248,12 @@
 				boundData();
 				//setup width and height
 				
-				widget.css("width", (options.width !== null) ? options.width : "100%"); 
-				widget.css("height", (options.height !== null) ? options.height : "auto"); 
+                widget.css("width", (options.width !== null) ? options.width : "100%"); 
+                var widget_height = (options.height !== null) ? options.height : "auto";
+                widget.css("height", widget_height); 
+                if (widget_height !== "auto"){
+                    widget.css("overflow-y", "scroll"); 
+                }
 				
 				widget.hide();
             }
@@ -714,7 +722,8 @@
                     'change': change,
                     'blur': options.debug ? '' : hideWidget,
                     'keydown': keydown,
-                    'focus':  showWidget,
+                    // 'focus':  showWidget,
+                    'click':  toggle,
                 });
         	}
             if (component) {
@@ -760,20 +769,20 @@
         	
         },
         setState = function(state, message){
-        	if(state === null){
-        		groupElement.removeClass("has-warning has-error has-success");
-        		helpmsg.html("");
-        		helpmsg.hide();
-        	}else if((state === "warning") || (state === "error") || (state === "success")){
-    			groupElement.addClass("has-" + state);
-    			if(!!message){
-        			helpmsg.html(message);
-            		helpmsg.show();
-            	}else{
-            		helpmsg.html("");
-            		helpmsg.hide();
-            	}
-        	}
+        	// if(state === null){
+        	// 	groupElement.removeClass("has-warning has-error has-success");
+        	// 	helpmsg.html("");
+        	// 	helpmsg.hide();
+        	// }else if((state === "warning") || (state === "error") || (state === "success")){
+    		// 	groupElement.addClass("has-" + state);
+    		// 	if(!!message){
+        	// 		helpmsg.html(message);
+            // 		helpmsg.show();
+            // 	}else{
+            // 		helpmsg.html("");
+            // 		helpmsg.hide();
+            // 	}
+        	// }
         	
         },
         unsubscribeEvents = function () {
@@ -914,51 +923,46 @@
             var parentEl = element.parent();
             
             
-            if(parentEl.is('div') && parentEl.hasClass('input-group') && parentEl.hasClass('combobox-control')){
+            // if(parentEl.is('div') && parentEl.hasClass('input-group') && parentEl.hasClass('gr-combobox')){
+            if(parentEl.is('div') && parentEl.hasClass('gr-combobox')){
             	inputGroupEl = parentEl;
             }else{
-            	element.wrap( '<div class="input-group combobox-control"></div>' );
+            	element.wrap( '<div class="gr-combobox"></div>' );
                 inputGroupEl = element.parent();
             }
             
-            
-            var parentInputGroupEl = inputGroupEl.parent();
-            if(parentInputGroupEl.is('div') && parentInputGroupEl.hasClass('combobox-group')){
-            	groupElement = parentInputGroupEl;
-            }else{
-            	inputGroupEl.wrap( '<div class="combobox-group"></div>' );
-            	groupElement = inputGroupEl.parent();
-            }
-            
             //component
-            var componentButton = element.nextAll('span:first');
+            // var componentButton = element.nextAll('span:first');
             
-            if((componentButton.length == 0 ) || !($(componentButton[0]).hasClass('input-group-addon'))){
-            	componentButton = $('<span class="input-group-addon dropdown-toggle" data-dropdown="dropdown">').html('<span class="caret"></span><span class="glyphicon glyphicon-remove" style="display:none;"></span>');
-                inputGroupEl.append(componentButton);
-            }
+            // if((componentButton.length == 0 ) || !($(componentButton[0]).hasClass('input-group-addon'))){
+            // 	componentButton = $('<span class="input-group-addon dropdown-toggle" data-dropdown="dropdown">').html('<span class="caret"></span><span class="glyphicon glyphicon-remove" style="display:none;"></span>');
+            //     inputGroupEl.append(componentButton);
+            // }
             
-            component = componentButton;
+            // component = componentButton;
+            
             
             var widgetEl = element.nextAll('ul:first');
             if(widgetEl.length > 0 ){
             	widgetEl.remove();
             }
             
-            var prevEl = element.prev('input');
-            if((prevEl.length == 0 ) || !($(prevEl[0]).hasClass('form-control'))){
-            	prevEl = $('<input class="form-control" type="text">');
+            var prevEl = element.prev('.gr-input--suffix');
+            if((prevEl.length == 0 )){
+            	prevEl = $(textElementTemplate);
                 element.before(prevEl);
             }
-            textElement = prevEl;
+            textElement = prevEl.find("input.gr-input__inner");
+
+            component = prevEl.find("span.gr-input__suffix");
             
-            var helpEl = inputGroupEl.next('div');
-            if((helpEl.length == 0 ) || !($(helpEl[0]).hasClass('help-block'))){
-            	helpEl = $('<div class="help-block">');
-            	inputGroupEl.after(helpEl);
-            }
-            helpmsg = helpEl;
-            helpmsg.hide();
+            // var helpEl = inputGroupEl.next('div');
+            // if((helpEl.length == 0 ) || !($(helpEl[0]).hasClass('help-block'))){
+            // 	helpEl = $('<div class="help-block">');
+            // 	inputGroupEl.after(helpEl);
+            // }
+            // helpmsg = helpEl;
+            // helpmsg.hide();
             element.css("display", "none");
         } else {
             throw new Error('Cannot apply to non input, select element');
@@ -976,9 +980,6 @@
 				value = [];
 			}
         }
-        if(!!options.groupSize){
-        	inputGroupEl.addClass("input-group-" + options.groupSize);
-        }
         
     	setupWidget();
     	
@@ -993,7 +994,11 @@
 			if (options.textField === null){
 				options.textField = options.valueField;
 			}
-    	}
+        }
+        
+        if(textElement && (options.allowTextInput === false)){
+            textElement.attr("readonly", "readonly");
+        }
     	
     	//if((options.index) && (options.index > -1)){
     	//	grobject.setSingleIndex(options.index);

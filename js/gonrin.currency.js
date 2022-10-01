@@ -162,7 +162,7 @@
 	                oldValue: oldvalue
 	            });
 			}
-			
+			input.val(value);
 		};
 		var onFocus = function(){
 			if(textElement){

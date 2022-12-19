@@ -843,7 +843,9 @@
             unsubscribeEvents();
             widget.remove();
             component.remove();
-            helpmsg.remove();
+            if(!!helpmsg){
+                helpmsg.remove();
+            }
             textElement.remove();
             element.removeData('gonrin');
         };

@@ -449,7 +449,14 @@
                     	//apply cell template here:
                     	if((!!options.fields[i].template) && (!!gonrin.template)){
                     		if ($.isFunction( options.fields[i].template )){
-                    			var tpl = gonrin.template(options.fields[i].template(dataToRender[row]));
+								var tpl = ""; 
+								if(options.context){
+									tpl = gonrin.template(options.fields[i].template.call(options.context, dataToRender[row], {}));
+								}else{
+									tpl = gonrin.template(options.fields[i].template(dataToRender[row]));
+								}
+
+                    			// var tpl = gonrin.template(options.fields[i].template(dataToRender[row]));
     							tcol.html(tpl(dataToRender[row]));
                     		}else{
                     			var tpl = gonrin.template(options.fields[i].template);

@@ -1,0 +1,191 @@
+.gonrin-gantt-wrapper {
+    --entry-color: #8777d992;
+    --border-color: #0000001a;
+    --background-color: #f9f9f9;
+    --hovered-background: #f0f0f0;
+    --today-line-border-color: #fd9b1c;
+}
+
+.gonrin-gantt-wrapper {
+    position: relative;
+    min-width: 550px;
+}
+
+.gonrin-gantt-headers {
+    display: grid;
+    background-color: var(--background-color);
+    border: 1px solid var(--border-color);
+    min-height: 40px;
+}
+
+.gonrin-gantt-headers>div:not(:last-child) {
+    border-right: 1px solid var(--border-color);
+}
+
+.gonrin-gantt-header {
+    display: flex;
+    padding: 10px 2px 10px 2px;
+    justify-content: center;
+    text-align: center;
+}
+
+.gonrin-gantt-sidebar-header {
+    padding: 5px 5px 5px 5px;
+    background-color: var(--background-color);
+    border-right: 1px solid var(--border-color);
+    position: relative;
+}
+
+.gonrin-gantt-sidebar-header-content {
+    margin: auto;
+}
+
+.gonrin-vertical-center {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+.gonrin-text-center {
+    text-align: center;
+}
+.gonrin-space-center {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+.gonrin-gantt-content {
+    position: relative;
+}
+
+.gonrin-gantt-row {
+    display: grid;
+    min-height: 25px;
+    border: 1px solid var(--border-color);
+    border-top: 0;
+    border-right: 1px solid transparent;
+
+}
+
+.gonrin-gantt-sub-row-wrapper {
+    padding: 4px;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    position: relative;
+}
+
+.gonrin-gantt-row-entry {
+    height: 25px;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: var(--entry-color);
+}
+
+.gonrin-gantt-row-entry:hover {
+    box-shadow: var(--entry-color) 0px 0px 2px .1px;
+}
+
+.gonrin-gantt-lines-container {
+    display: grid;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    border: 1px solid var(--border-color);
+    z-index: 0;
+}
+
+.gonrin-gantt-lines-container>div:not(:last-child):not(.gonrin-gantt-sidebar-template) {
+    border-right: 1px solid var(--border-color);
+    min-width: 49px !important;
+}
+
+.gonrin-gantt-today-container{
+    display: grid;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: transparent;
+    z-index: 2;
+}
+
+.gonrin-gantt-today-line{
+    position: relative;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0px;
+    background-color: transparent;
+    border-right: 1.2px solid var(--today-line-border-color, #ff9307);
+    z-index: 2;
+}
+
+.gonrin-gantt-today-line2{
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0px;
+    background-color: transparent;
+    border-right: 1.2px solid var(--today-line-border-color, #ff9307);
+    z-index: 2;
+}
+
+
+
+.gonrin-gantt-row-entry-tooltip {
+    position: absolute;
+    display: none;
+    max-width: 500px;
+    background-color: #ffffff;
+    box-shadow: 0 0 5px #aaa;
+    border: solid 0.5px #8777d9;;
+    padding: 10px;
+    z-index: 20;
+}
+
+.gonrin-gantt-grouping-header {
+    background-color: var(--background-color);
+    padding: 5px 0;
+    border: 1px solid var(--border-color);
+    border-top: 0 transparent;
+    cursor: pointer;
+    user-select: none;
+}
+
+.gonrin-gantt-grouping-header:hover {
+    background-color: var(--hovered-background);
+}
+
+.gonrin-gantt {
+    overflow: auto;
+}
+
+.gonrin-gantt-fixed-bottom {
+    position: fixed;
+    bottom: 10px;
+    right: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: end;
+    max-width: 600px;
+    min-height: 2rem;
+    padding: 0.5rem;
+    background: #f3f4f5;
+    border-bottom:  1px solid #ebedef;  
+    border: 0;
+    border-radius: 3px;
+    box-shadow: #00000040 0px 0.0625em 0.0625em, #00000040 0px 0.125em 0.5em, 
+    #ffffff1a 0px 0px 0px 1px inset;
+  }

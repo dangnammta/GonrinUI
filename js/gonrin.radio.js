@@ -110,6 +110,7 @@
         	value = val;
         	
         	if(data && (data.length > 0)){
+                var found = false;
         		for(var i = 0; i < data.length; i++){
         			var item = data[i];
         			if(dataSourceType === 'object'){
@@ -124,10 +125,15 @@
             	                    value: value,
             	                    oldValue: oldvalue
             	                });
-            					return;
+                                found = true;
+            					
             				}
             			}
         			}
+
+                    if (found !== true){
+                        $(widget.find('input[type=radio]')).prop('checked', false);
+                    }
         			
         		}
         		

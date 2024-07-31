@@ -1,6 +1,7 @@
 class Gantt {
     constructor(staticID, options) {
         this.staticID = staticID;
+        this.overlap_bar = true; // true/fasle
         this.sidebarHeader = options.sidebarHeader || 'Unused parameter right now';
         this.noDataFoundMessage = options.noDataFoundMessage || 'No data found.';
         this.startTimeAlias = options.startTimeAlias || 'startTime';
@@ -21,6 +22,9 @@ class Gantt {
             "hour": "Giờ", "day": "Ngày", "week": "Tuần", "month": "Tháng", "quarter": "Quý", "year": "Năm"
         };
 
+        this.sun_color = options.sun_color || "#f7eded";
+        this.sat_color = options.sat_color || "#f1f6f7";
+        this.weekday_text = options.weekday_text || ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
         this.data = {};
         this.rawData = [];
@@ -70,6 +74,9 @@ class Gantt {
         if (this.chartType === "hour") {
             this.maxTime = roundHourUp(maxTime);
             this.minTime = roundHourDown(minTime);
+        } else if (this.chartType === "day") {
+            this.maxTime = roundDayUp(maxTime);
+            this.minTime = roundDayDown(minTime);
         } else if (this.chartType === "month") {
             this.maxTime = roundMonthUp(maxTime);
             this.minTime = roundMonthDown(minTime);
@@ -89,7 +96,12 @@ class Gantt {
             for (let i = new Date(this.minTime.getTime()); i <= this.maxTime; i.setTime(i.getTime() + (60 * 60 * 1000))) {
                 this.divisionCount++;
             }
-        } else if (this.chartType === "month") {
+        } else if (this.chartType === "day") {
+            for (let i = new Date(this.minTime.getTime()); i <= this.maxTime; i.setTime(i.getTime() + (24 * 60 * 60 * 1000))) {
+                this.divisionCount++;
+            }
+        }
+        else if (this.chartType === "month") {
             this.divisionCount = (this.maxTime.getFullYear() - this.minTime.getFullYear()) * 12
                 + this.maxTime.getMonth() - this.minTime.getMonth() + 1;
         } else if (this.chartType === "quarter") {
@@ -146,7 +158,31 @@ class Gantt {
             }
             return `<div class="gonrin-gantt-headers" style="grid-template-columns: ${this.templateColumnWidth} 
              repeat(${this.divisionCount}, 1fr)">${headerDivs}</div>`;
-        } else if (this.chartType === "month") {
+        } else if (this.chartType === "day") {
+            let headerDivs = `<div class="gonrin-gantt-header-spacer"></div>`;
+            if (this.divisionCount > 1) {
+                for (let i = 0; i < this.divisionCount; i++) {
+                    let date = new Date(this.minTime.getTime() + ((24 * 60 * 60 * 1000) * i)),
+                        _year = date.getFullYear(),
+                        _month = date.getMonth(),
+                        _day = date.getDate(),
+                        _week_day = date.getDay();
+                    let style_header_color = '';
+                    if (_week_day == 0) {
+                        style_header_color = `style="background-color: ${this.sun_color}!important;"`;
+                    } else if (_week_day == 6) {
+                        style_header_color = `style="background-color: ${this.sat_color}!important;"`;
+                    }
+                    headerDivs += `<div class="gonrin-gantt-header" ${style_header_color}>${this.weekday_text[_week_day]} ${_day}/${_month}</div>`;
+                }
+            } else {
+                let day = this.minTime.getDay();
+                headerDivs += `<div class="gonrin-gantt-header">${this.translateLang.day} ${day}</div>`;
+            }
+            return `<div class="gonrin-gantt-headers" style="grid-template-columns: ${this.templateColumnWidth} 
+             repeat(${this.divisionCount}, 1fr); min-width: ${this.min_width_cont}px;">${headerDivs}</div>`;
+        }
+        else if (this.chartType === "month") {
             let headerDivs = `<div class="gonrin-gantt-header-spacer"></div>`;
             if (this.divisionCount > 1) {
                 // let the_max_time_month = this.maxTime.getMonth();
@@ -223,17 +259,31 @@ class Gantt {
              repeat(${this.divisionCount}, 1fr); min-width: ${this.min_width_cont}px;">${headerDivs}</div>`;
         }
     }
-    
+
     buildLines() {
         let lines = '<div class="gonrin-gantt-sidebar-template"></div>';
-        for (let i = 0; i < this.divisionCount; i++) {
-            lines += `<div class="gonrin-gantt-line"></div>`;
+        if ((this.chartType === "day")) {
+            for (let i = 0; i < this.divisionCount; i++) {
+                let date = new Date(this.minTime.getTime() + ((24 * 60 * 60 * 1000) * i)),
+                    _week_day = date.getDay();
+                let style_header_color = '';
+                if (_week_day == 0) {
+                    style_header_color = `style="background-color: ${this.sun_color}!important;"`;
+                } else if (_week_day == 6) {
+                    style_header_color = `style="background-color: ${this.sat_color}!important;"`;
+                }
+                lines += `<div class="gonrin-gantt-line" ${style_header_color}></div>`;
+            }
+        } else {
+            for (let i = 0; i < this.divisionCount; i++) {
+                lines += `<div class="gonrin-gantt-line"></div>`;
+            }
         }
         let currTime = new Date();
         let today_line_width = 50;
         today_line_width = (currTime - this.minTime) / (this.maxTime - this.minTime) * 100;
         lines += `<div class="gonrin-gantt-today-container" style="left: ${this.templateColumnWidth}; 
-            width: calc(100% - ${this.templateColumnWidth}); grid-template-columns: ${this.divisionCount -1}fr  1fr;">
+            width: calc(100% - ${this.templateColumnWidth}); grid-template-columns: ${this.divisionCount - 1}fr  1fr;">
             <div class="gonrin-gantt-line">
             <div class="gonrin-gantt-today-line" style="width: ${today_line_width}%;"></div></div>
             <div class="gonrin-gantt-line"></div></div>`;
@@ -243,20 +293,22 @@ class Gantt {
     }
 
     buildRow(rowArr, dataIndex) {
-        let totalTime = this.maxTime - this.minTime,
+        let totalTime = this.maxTime - this.minTime, baseTime = this.minTime, row_height = "max(1rem",
             compositeRows = `<div style="grid-column: 2/${this.divisionCount + 1};grid-row:1;display:flex;align-items:center"><div class="gonrin-gantt-sub-row-wrapper">`;
+        for (let i = 0; i < rowArr.length; i++) { if (!!rowArr[i]?.height) { row_height += "," + rowArr[i]?.height; } };
+        row_height += ")";
+        compositeRows += `<div style="width:100%; height: ${row_height};background-color: transparent !important;";></div>`;
         for (let i = 0; i < rowArr.length; i++) {
-            // let rowData = rowArr[i];
             //Check to see if the current entry has a start and end time. If not we break
             if (!rowArr[i][this.startTimeAlias] || !rowArr[i][this.endTimeAlias])
                 break;
             let currElStart = new Date(rowArr[i][this.startTimeAlias]),
                 currElEnd = new Date(rowArr[i][this.endTimeAlias]),
-                currElRunPercent = ((currElEnd - currElStart) / totalTime) * 100;
+                currElRunPercent = ((currElEnd - currElStart) / totalTime) * 100,
+                difference = 0;
             if (i === 0 || (rowArr[i - 1] && new Date(rowArr[i - 1][this.endTimeAlias]) !== currElStart)) {
-                let baseTime = (i === 0 ? this.minTime : new Date(rowArr[i - 1][this.endTimeAlias])),
-                    difference = ((currElStart - baseTime) / totalTime) * 100;
-                compositeRows += `<div style="width:${difference}%;"></div>`;
+                difference = ((currElStart - baseTime) / totalTime) * 100;
+                // compositeRows += `<div style="width:${difference}%;"></div>`;
             }
             //If we don't have a linkAlias we assume the entries are not meant to link anywhere, so we just render them as divs instead.
             let data_obj = '';
@@ -271,15 +323,101 @@ class Gantt {
             if (this.linkAlias) {
                 compositeRows += `<a class="gonrin-gantt-row-entry ${rowArr[i]?.cssClass ?? ""}" href="${rowArr[i][this.linkAlias]}" data-index="${dataIndex.join('-')}-${i}" 
                     style="width:${currElRunPercent}%; height:${rowArr[i]?.height ?? ""};
-                    background-color: ${rowArr[i]?.bgcolor ?? ""} !important;"  ${data_obj}></a>`;
+                    background-color: ${rowArr[i]?.bgcolor ?? ""} !important;
+                    left: ${difference}%;"  ${data_obj}></a>`;
             } else {
                 compositeRows += `<div class="gonrin-gantt-row-entry ${rowArr[i]?.cssClass ?? ""}" data-index="${dataIndex.join('-')}-${i}" 
                     style="width:${currElRunPercent}%;height:${rowArr[i]?.height ?? ""};
-                    background-color: ${rowArr[i]?.bgcolor ?? ""} !important;"  ${data_obj}></div>`;
+                    background-color: ${rowArr[i]?.bgcolor ?? ""} !important;                    
+                    left: ${difference}%;"  ${data_obj}></div>`;
             }
         }
         return compositeRows + '</div></div>';
     }
+
+    // buildRowOverlap(rowArr, dataIndex) {
+    //     if (!this.overlap_bar) {
+    //         return this.buildRowNoOverlap(rowArr, dataIndex);
+    //     }
+    //     let totalTime = this.maxTime - this.minTime, baseTime = this.minTime, row_height = "max(1rem",
+    //         compositeRows = `<div style="grid-column: 2/${this.divisionCount + 1};grid-row:1;display:flex;align-items:center"><div class="gonrin-gantt-sub-row-wrapper">`;
+    //     for (let i = 0; i < rowArr.length; i++) { if (!!rowArr[i]?.height) { row_height += "," + rowArr[i]?.height; } };
+    //     row_height += ")";
+    //     compositeRows += `<div style="width:100%; height: ${row_height};background-color: transparent !important;";></div>`;
+    //     for (let i = 0; i < rowArr.length; i++) {
+    //         //Check to see if the current entry has a start and end time. If not we break
+    //         let gourp_entry = `<div class="gonrin-gantt-row-group">`;
+    //         if (!rowArr[i][this.startTimeAlias] || !rowArr[i][this.endTimeAlias])
+    //             break;
+    //         let currElStart = new Date(rowArr[i][this.startTimeAlias]),
+    //             currElEnd = new Date(rowArr[i][this.endTimeAlias]),
+    //             currElRunPercent = ((currElEnd - currElStart) / totalTime) * 100;
+    //         if (i === 0 || (rowArr[i - 1] && new Date(rowArr[i - 1][this.endTimeAlias]) !== currElStart)) {
+    //             let difference = ((currElStart - baseTime) / totalTime) * 100;
+    //             gourp_entry += `<div style="width:${difference}%;"></div>`;
+    //         }
+    //         //If we don't have a linkAlias we assume the entries are not meant to link anywhere, so we just render them as divs instead.
+    //         let data_obj = '';
+    //         if (!!rowArr[i]?.dataBundle && typeof rowArr[i]?.dataBundle === "object") {
+    //             for (const key in rowArr[i].dataBundle) {
+    //                 if (Object.hasOwnProperty.call(rowArr[i].dataBundle, key)) {
+    //                     data_obj = data_obj + "data-" + key + `="` + rowArr[i].dataBundle[key] + `" `;
+    //                 }
+    //             }
+    //         }
+    //         if (this.linkAlias) {
+    //             gourp_entry += `<a class="gonrin-gantt-row-entry ${rowArr[i]?.cssClass ?? ""}" href="${rowArr[i][this.linkAlias]}" data-index="${dataIndex.join('-')}-${i}" 
+    //                 style="width:${currElRunPercent}%; height:${rowArr[i]?.height ?? ""};
+    //                 background-color: ${rowArr[i]?.bgcolor ?? ""} !important;"  ${data_obj}></a>`;
+    //         } else {
+    //             gourp_entry += `<div class="gonrin-gantt-row-entry ${rowArr[i]?.cssClass ?? ""}" data-index="${dataIndex.join('-')}-${i}" 
+    //                 style="width:${currElRunPercent}%;height:${rowArr[i]?.height ?? ""};
+    //                 background-color: ${rowArr[i]?.bgcolor ?? ""} !important;"  ${data_obj}></div>`;
+    //         }
+    //         gourp_entry += '</div>';
+    //         compositeRows += gourp_entry;
+    //     }
+    //     return compositeRows + '</div></div>';
+    // }
+
+    // buildRowNoOverlap(rowArr, dataIndex) {
+    //     let totalTime = this.maxTime - this.minTime,
+    //         compositeRows = `<div style="grid-column: 2/${this.divisionCount + 1};grid-row:1;display:flex;align-items:center"><div class="gonrin-gantt-sub-row-wrapper">`;
+    //     for (let i = 0; i < rowArr.length; i++) {
+    //         //Check to see if the current entry has a start and end time. If not we break
+    //         if (!rowArr[i][this.startTimeAlias] || !rowArr[i][this.endTimeAlias])
+    //             break;
+    //         let currElStart = new Date(rowArr[i][this.startTimeAlias]),
+    //             currElEnd = new Date(rowArr[i][this.endTimeAlias]),
+    //             currElRunPercent = ((currElEnd - currElStart) / totalTime) * 100;
+    //         if (i === 0 || (rowArr[i - 1] && new Date(rowArr[i - 1][this.endTimeAlias]) !== currElStart)) {
+    //             let baseTime = (i === 0 ? this.minTime : new Date(rowArr[i - 1][this.endTimeAlias])),
+    //                 difference = ((currElStart - baseTime) / totalTime) * 100;
+    //             compositeRows += `<div style="width:${difference}%;"></div>`;
+    //         }
+    //         //If we don't have a linkAlias we assume the entries are not meant to link anywhere, so we just render them as divs instead.
+    //         let data_obj = '';
+    //         if (!!rowArr[i]?.dataBundle && typeof rowArr[i]?.dataBundle === "object") {
+    //             for (const key in rowArr[i].dataBundle) {
+    //                 if (Object.hasOwnProperty.call(rowArr[i].dataBundle, key)) {
+    //                     data_obj = data_obj + "data-" + key + `="` + rowArr[i].dataBundle[key] + `" `;
+    //                 }
+    //             }
+    //         }
+
+    //         if (this.linkAlias) {
+    //             compositeRows += `<a class="gonrin-gantt-row-entry ${rowArr[i]?.cssClass ?? ""}" href="${rowArr[i][this.linkAlias]}" data-index="${dataIndex.join('-')}-${i}" 
+    //                 style="width:${currElRunPercent}%; height:${rowArr[i]?.height ?? ""};
+    //                 background-color: ${rowArr[i]?.bgcolor ?? ""} !important;"  ${data_obj}></a>`;
+    //         } else {
+    //             compositeRows += `<div class="gonrin-gantt-row-entry ${rowArr[i]?.cssClass ?? ""}" data-index="${dataIndex.join('-')}-${i}" 
+    //                 style="width:${currElRunPercent}%;height:${rowArr[i]?.height ?? ""};
+    //                 background-color: ${rowArr[i]?.bgcolor ?? ""} !important;"  ${data_obj}></div>`;
+    //         }
+    //     }
+    //     return compositeRows + '</div></div>';
+    // }
+
 
     buildContent() {
         let body = [`<div class="gonrin-gantt-row-container" style="min-width: ${this.min_width_cont}px;">`],
@@ -355,6 +493,7 @@ class Gantt {
 
                 function getToolTipData() {
                     let dataArray = self.data;
+                    console.log("self.data=================",self.data);
                     for (let i = 0; i < indexArray.length; i++) {
                         if (i === indexArray.length - 1)
                             return dataArray[indexArray[i]]
@@ -422,6 +561,16 @@ function roundHourDown(date) {
     return new Date(Math.floor(date.getTime() / m) * m);
 }
 
+function roundDayUp(date) {
+    let y = date.getFullYear(), m = date.getMonth(), d = date.getDate();
+    return new Date(y, m, (d + 2));
+}
+
+function roundDayDown(date) {
+    let y = date.getFullYear(), m = date.getMonth(), d = date.getDate();
+    return new Date(y, m, (d - 1));
+}
+
 function roundMonthUp(date) {
     let y = date.getFullYear(), m = date.getMonth();
     return new Date(y, m + 1, 1);
@@ -433,12 +582,12 @@ function roundMonthDown(date) {
 
 function roundQuarterUp(date) {
     let y = date.getFullYear(), m = date.getMonth();
-    let mq = (Math.ceil(m / 3) * 3)
+    let mq = (Math.ceil((m + 1) / 3) * 3);
     return new Date(y, mq, 1);
 }
 function roundQuarterDown(date) {
     let y = date.getFullYear(), m = date.getMonth();
-    let mq = (Math.floor(m / 3) * 3)
+    let mq = (Math.floor((m + 1) / 3) * 3);
     return new Date(y, mq, 1);
 }
 

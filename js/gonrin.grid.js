@@ -456,11 +456,20 @@
 									tpl = gonrin.template(options.fields[i].template(dataToRender[row]));
 								}
 
-                    			// var tpl = gonrin.template(options.fields[i].template(dataToRender[row]));
-    							tcol.html(tpl(dataToRender[row]));
+    							// tcol.html(tpl(dataToRender[row]));
+                                var html = tpl(dataToRender[row]);
+                                html = html.replace('<script>', '');
+                                html = html.replace('</script>', '');
+                                html = html.replace('script', '*****');
+    							tcol.html(html);
                     		}else{
                     			var tpl = gonrin.template(options.fields[i].template);
-    							tcol.html(tpl(dataToRender[row]));
+    							// tcol.html(tpl(dataToRender[row]));
+                                var html = tpl(dataToRender[row]);
+                                html = html.replace('<script>', '');
+                                html = html.replace('</script>', '');
+                                html = html.replace('script', '*****');
+    							tcol.html(html);
                     		}
 							
 						}

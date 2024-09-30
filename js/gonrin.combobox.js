@@ -901,6 +901,9 @@
             if (textElement){
             	textElement.prop('readonly', true);
             }
+            if (input){
+            	input.prop('readonly', true);
+            }
             return grobject;
         };
         
